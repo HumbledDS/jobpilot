@@ -4,7 +4,7 @@ export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
 async function handler(req: Request) {
-  const secret = process.env.INGEST_CRON_SECRET;
+  const secret = process.env.CRON_SECRET;
   if (secret) {
     const auth = req.headers.get("authorization");
     const token = new URL(req.url).searchParams.get("secret");

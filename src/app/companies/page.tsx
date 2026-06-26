@@ -46,6 +46,8 @@ export default async function CompaniesPage({
 
   const linkedinUrl = (name: string) =>
     `https://www.linkedin.com/jobs/search/?keywords=${encodeURIComponent(name + " data")}&location=%C3%8Ele-de-France`;
+  const indeedUrl = (name: string) =>
+    `https://fr.indeed.com/jobs?q=${encodeURIComponent(name)}&l=${encodeURIComponent("Île-de-France")}`;
 
   return (
     <div>
@@ -155,6 +157,7 @@ export default async function CompaniesPage({
               <div className="mt-auto flex gap-3 text-xs">
                 <Link href={`/jobs?q=${encodeURIComponent(c.name)}`} className="text-blue-600 underline">offres ici</Link>
                 <a href={linkedinUrl(c.name)} target="_blank" rel="noreferrer" className="text-blue-600 underline">LinkedIn</a>
+                <a href={indeedUrl(c.name)} target="_blank" rel="noreferrer" className="text-blue-600 underline">Indeed</a>
               </div>
             </Card>
           ))}

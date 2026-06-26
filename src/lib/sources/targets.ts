@@ -60,6 +60,40 @@ async function fetchGreenhouse(token: string, company: string): Promise<Normaliz
   }
 }
 
+/** SmartRecruiters : postings publics d'une entreprise. */
+async function fetchSmartRecruiters(token: string, company: string): Promise<NormalizedJob[]> {
+  try {
+    const res = await fetch(
+      `https://api.smartrecruiters.com/v1/companies/${token}/postings?limit=100`,
+      { cache: "no-store" },
+    );
+    if (!res.ok) return [];
+    const data = (await res.json()) as { content?: SrJob[] };
+    return (data.content ?? []).map((j) => {
+      const loc =
+        [j.location?.city, j.location?.region, j.location?.country].filter(Boolean).join(", ") ||
+        (j.location?.remote ? "Remote" : null);
+      return {
+        source: "targets",
+        external_id: `sr:${token}:${j.id}`,
+        title: j.name,
+        company_name: company,
+        location: loc,
+        url: `https://jobs.smartrecruiters.com/${token}/${j.id}`,
+        salary_min: null,
+        salary_max: null,
+        contract_type: j.typeOfEmployment?.label ?? null,
+        description: "",
+        posted_at: j.releasedDate ?? null,
+        tags: ["entreprise cible", "smartrecruiters"],
+        raw: j,
+      };
+    });
+  } catch {
+    return [];
+  }
+}
+
 /** Lever : postings publics d'une entreprise. */
 async function fetchLever(token: string, company: string): Promise<NormalizedJob[]> {
   try {
@@ -119,12 +153,13 @@ export async function ingestTargets(names: string[], cap = 40): Promise<TargetIn
   await chunk(targets, 6, async (name) => {
     const token = slug(name);
     if (!token) return;
-    const [gh, lv] = await Promise.all([
+    const [gh, lv, sr] = await Promise.all([
       fetchGreenhouse(token, name),
       fetchLever(token, name),
+      fetchSmartRecruiters(token, name),
     ]);
-    if (gh.length || lv.length) boards++;
-    for (const j of [...gh, ...lv]) {
+    if (gh.length || lv.length || sr.length) boards++;
+    for (const j of [...gh, ...lv, ...sr]) {
       if (!j.external_id || have.has(j.external_id) || collected.has(j.external_id)) continue;
       if (!isRelevant(j).ok) continue; // métier data/cloud + IDF/remote, hors alternance/stage
       collected.set(j.external_id, j);
@@ -192,4 +227,12 @@ type LeverJob = {
   descriptionPlain?: string;
   createdAt?: number;
   categories?: { location?: string; commitment?: string; team?: string };
+};
+
+type SrJob = {
+  id: string;
+  name: string;
+  releasedDate?: string;
+  typeOfEmployment?: { label?: string };
+  location?: { city?: string; region?: string; country?: string; remote?: boolean };
 };
