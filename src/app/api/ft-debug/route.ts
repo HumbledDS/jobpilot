@@ -38,6 +38,14 @@ export async function GET() {
     }
   } catch (e) {
     out.error = e instanceof Error ? e.message : String(e);
+    const cause = (e as { cause?: unknown }).cause;
+    if (cause) {
+      out.cause = {
+        code: (cause as { code?: string }).code,
+        message: (cause as { message?: string }).message,
+        name: (cause as { name?: string }).name,
+      };
+    }
   }
   return Response.json(out);
 }
