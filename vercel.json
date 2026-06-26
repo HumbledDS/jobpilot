@@ -4,6 +4,10 @@
     {
       "path": "/api/ingest",
       "schedule": "0 6 * * *"
+    },
+    {
+      "path": "/api/source-targets?cap=60",
+      "schedule": "30 6 * * *"
     }
   ]
 }
