@@ -150,4 +150,6 @@ export type SkillProject = {
   repo_url: string | null;
   deployed_url: string | null;
   order_index: number | null;
+  brief: string | null;
+  notes: string | null;
 };

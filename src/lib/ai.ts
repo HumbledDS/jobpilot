@@ -103,6 +103,46 @@ Règles: honnête (ne jamais inventer d'expérience), concis (250-320 mots), str
   return complete(system, user, 1200);
 }
 
+/** Generate a portfolio project idea aligned with the target positioning. */
+export async function generateProjectIdeaAI(input: {
+  theme?: string | null;
+  role?: string | null;
+  cloud?: string | null;
+}): Promise<{
+  name: string;
+  description: string;
+  target_role: string;
+  cloud: string;
+} | null> {
+  const system = `Tu proposes des idées de projets portfolio data/cloud/IA pour ${PROFILE_CONTEXT}
+But: prouver les compétences pour des postes Data Engineer / Cloud / Platform / Forward Deployed / Architect. Le projet doit être réalisable seul, déployable, et différenciant (idéalement MCP, API, cloud-native, streaming, data quality, IaC…).
+Réponds UNIQUEMENT en JSON: {"name":"...","description":"... (1-2 phrases, ce qu'on construit et ce que ça prouve)","target_role":"...","cloud":"AWS|GCP|Azure|multi|Vercel..."}`;
+  const user = `${input.theme ? `Thème souhaité: ${input.theme}\n` : ""}${input.role ? `Rôle visé: ${input.role}\n` : ""}${input.cloud ? `Cloud préféré: ${input.cloud}\n` : ""}Propose UNE idée de projet.`;
+  const out = await complete(system, user, 700);
+  if (!out) return null;
+  const p = parseJson<{ name: string; description: string; target_role: string; cloud: string }>(out);
+  if (!p) return null;
+  return {
+    name: p.name ?? "Projet",
+    description: p.description ?? "",
+    target_role: p.target_role ?? "",
+    cloud: p.cloud ?? "",
+  };
+}
+
+/** Generate a concrete build brief for a project (objective, stack, steps, deliverables). */
+export async function generateProjectBriefAI(input: {
+  name: string;
+  description?: string | null;
+  targetRole?: string | null;
+  cloud?: string | null;
+}): Promise<string | null> {
+  const system = `Tu écris un brief de projet technique actionnable en français pour ${PROFILE_CONTEXT}
+Format en sections courtes: Objectif · Stack · Architecture (3-5 puces) · Étapes (numérotées, MVP d'abord) · Livrables (repo, déploiement, README, tests) · Ce que ça prouve en entretien. Concret et réaliste pour une personne seule. Pas d'emojis.`;
+  const user = `Projet: ${input.name}\n${input.description ? `Description: ${input.description}\n` : ""}${input.targetRole ? `Rôle visé: ${input.targetRole}\n` : ""}${input.cloud ? `Cloud: ${input.cloud}\n` : ""}Écris le brief.`;
+  return complete(system, user, 1400);
+}
+
 /** Generate a short application email to a recruiter, signed with the profile. */
 export async function generateApplicationEmailAI(input: {
   jobTitle: string;
