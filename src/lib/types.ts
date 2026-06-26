@@ -47,6 +47,10 @@ export type Job = {
   tags: string[] | null;
   posted_at: string | null;
   ingested_at: string;
+  match_score: number | null;
+  matched_skills: string[] | null;
+  missing_skills: string[] | null;
+  role_family: string | null;
 };
 
 export type Company = {

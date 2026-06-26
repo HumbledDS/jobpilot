@@ -23,15 +23,22 @@ export async function getApplications(): Promise<Application[]> {
   return (data as Application[]) ?? [];
 }
 
-export async function getJobs(): Promise<Job[]> {
+export async function getJobs(
+  sort: "score" | "fresh" = "score",
+): Promise<Job[]> {
   const db = getAdmin();
   if (!db) return [];
-  const { data } = await db
-    .from("jp_jobs")
-    .select("*")
-    .order("posted_at", { ascending: false, nullsFirst: false })
-    .order("ingested_at", { ascending: false })
-    .limit(300);
+  let q = db.from("jp_jobs").select("*");
+  if (sort === "fresh") {
+    q = q
+      .order("posted_at", { ascending: false, nullsFirst: false })
+      .order("match_score", { ascending: false, nullsFirst: false });
+  } else {
+    q = q
+      .order("match_score", { ascending: false, nullsFirst: false })
+      .order("posted_at", { ascending: false, nullsFirst: false });
+  }
+  const { data } = await q.limit(300);
   return (data as Job[]) ?? [];
 }
 
@@ -101,6 +108,23 @@ export async function getCoverLetters(): Promise<CoverLetter[]> {
     .select("*")
     .order("created_at", { ascending: false });
   return (data as CoverLetter[]) ?? [];
+}
+
+export type Profile = {
+  full_name: string | null;
+  headline: string | null;
+  skills: string[];
+  target_roles: string[];
+  salary_target: number | null;
+  locations: string[];
+  seniority: string | null;
+};
+
+export async function getProfile(): Promise<Profile | null> {
+  const db = getAdmin();
+  if (!db) return null;
+  const { data } = await db.from("jp_profile").select("*").eq("id", 1).maybeSingle();
+  return (data as Profile) ?? null;
 }
 
 export async function getSkillProjects(): Promise<SkillProject[]> {

@@ -7,6 +7,7 @@ import {
 } from "@/lib/sources/francetravail";
 import { fetchAdzuna, adzunaConfigured } from "@/lib/sources/adzuna";
 import { isRelevant } from "@/lib/sources/filter";
+import { scoreJob } from "@/lib/scoring";
 
 export type SourceRun = {
   source: string;
@@ -80,21 +81,28 @@ export async function runIngest(): Promise<{
 
       const toInsert = relevant
         .filter((j) => !have.has(j.external_id))
-        .map((j) => ({
-          source: j.source,
-          external_id: j.external_id,
-          title: j.title,
-          company_name: j.company_name,
-          location: j.location,
-          url: j.url,
-          salary_min: j.salary_min,
-          salary_max: j.salary_max,
-          contract_type: j.contract_type,
-          description: j.description,
-          posted_at: j.posted_at,
-          tags: j.tags,
-          raw: j.raw,
-        }));
+        .map((j) => {
+          const sc = scoreJob(j);
+          return {
+            source: j.source,
+            external_id: j.external_id,
+            title: j.title,
+            company_name: j.company_name,
+            location: j.location,
+            url: j.url,
+            salary_min: j.salary_min,
+            salary_max: j.salary_max,
+            contract_type: j.contract_type,
+            description: j.description,
+            posted_at: j.posted_at,
+            tags: j.tags,
+            raw: j.raw,
+            match_score: sc.score,
+            matched_skills: sc.matched,
+            missing_skills: sc.missing,
+            role_family: sc.roleFamily,
+          };
+        });
 
       let inserted = 0;
       if (toInsert.length) {

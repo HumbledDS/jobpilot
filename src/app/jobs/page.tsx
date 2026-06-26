@@ -10,6 +10,7 @@ import {
   SOURCE_LABELS,
   timeAgo,
 } from "@/components/ui";
+import { scoreLabel } from "@/lib/scoring";
 import { createJob, deleteJob, applyToJob, ingestNow } from "./actions";
 import Link from "next/link";
 
@@ -18,10 +19,11 @@ export const dynamic = "force-dynamic";
 export default async function JobsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ source?: string }>;
+  searchParams: Promise<{ source?: string; sort?: string }>;
 }) {
-  const { source } = await searchParams;
-  const all = await getJobs();
+  const { source, sort } = await searchParams;
+  const sortMode = sort === "fresh" ? "fresh" : "score";
+  const all = await getJobs(sortMode);
 
   const bySource = all.reduce<Record<string, number>>((acc, j) => {
     acc[j.source] = (acc[j.source] ?? 0) + 1;
@@ -33,32 +35,41 @@ export default async function JobsPage({
     <div>
       <PageHeader
         title="Offres"
-        subtitle={`${all.length} offres ciblées — règles : data/cloud/IA · Île-de-France (ou remote) · ≥ 45k quand le salaire est connu · hors alternance/stage`}
+        subtitle={`${all.length} offres ciblées — classées par pertinence avec ton profil (data/cloud/IA · IDF · hors alternance/stage)`}
         action={
           <form action={ingestNow}>
-            <button className="btn-primary">Ingérer (APEC + APIs)</button>
+            <button className="btn-primary">Ingérer (APEC + France Travail)</button>
           </form>
         }
       />
       {!hasAdmin() && <SetupBanner />}
 
-      {/* Source filter */}
-      <div className="mb-5 flex flex-wrap gap-2">
+      <div className="mb-4 flex flex-wrap items-center gap-2">
+        <span className="text-xs text-slate-400">Trier :</span>
         <Link
-          href="/jobs"
-          className={`rounded-full border px-3 py-1 text-xs font-medium ${
-            !source ? "border-slate-900 bg-slate-900 text-white" : "border-slate-200 bg-white text-slate-600"
-          }`}
+          href={`/jobs${source ? `?source=${source}` : ""}`}
+          className={`rounded-full border px-3 py-1 text-xs font-medium ${sortMode === "score" ? "border-slate-900 bg-slate-900 text-white" : "border-slate-200 bg-white text-slate-600"}`}
+        >
+          Pertinence
+        </Link>
+        <Link
+          href={`/jobs?sort=fresh${source ? `&source=${source}` : ""}`}
+          className={`rounded-full border px-3 py-1 text-xs font-medium ${sortMode === "fresh" ? "border-slate-900 bg-slate-900 text-white" : "border-slate-200 bg-white text-slate-600"}`}
+        >
+          Fraîcheur
+        </Link>
+        <span className="mx-2 text-slate-300">|</span>
+        <Link
+          href={`/jobs${sortMode === "fresh" ? "?sort=fresh" : ""}`}
+          className={`rounded-full border px-3 py-1 text-xs font-medium ${!source ? "border-slate-900 bg-slate-900 text-white" : "border-slate-200 bg-white text-slate-600"}`}
         >
           Toutes ({all.length})
         </Link>
         {Object.entries(bySource).map(([s, n]) => (
           <Link
             key={s}
-            href={`/jobs?source=${s}`}
-            className={`rounded-full border px-3 py-1 text-xs font-medium ${
-              source === s ? "border-slate-900 bg-slate-900 text-white" : "border-slate-200 bg-white text-slate-600"
-            }`}
+            href={`/jobs?source=${s}${sortMode === "fresh" ? "&sort=fresh" : ""}`}
+            className={`rounded-full border px-3 py-1 text-xs font-medium ${source === s ? "border-slate-900 bg-slate-900 text-white" : "border-slate-200 bg-white text-slate-600"}`}
           >
             {SOURCE_LABELS[s] ?? s} ({n})
           </Link>
@@ -85,17 +96,24 @@ export default async function JobsPage({
 
       {jobs.length === 0 ? (
         <EmptyState>
-          Aucune offre. Clique sur « Ingérer » pour récupérer les offres APEC.
+          Aucune offre. Clique sur « Ingérer » pour récupérer les offres.
         </EmptyState>
       ) : (
         <div className="space-y-2">
           {jobs.map((j) => {
             const sal = fmtSalary(j.salary_min, j.salary_max);
+            const sl = scoreLabel(j.match_score);
             return (
               <Card key={j.id} className="p-4">
-                <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+                <div className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
                   <div className="min-w-0">
                     <div className="flex flex-wrap items-center gap-2">
+                      <span
+                        className={`rounded border px-1.5 py-0.5 text-[11px] font-bold ${sl.cls}`}
+                        title="Score de matching avec ton profil"
+                      >
+                        {j.match_score ?? "—"} · {sl.label}
+                      </span>
                       <Freshness postedAt={j.posted_at} />
                       <span className="text-sm font-semibold text-slate-800">{j.title}</span>
                       <span className="rounded bg-slate-100 px-1.5 py-0.5 text-[10px] uppercase text-slate-500">
@@ -105,23 +123,32 @@ export default async function JobsPage({
                     <div className="mt-1 flex flex-wrap gap-x-3 gap-y-0.5 text-xs text-slate-500">
                       {j.company_name && <span className="font-medium text-slate-600">{j.company_name}</span>}
                       {j.location && <span>{j.location}</span>}
-                      {j.remote && <span>{j.remote}</span>}
-                      {j.contract_type && <span>{j.contract_type}</span>}
+                      {j.role_family && j.role_family !== "Autre" && <span>{j.role_family}</span>}
                       {sal && <span className="font-medium text-emerald-600">{sal}</span>}
                       <span className="text-slate-400">publiée {timeAgo(j.posted_at)}</span>
                     </div>
+                    {(j.matched_skills?.length || j.missing_skills?.length) ? (
+                      <div className="mt-2 flex flex-wrap gap-1">
+                        {(j.matched_skills ?? []).map((s) => (
+                          <span key={s} className="rounded bg-emerald-50 px-1.5 py-0.5 text-[11px] text-emerald-700">
+                            {s}
+                          </span>
+                        ))}
+                        {(j.missing_skills ?? []).map((s) => (
+                          <span key={s} className="rounded bg-slate-100 px-1.5 py-0.5 text-[11px] text-slate-500" title="Compétence demandée que tu n'as pas listée">
+                            +{s}
+                          </span>
+                        ))}
+                      </div>
+                    ) : null}
                   </div>
                   <div className="flex shrink-0 items-center gap-2">
                     <form action={applyToJob}>
                       <input type="hidden" name="id" value={j.id} />
-                      <button className="rounded bg-slate-800 px-2 py-1 text-xs text-white">
-                        Candidater
-                      </button>
+                      <button className="rounded bg-slate-800 px-2 py-1 text-xs text-white">Candidater</button>
                     </form>
                     {j.url && (
-                      <a href={j.url} target="_blank" rel="noreferrer" className="text-xs text-blue-600 underline">
-                        Voir
-                      </a>
+                      <a href={j.url} target="_blank" rel="noreferrer" className="text-xs text-blue-600 underline">Voir</a>
                     )}
                     <form action={deleteJob}>
                       <input type="hidden" name="id" value={j.id} />

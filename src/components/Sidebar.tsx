@@ -7,6 +7,7 @@ const NAV = [
   { href: "/", label: "Dashboard" },
   { href: "/applications", label: "Candidatures" },
   { href: "/jobs", label: "Offres" },
+  { href: "/marche", label: "Marché" },
   { href: "/companies", label: "Entreprises" },
   { href: "/contacts", label: "Contacts" },
   { href: "/documents", label: "Documents" },
