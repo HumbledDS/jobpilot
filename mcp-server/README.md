@@ -38,4 +38,21 @@ Ajouter dans la config MCP du client :
 ```
 Ensuite, demande au LLM : « quelles sont mes meilleures offres ? » ou « quelles compétences monter selon le marché ? ».
 
-> Évolution possible : transport HTTP/SSE pour l'héberger, + outils d'écriture (créer une candidature, programmer un post).
+## Version hébergée (HTTP) — recommandée
+
+Le serveur est aussi exposé en **Streamable HTTP** dans l'app Next.js, donc **appelable à distance** (pas besoin de lancer le stdio en local).
+
+- **URL** : `https://jobpilot-sand.vercel.app/api/mcp`
+- **Auth** : en-tête `Authorization: Bearer <MCP_TOKEN>`
+- Code : [`src/app/api/mcp/route.ts`](../src/app/api/mcp/route.ts) (adaptateur `mcp-handler`).
+
+Connexion via un client qui supporte les serveurs MCP distants (Authorization Bearer). Exemple de test :
+```bash
+curl -X POST https://jobpilot-sand.vercel.app/api/mcp \
+  -H "Authorization: Bearer $MCP_TOKEN" \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json, text/event-stream" \
+  -d '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"top_matches","arguments":{"limit":3}}}'
+```
+
+> Évolution possible : OAuth au lieu d'un token statique, + outils d'écriture (créer une candidature, programmer un post).
