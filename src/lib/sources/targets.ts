@@ -94,6 +94,66 @@ async function fetchSmartRecruiters(token: string, company: string): Promise<Nor
   }
 }
 
+// Workday : pas d'auto-découverte (tenant/datacenter/site non devinables) -> table curée + vérifiée.
+type WorkdayCoord = { tenant: string; dc: string; site: string };
+const WORKDAY_TENANTS: Record<string, WorkdayCoord> = {
+  Thales: { tenant: "thales", dc: "wd3", site: "Careers" },
+  Airbus: { tenant: "ag", dc: "wd3", site: "Airbus" },
+  "Air Liquide": { tenant: "airliquidehr", dc: "wd3", site: "AirLiquideExternalCareer" },
+  "Renault Group": { tenant: "alliancewd", dc: "wd3", site: "renault-group-careers" },
+  Orange: { tenant: "orange", dc: "wd3", site: "Orange_Career" },
+  RATP: { tenant: "ratp", dc: "wd3", site: "RATP_Externe" },
+  SNCF: { tenant: "evoyageurs", dc: "wd3", site: "jobs" },
+  Stellantis: { tenant: "stellantis", dc: "wd3", site: "External_Career_Site_ID01" },
+  Michelin: { tenant: "michelinhr", dc: "wd3", site: "Michelin" },
+  Chanel: { tenant: "cc", dc: "wd3", site: "ChanelCareers" },
+  "Pernod Ricard": { tenant: "pernodricard", dc: "wd3", site: "pernod-ricard" },
+  Veolia: { tenant: "veoliauki", dc: "wd3", site: "VESCareers" },
+};
+
+/** Workday : flux CXS public d'une entreprise (postes internes), filtré par recherche data/cloud. */
+async function fetchWorkday(company: string, c: WorkdayCoord): Promise<NormalizedJob[]> {
+  const base = `https://${c.tenant}.${c.dc}.myworkdayjobs.com`;
+  const byPath = new Map<string, NormalizedJob>();
+  for (const term of ["data", "cloud"]) {
+    for (let offset = 0; offset <= 20; offset += 20) {
+      try {
+        const res = await fetch(`${base}/wday/cxs/${c.tenant}/${c.site}/jobs`, {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ appliedFacets: {}, limit: 20, offset, searchText: term }),
+          cache: "no-store",
+        });
+        if (!res.ok) break;
+        const data = (await res.json()) as { jobPostings?: WdJob[] };
+        const posts = data.jobPostings ?? [];
+        for (const j of posts) {
+          if (!j.externalPath || byPath.has(j.externalPath)) continue;
+          byPath.set(j.externalPath, {
+            source: "targets",
+            external_id: `wd:${c.tenant}:${j.externalPath}`,
+            title: j.title,
+            company_name: company,
+            location: j.locationsText ?? null,
+            url: `${base}/${c.site}${j.externalPath}`,
+            salary_min: null,
+            salary_max: null,
+            contract_type: null,
+            description: "",
+            posted_at: null,
+            tags: ["entreprise cible", "workday"],
+            raw: j,
+          });
+        }
+        if (posts.length < 20) break;
+      } catch {
+        break;
+      }
+    }
+  }
+  return [...byPath.values()];
+}
+
 /** Lever : postings publics d'une entreprise. */
 async function fetchLever(token: string, company: string): Promise<NormalizedJob[]> {
   try {
@@ -153,13 +213,15 @@ export async function ingestTargets(names: string[], cap = 40): Promise<TargetIn
   await chunk(targets, 6, async (name) => {
     const token = slug(name);
     if (!token) return;
-    const [gh, lv, sr] = await Promise.all([
+    const wd = WORKDAY_TENANTS[name];
+    const [gh, lv, sr, wj] = await Promise.all([
       fetchGreenhouse(token, name),
       fetchLever(token, name),
       fetchSmartRecruiters(token, name),
+      wd ? fetchWorkday(name, wd) : Promise.resolve([] as NormalizedJob[]),
     ]);
-    if (gh.length || lv.length || sr.length) boards++;
-    for (const j of [...gh, ...lv, ...sr]) {
+    if (gh.length || lv.length || sr.length || wj.length) boards++;
+    for (const j of [...gh, ...lv, ...sr, ...wj]) {
       if (!j.external_id || have.has(j.external_id) || collected.has(j.external_id)) continue;
       if (!isRelevant(j).ok) continue; // métier data/cloud + IDF/remote, hors alternance/stage
       collected.set(j.external_id, j);
@@ -235,4 +297,10 @@ type SrJob = {
   releasedDate?: string;
   typeOfEmployment?: { label?: string };
   location?: { city?: string; region?: string; country?: string; remote?: boolean };
+};
+
+type WdJob = {
+  title: string;
+  externalPath?: string;
+  locationsText?: string;
 };
