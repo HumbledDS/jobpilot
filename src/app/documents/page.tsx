@@ -1,0 +1,117 @@
+import { getCvVersions, getCoverLetters } from "@/lib/db";
+import { hasAdmin } from "@/lib/supabase/admin";
+import { PageHeader, Card, SetupBanner, EmptyState } from "@/components/ui";
+import {
+  createCvVersion,
+  deleteCvVersion,
+  createCoverLetter,
+  deleteCoverLetter,
+} from "./actions";
+
+export const dynamic = "force-dynamic";
+
+export default async function DocumentsPage() {
+  const [cvs, letters] = await Promise.all([getCvVersions(), getCoverLetters()]);
+
+  return (
+    <div>
+      <PageHeader
+        title="Documents"
+        subtitle="Versioning de tes CV et lettres de motivation"
+      />
+      {!hasAdmin() && <SetupBanner />}
+
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        {/* CV versions */}
+        <div>
+          <Card className="mb-4">
+            <div className="mb-3 text-sm font-semibold text-slate-700">+ Version de CV</div>
+            <form action={createCvVersion} className="grid grid-cols-1 gap-3">
+              <input name="label" required placeholder="Label (ex: CV Master 2026) *" className="input" />
+              <input name="target_role" placeholder="Rôle cible (ex: FDE / Cloud)" className="input" />
+              <input name="file_url" placeholder="Lien du fichier (Drive, Storage…)" className="input" />
+              <button className="btn-primary">Ajouter</button>
+            </form>
+          </Card>
+          <div className="space-y-3">
+            {cvs.length === 0 ? (
+              <EmptyState>Aucune version de CV.</EmptyState>
+            ) : (
+              cvs.map((cv) => (
+                <Card key={cv.id}>
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <div className="text-sm font-semibold text-slate-800">
+                        {cv.label}{" "}
+                        <span className="text-xs font-normal text-slate-400">
+                          v{cv.version}
+                        </span>
+                      </div>
+                      <div className="text-xs text-slate-500">{cv.target_role}</div>
+                      {cv.file_url && (
+                        <a
+                          href={cv.file_url}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="text-xs text-blue-600 underline"
+                        >
+                          Ouvrir
+                        </a>
+                      )}
+                    </div>
+                    <form action={deleteCvVersion}>
+                      <input type="hidden" name="id" value={cv.id} />
+                      <button className="rounded px-2 py-1 text-xs text-rose-500 hover:bg-rose-50">
+                        ✕
+                      </button>
+                    </form>
+                  </div>
+                </Card>
+              ))
+            )}
+          </div>
+        </div>
+
+        {/* Cover letters */}
+        <div>
+          <Card className="mb-4">
+            <div className="mb-3 text-sm font-semibold text-slate-700">
+              + Lettre de motivation
+            </div>
+            <form action={createCoverLetter} className="grid grid-cols-1 gap-3">
+              <input name="label" required placeholder="Label (ex: LM Data Engineer) *" className="input" />
+              <input name="tone" placeholder="Ton (ex: direct, formel)" className="input" />
+              <textarea name="content" placeholder="Contenu…" rows={4} className="input" />
+              <button className="btn-primary">Ajouter</button>
+            </form>
+          </Card>
+          <div className="space-y-3">
+            {letters.length === 0 ? (
+              <EmptyState>Aucune lettre.</EmptyState>
+            ) : (
+              letters.map((l) => (
+                <Card key={l.id}>
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <div className="text-sm font-semibold text-slate-800">{l.label}</div>
+                      <div className="text-xs text-slate-400">{l.tone}</div>
+                    </div>
+                    <form action={deleteCoverLetter}>
+                      <input type="hidden" name="id" value={l.id} />
+                      <button className="rounded px-2 py-1 text-xs text-rose-500 hover:bg-rose-50">
+                        ✕
+                      </button>
+                    </form>
+                  </div>
+                  {l.content && (
+                    <p className="mt-2 line-clamp-3 text-xs text-slate-500">{l.content}</p>
+                  )}
+                </Card>
+              ))
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

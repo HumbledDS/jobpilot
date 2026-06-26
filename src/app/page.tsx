@@ -1,65 +1,134 @@
-import Image from "next/image";
+import { getApplications, getJobs, getContacts, getSkillProjects } from "@/lib/db";
+import { hasAdmin } from "@/lib/supabase/admin";
+import { PageHeader, StatCard, Card, SetupBanner, EmptyState } from "@/components/ui";
+import {
+  APPLICATION_STATUSES,
+  STATUS_LABELS,
+  STATUS_COLORS,
+  type ApplicationStatus,
+} from "@/lib/types";
+import Link from "next/link";
 
-export default function Home() {
+export const dynamic = "force-dynamic";
+
+export default async function DashboardPage() {
+  const [apps, jobs, contacts, projects] = await Promise.all([
+    getApplications(),
+    getJobs(),
+    getContacts(),
+    getSkillProjects(),
+  ]);
+
+  const byStatus = (s: ApplicationStatus) =>
+    apps.filter((a) => a.status === s).length;
+
+  const sent = apps.filter((a) =>
+    ["postule", "relance", "entretien", "offre", "refuse", "sans_reponse"].includes(
+      a.status,
+    ),
+  ).length;
+  const interviews = byStatus("entretien") + byStatus("offre");
+  const responseRate = sent ? Math.round((interviews / sent) * 100) : 0;
+
+  const upcoming = apps
+    .filter((a) => a.next_action_at)
+    .sort((a, b) => (a.next_action_at! < b.next_action_at! ? -1 : 1))
+    .slice(0, 6);
+
+  const projectsDone = projects.filter(
+    (p) => p.status === "deployed" || p.status === "done",
+  ).length;
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+    <div>
+      <PageHeader
+        title="Dashboard"
+        subtitle="Vue d'ensemble de ta recherche d'emploi data / cloud / IA"
+      />
+      {!hasAdmin() && <SetupBanner />}
+
+      <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+        <StatCard label="Candidatures" value={apps.length} hint={`${sent} envoyées`} />
+        <StatCard label="Entretiens" value={interviews} />
+        <StatCard label="Taux de réponse" value={`${responseRate}%`} hint="entretien+ / envoyées" />
+        <StatCard label="Offres reçues" value={byStatus("offre")} />
+      </div>
+
+      <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-3">
+        <Card className="lg:col-span-2">
+          <div className="mb-4 text-sm font-semibold text-slate-700">
+            Pipeline des candidatures
+          </div>
+          {apps.length === 0 ? (
+            <EmptyState>
+              Aucune candidature.{" "}
+              <Link href="/applications" className="text-slate-900 underline">
+                Ajoute-en une
+              </Link>
+              .
+            </EmptyState>
+          ) : (
+            <div className="space-y-2">
+              {APPLICATION_STATUSES.map((s) => {
+                const n = byStatus(s);
+                const pct = apps.length ? (n / apps.length) * 100 : 0;
+                return (
+                  <div key={s} className="flex items-center gap-3">
+                    <div className="w-28 text-xs text-slate-500">
+                      {STATUS_LABELS[s]}
+                    </div>
+                    <div className="h-5 flex-1 overflow-hidden rounded bg-slate-100">
+                      <div
+                        className="h-full rounded bg-slate-800"
+                        style={{ width: `${pct}%` }}
+                      />
+                    </div>
+                    <div className="w-8 text-right text-xs font-medium text-slate-600">
+                      {n}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </Card>
+
+        <Card>
+          <div className="mb-4 text-sm font-semibold text-slate-700">
+            Prochaines actions
+          </div>
+          {upcoming.length === 0 ? (
+            <EmptyState>Rien de planifié.</EmptyState>
+          ) : (
+            <ul className="space-y-3">
+              {upcoming.map((a) => (
+                <li key={a.id} className="text-sm">
+                  <div className="font-medium text-slate-800">
+                    {a.jp_jobs?.title ?? "Candidature"}
+                  </div>
+                  <div className="flex items-center gap-2 text-xs text-slate-400">
+                    <span
+                      className={`rounded border px-1.5 py-0.5 ${STATUS_COLORS[a.status]}`}
+                    >
+                      {STATUS_LABELS[a.status]}
+                    </span>
+                    <span>
+                      {new Date(a.next_action_at!).toLocaleDateString("fr-FR")}
+                    </span>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </Card>
+      </div>
+
+      <div className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-4">
+        <StatCard label="Offres en base" value={jobs.length} />
+        <StatCard label="Contacts" value={contacts.length} />
+        <StatCard label="Projets faits" value={`${projectsDone}/${projects.length}`} />
+        <StatCard label="Objectif" value="50k€+" hint="IDF · data/cloud/IA" />
+      </div>
     </div>
   );
 }

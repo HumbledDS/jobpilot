@@ -1,0 +1,53 @@
+"use server";
+
+import { getAdmin } from "@/lib/supabase/admin";
+import { revalidatePath } from "next/cache";
+
+const str = (fd: FormData, k: string) => {
+  const v = String(fd.get(k) ?? "").trim();
+  return v.length ? v : null;
+};
+
+export async function createJob(formData: FormData) {
+  const db = getAdmin();
+  if (!db) return;
+  const title = str(formData, "title");
+  if (!title) return;
+  const salaryRaw = str(formData, "salary_min");
+  const salary_min = salaryRaw
+    ? Number(salaryRaw) * (salaryRaw.length <= 3 ? 1000 : 1)
+    : null;
+  await db.from("jp_jobs").insert({
+    title,
+    company_name: str(formData, "company_name"),
+    location: str(formData, "location"),
+    url: str(formData, "url"),
+    remote: str(formData, "remote"),
+    salary_min: Number.isFinite(salary_min as number) ? salary_min : null,
+    source: "manual",
+  });
+  revalidatePath("/jobs");
+  revalidatePath("/");
+}
+
+export async function deleteJob(formData: FormData) {
+  const db = getAdmin();
+  if (!db) return;
+  const id = str(formData, "id");
+  if (!id) return;
+  await db.from("jp_jobs").delete().eq("id", id);
+  revalidatePath("/jobs");
+}
+
+export async function applyToJob(formData: FormData) {
+  const db = getAdmin();
+  if (!db) return;
+  const job_id = str(formData, "id");
+  if (!job_id) return;
+  await db
+    .from("jp_applications")
+    .insert({ job_id, status: "a_postuler" });
+  revalidatePath("/applications");
+  revalidatePath("/jobs");
+  revalidatePath("/");
+}
