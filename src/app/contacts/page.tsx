@@ -37,12 +37,12 @@ export default async function ContactsPage() {
         <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
           {contacts.map((c) => (
             <Card key={c.id}>
-              <div className="flex items-start justify-between">
-                <div>
-                  <div className="text-sm font-semibold text-slate-800">
+              <div className="flex items-start justify-between gap-2">
+                <div className="min-w-0">
+                  <div className="break-words text-sm font-semibold text-slate-800">
                     {c.full_name}
                   </div>
-                  <div className="text-xs text-slate-500">
+                  <div className="break-words text-xs text-slate-500">
                     {c.role ?? ""}
                     {companyName(c.company_id) ? ` · ${companyName(c.company_id)}` : ""}
                   </div>
@@ -54,9 +54,9 @@ export default async function ContactsPage() {
                   </button>
                 </form>
               </div>
-              <div className="mt-2 flex flex-col gap-1 text-xs">
+              <div className="mt-2 flex flex-col gap-1 break-words text-xs">
                 {c.email && (
-                  <a href={`mailto:${c.email}`} className="text-blue-600 underline">
+                  <a href={`mailto:${c.email}`} className="break-all text-blue-600 underline">
                     {c.email}
                   </a>
                 )}

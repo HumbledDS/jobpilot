@@ -68,8 +68,8 @@ export default async function CompaniesPage({
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {list.map((c) => (
             <Card key={c.id} className="flex flex-col gap-2 p-4">
-              <div>
-                <div className="text-sm font-semibold text-slate-800">{c.name}</div>
+              <div className="min-w-0">
+                <div className="break-words text-sm font-semibold text-slate-800">{c.name}</div>
                 <div className="text-[11px] uppercase tracking-wide text-slate-400">
                   {c.category}
                 </div>

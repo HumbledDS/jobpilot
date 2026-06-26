@@ -10,14 +10,14 @@ export function PageHeader({
   action?: ReactNode;
 }) {
   return (
-    <div className="mb-6 flex items-end justify-between gap-4">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+    <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+      <div className="min-w-0">
+        <h1 className="text-xl font-bold tracking-tight text-slate-900 sm:text-2xl">
           {title}
         </h1>
         {subtitle && <p className="mt-1 text-sm text-slate-500">{subtitle}</p>}
       </div>
-      {action}
+      {action && <div className="shrink-0">{action}</div>}
     </div>
   );
 }
@@ -31,7 +31,7 @@ export function Card({
 }) {
   return (
     <div
-      className={`rounded-xl border border-slate-200 bg-white p-5 shadow-sm ${className}`}
+      className={`rounded-xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5 ${className}`}
     >
       {children}
     </div>
@@ -48,11 +48,13 @@ export function StatCard({
   hint?: string;
 }) {
   return (
-    <Card>
-      <div className="text-xs font-medium uppercase tracking-wide text-slate-400">
+    <Card className="min-w-0">
+      <div className="truncate text-xs font-medium uppercase tracking-wide text-slate-400">
         {label}
       </div>
-      <div className="mt-2 text-3xl font-bold text-slate-900">{value}</div>
+      <div className="mt-2 text-2xl font-bold text-slate-900 sm:text-3xl">
+        {value}
+      </div>
       {hint && <div className="mt-1 text-xs text-slate-400">{hint}</div>}
     </Card>
   );

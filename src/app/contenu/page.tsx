@@ -71,12 +71,12 @@ export default async function ContenuPage() {
                   <EmptyState>Rien ici.</EmptyState>
                 ) : (
                   list.map((p) => (
-                    <Card key={p.id} className="p-3">
+                    <Card key={p.id} className="min-w-0 p-3">
                       <details>
-                        <summary className="cursor-pointer text-sm font-semibold text-slate-800">
+                        <summary className="cursor-pointer break-words text-sm font-semibold text-slate-800">
                           {p.title}
                         </summary>
-                        <div className="mt-1 text-[11px] text-slate-400">
+                        <div className="mt-1 break-words text-[11px] text-slate-400">
                           {p.topic}{p.course ? ` · ${p.course}` : ""}{p.angle ? ` · ${p.angle}` : ""}
                         </div>
                         <form action={updatePost} className="mt-3 space-y-2">
@@ -94,7 +94,7 @@ export default async function ContenuPage() {
                             <button className="rounded bg-slate-800 px-2 py-1 text-xs text-white">Enregistrer</button>
                           </div>
                         </form>
-                        <div className="mt-2 flex items-center gap-2">
+                        <div className="mt-2 flex flex-wrap items-center gap-2">
                           <CopyButton text={fullText(p)} label="Copier le post" />
                           {p.status !== "published" && (
                             <form action={setPostStatus}>

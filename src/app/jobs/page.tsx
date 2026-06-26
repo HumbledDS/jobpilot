@@ -115,7 +115,7 @@ export default async function JobsPage({
                         {j.match_score ?? "—"} · {sl.label}
                       </span>
                       <Freshness postedAt={j.posted_at} />
-                      <Link href={`/jobs/${j.id}`} className="text-sm font-semibold text-slate-800 hover:underline">
+                      <Link href={`/jobs/${j.id}`} className="break-words text-sm font-semibold text-slate-800 hover:underline">
                         {j.title}
                       </Link>
                       <span className="rounded bg-slate-100 px-1.5 py-0.5 text-[10px] uppercase text-slate-500">
@@ -144,17 +144,17 @@ export default async function JobsPage({
                       </div>
                     ) : null}
                   </div>
-                  <div className="flex shrink-0 items-center gap-2">
+                  <div className="flex shrink-0 flex-wrap items-center gap-2 border-t border-slate-100 pt-2 md:border-0 md:pt-0">
                     <form action={applyToJob}>
                       <input type="hidden" name="id" value={j.id} />
-                      <button className="rounded bg-slate-800 px-2 py-1 text-xs text-white">Candidater</button>
+                      <button className="rounded bg-slate-800 px-3 py-1.5 text-xs text-white">Candidater</button>
                     </form>
                     {j.url && (
-                      <a href={j.url} target="_blank" rel="noreferrer" className="text-xs text-blue-600 underline">Voir</a>
+                      <a href={j.url} target="_blank" rel="noreferrer" className="rounded px-3 py-1.5 text-xs text-blue-600 underline">Voir</a>
                     )}
-                    <form action={deleteJob}>
+                    <form action={deleteJob} className="ml-auto md:ml-0">
                       <input type="hidden" name="id" value={j.id} />
-                      <button className="rounded px-2 py-1 text-xs text-rose-500 hover:bg-rose-50">×</button>
+                      <button className="rounded px-3 py-1.5 text-xs text-rose-500 hover:bg-rose-50" aria-label="Supprimer">×</button>
                     </form>
                   </div>
                 </div>

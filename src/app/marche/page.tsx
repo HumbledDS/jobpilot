@@ -85,7 +85,7 @@ export default async function MarchePage() {
                   const has = profileSkills.has(d.skill);
                   return (
                     <div key={d.skill} className="flex items-center gap-2">
-                      <div className="w-40 truncate text-xs text-slate-600">
+                      <div className="w-28 shrink-0 truncate text-xs text-slate-600 sm:w-40">
                         {d.skill}{" "}
                         {has ? (
                           <span className="text-emerald-600">(acquis)</span>
@@ -93,7 +93,7 @@ export default async function MarchePage() {
                           <span className="text-rose-500">(à acquérir)</span>
                         )}
                       </div>
-                      <div className="h-4 flex-1 overflow-hidden rounded bg-slate-100">
+                      <div className="h-4 min-w-0 flex-1 overflow-hidden rounded bg-slate-100">
                         <div
                           className={`h-full rounded ${has ? "bg-emerald-500" : "bg-slate-400"}`}
                           style={{ width: `${(d.count / maxDemand) * 100}%` }}

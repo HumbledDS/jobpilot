@@ -20,7 +20,7 @@ export default async function JobDetailPage({
   const sal = fmtSalary(job.salary_min, job.salary_max);
 
   return (
-    <div className="max-w-3xl">
+    <div className="max-w-3xl break-words">
       <Link href="/jobs" className="text-xs text-slate-400 hover:underline">
         ← Retour aux offres
       </Link>
@@ -44,13 +44,13 @@ export default async function JobDetailPage({
         <span className="text-slate-400">publiée {timeAgo(job.posted_at)}</span>
       </div>
 
-      <div className="mt-4 flex gap-2">
-        <form action={applyToJob}>
+      <div className="mt-4 flex flex-col gap-2 sm:flex-row">
+        <form action={applyToJob} className="contents sm:block">
           <input type="hidden" name="id" value={job.id} />
-          <button className="btn-primary">Candidater</button>
+          <button className="btn-primary w-full sm:w-auto">Candidater</button>
         </form>
         {job.url && (
-          <a href={job.url} target="_blank" rel="noreferrer" className="rounded-lg border border-slate-200 px-4 py-2 text-sm hover:bg-slate-50">
+          <a href={job.url} target="_blank" rel="noreferrer" className="rounded-lg border border-slate-200 px-4 py-2 text-center text-sm hover:bg-slate-50">
             Voir l&apos;offre d&apos;origine
           </a>
         )}

@@ -41,8 +41,8 @@ export default async function DocumentsPage() {
             ) : (
               cvs.map((cv) => (
                 <Card key={cv.id}>
-                  <div className="flex items-start justify-between">
-                    <div>
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="min-w-0 break-words">
                       <div className="text-sm font-semibold text-slate-800">
                         {cv.label}{" "}
                         <span className="text-xs font-normal text-slate-400">
@@ -77,7 +77,7 @@ export default async function DocumentsPage() {
         {/* Cover letters */}
         <div>
           <Card className="mb-4">
-            <div className="mb-3 flex items-center justify-between">
+            <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
               <span className="text-sm font-semibold text-slate-700">
                 Générer une lettre avec l&apos;IA
               </span>
@@ -113,8 +113,8 @@ export default async function DocumentsPage() {
             ) : (
               letters.map((l) => (
                 <Card key={l.id}>
-                  <div className="flex items-start justify-between">
-                    <div>
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="min-w-0 break-words">
                       <div className="text-sm font-semibold text-slate-800">{l.label}</div>
                       <div className="text-xs text-slate-400">{l.tone}</div>
                     </div>

@@ -131,11 +131,11 @@ export default async function DashboardPage() {
                 const n = byStatus(s);
                 const pct = apps.length ? (n / apps.length) * 100 : 0;
                 return (
-                  <div key={s} className="flex items-center gap-3">
-                    <div className="w-28 text-xs text-slate-500">
+                  <div key={s} className="flex items-center gap-2 sm:gap-3">
+                    <div className="w-20 shrink-0 text-xs text-slate-500 sm:w-28">
                       {STATUS_LABELS[s]}
                     </div>
-                    <div className="h-5 flex-1 overflow-hidden rounded bg-slate-100">
+                    <div className="h-5 min-w-0 flex-1 overflow-hidden rounded bg-slate-100">
                       <div
                         className="h-full rounded bg-slate-800"
                         style={{ width: `${pct}%` }}
@@ -161,7 +161,7 @@ export default async function DashboardPage() {
             <ul className="space-y-3">
               {upcoming.map((a) => (
                 <li key={a.id} className="text-sm">
-                  <div className="font-medium text-slate-800">
+                  <div className="font-medium break-words text-slate-800">
                     {a.jp_jobs?.title ?? "Candidature"}
                   </div>
                   <div className="flex items-center gap-2 text-xs text-slate-400">

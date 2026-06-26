@@ -54,11 +54,11 @@ export default async function ApplicationsPage() {
       {apps.length === 0 ? (
         <EmptyState>Aucune candidature pour l&apos;instant.</EmptyState>
       ) : (
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
           {APPLICATION_STATUSES.filter((s) => s !== "sans_reponse").map((s) => {
             const col = apps.filter((a) => a.status === s);
             return (
-              <div key={s} className="flex flex-col gap-3">
+              <div key={s} className="flex min-w-0 flex-col gap-3">
                 <div className="flex items-center justify-between">
                   <span
                     className={`rounded border px-2 py-0.5 text-xs font-semibold ${STATUS_COLORS[s]}`}
@@ -70,12 +70,12 @@ export default async function ApplicationsPage() {
                 {col.map((a) => (
                   <div
                     key={a.id}
-                    className="rounded-lg border border-slate-200 bg-white p-3 shadow-sm"
+                    className="min-w-0 rounded-lg border border-slate-200 bg-white p-3 shadow-sm"
                   >
-                    <div className="text-sm font-semibold text-slate-800">
+                    <div className="break-words text-sm font-semibold text-slate-800">
                       {a.jp_jobs?.title ?? "—"}
                     </div>
-                    <div className="text-xs text-slate-500">
+                    <div className="break-words text-xs text-slate-500">
                       {a.jp_jobs?.company_name ?? ""}
                       {a.jp_jobs?.location ? ` · ${a.jp_jobs.location}` : ""}
                     </div>
@@ -100,13 +100,13 @@ export default async function ApplicationsPage() {
                         Voir l&apos;offre
                       </a>
                     )}
-                    <div className="mt-3 flex items-center gap-2">
-                      <form action={updateApplicationStatus} className="flex gap-1">
+                    <div className="mt-3 flex flex-wrap items-center gap-2">
+                      <form action={updateApplicationStatus} className="flex min-w-0 flex-1 gap-1">
                         <input type="hidden" name="id" value={a.id} />
                         <select
                           name="status"
                           defaultValue={a.status}
-                          className="rounded border border-slate-200 px-1 py-1 text-xs"
+                          className="min-w-0 flex-1 rounded border border-slate-200 px-1 py-1 text-xs"
                         >
                           {APPLICATION_STATUSES.map((st) => (
                             <option key={st} value={st}>

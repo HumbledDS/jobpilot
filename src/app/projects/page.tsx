@@ -54,11 +54,11 @@ export default async function ProjectsPage() {
             <Card key={p.id}>
               <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                 <div className="min-w-0">
-                  <div className="flex items-center gap-2">
+                  <div className="flex flex-wrap items-center gap-2">
                     <span className="text-xs font-bold text-slate-300">
                       #{p.order_index}
                     </span>
-                    <span className="text-sm font-semibold text-slate-800">
+                    <span className="break-words text-sm font-semibold text-slate-800">
                       {p.name}
                     </span>
                     <span
@@ -67,7 +67,7 @@ export default async function ProjectsPage() {
                       {STATUS.find((s) => s.v === p.status)?.label}
                     </span>
                   </div>
-                  <div className="text-xs text-slate-500">
+                  <div className="break-words text-xs text-slate-500">
                     {p.description}
                     {p.cloud ? ` · ${p.cloud}` : ""}
                     {p.target_role ? ` · ${p.target_role}` : ""}
@@ -87,7 +87,7 @@ export default async function ProjectsPage() {
                 </div>
                 <form
                   action={updateProject}
-                  className="flex shrink-0 flex-wrap items-center gap-2"
+                  className="flex w-full flex-wrap items-center gap-2 md:w-auto md:shrink-0"
                 >
                   <input type="hidden" name="id" value={p.id} />
                   <select
@@ -105,13 +105,13 @@ export default async function ProjectsPage() {
                     name="repo_url"
                     defaultValue={p.repo_url ?? ""}
                     placeholder="repo url"
-                    className="w-32 rounded border border-slate-200 px-2 py-1 text-xs"
+                    className="min-w-0 flex-1 rounded border border-slate-200 px-2 py-1 text-xs md:w-32 md:flex-none"
                   />
                   <input
                     name="deployed_url"
                     defaultValue={p.deployed_url ?? ""}
                     placeholder="live url"
-                    className="w-32 rounded border border-slate-200 px-2 py-1 text-xs"
+                    className="min-w-0 flex-1 rounded border border-slate-200 px-2 py-1 text-xs md:w-32 md:flex-none"
                   />
                   <button className="rounded bg-slate-800 px-2 py-1 text-xs text-white">
                     Maj
