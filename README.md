@@ -1,36 +1,45 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# JobPilot 🛫 — Career Control Center
 
-## Getting Started
+**JobPilot** is a personal control center to run a modern tech job search end-to-end:
+ingest job offers from legal APIs, track applications through a pipeline, manage
+recruiter contacts, version CVs & cover letters, and measure the whole funnel — plus a
+skill-up tracker to grow toward Forward Deployed / Cloud Architect roles.
 
-First, run the development server:
+> Built as a real, deployed product (not a tutorial): it doubles as a portfolio piece
+> demonstrating full-stack + data + cloud-native engineering.
 
+## Stack
+- **Next.js 15** (App Router, TypeScript, Tailwind)
+- **Supabase** (Postgres + Auth + Row Level Security) — tables prefixed `jp_`
+- **Vercel** (hosting + Cron for scheduled ingestion)
+- Job sources via **legal APIs**: France Travail (ex-Pôle Emploi) & Adzuna — *no LinkedIn scraping*
+
+## Core modules
+| Module | What it does |
+|---|---|
+| 📥 Offers ingestion | Pull data/cloud/AI offers (IDF, ≥ 50 k€) from France Travail & Adzuna into Postgres |
+| 🔎 Jobs board | Browse / search / filter ingested offers, save searches |
+| 🗂️ Applications (Kanban) | À postuler → Postulé → Relance → Entretien → Offre / Refus |
+| 👤 Contacts | Recruiters & interlocutors per company / application |
+| 🧾 Documents | Version CVs & cover letters, link the right version to each application |
+| 📊 Dashboard | Funnel, response rate, per-source stats, weekly cadence |
+| 🚀 Skill-up | Track the 10 end-to-end projects (repo + live URL + status) |
+
+## Getting started
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+cp .env.example .env.local   # fill Supabase + API keys
+npm run dev                  # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Database
+Schema lives in [`supabase/migrations/0001_jobpilot_init.sql`](supabase/migrations/0001_jobpilot_init.sql).
+All `jp_*` tables are RLS-protected (owner = `auth.uid()`).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Docs
+- [Architecture](docs/ARCHITECTURE.md)
+- [Feature roadmap](docs/FEATURES.md)
+- [10 end-to-end projects](docs/ROADMAP.md)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+Made by [Babacar Gueye](https://www.linkedin.com/in/babacargueye1/) · [GitHub](https://github.com/humbledDS)
