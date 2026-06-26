@@ -33,16 +33,17 @@ async function getToken(): Promise<string> {
 /** France Travail (ex Pôle Emploi) — Offres d'emploi v2. */
 export async function fetchFranceTravail(
   keywords: string,
-  opts: { departement?: string; salaireMin?: number } = {},
+  opts: { region?: string; salaireMin?: number } = {},
 ): Promise<NormalizedJob[]> {
   const token = await getToken();
   const qs = new URLSearchParams({
     motsCles: keywords,
     range: "0-49",
     typeContrat: "CDI",
+    // Région Île-de-France (code INSEE 11). 'departement' n'accepte qu'une valeur,
+    // 'region' permet de couvrir toute l'IDF en un appel.
+    region: opts.region ?? "11",
   });
-  // Île-de-France departments by default
-  qs.set("departement", opts.departement ?? "75,77,78,91,92,93,94,95");
 
   const res = await fetch(`${SEARCH_URL}?${qs.toString()}`, {
     headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
