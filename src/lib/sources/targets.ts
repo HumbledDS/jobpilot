@@ -109,6 +109,8 @@ const WORKDAY_TENANTS: Record<string, WorkdayCoord> = {
   Chanel: { tenant: "cc", dc: "wd3", site: "ChanelCareers" },
   "Pernod Ricard": { tenant: "pernodricard", dc: "wd3", site: "pernod-ricard" },
   Veolia: { tenant: "veoliauki", dc: "wd3", site: "VESCareers" },
+  Edenred: { tenant: "edenpeople", dc: "wd3", site: "Edenred_Careers" },
+  Criteo: { tenant: "criteo", dc: "wd3", site: "Criteo_Career_Site" },
 };
 
 /** Workday : flux CXS public d'une entreprise (postes internes), filtré par recherche data/cloud. */
