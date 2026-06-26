@@ -33,7 +33,7 @@ export default async function JobsPage({
     <div>
       <PageHeader
         title="Offres"
-        subtitle={`${all.length} offres en base — triées par fraîcheur (les plus récentes d'abord)`}
+        subtitle={`${all.length} offres ciblées — règles : data/cloud/IA · Île-de-France (ou remote) · ≥ 45k quand le salaire est connu · hors alternance/stage`}
         action={
           <form action={ingestNow}>
             <button className="btn-primary">Ingérer (APEC + APIs)</button>

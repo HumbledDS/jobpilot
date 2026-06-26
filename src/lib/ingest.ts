@@ -6,10 +6,12 @@ import {
   franceTravailConfigured,
 } from "@/lib/sources/francetravail";
 import { fetchAdzuna, adzunaConfigured } from "@/lib/sources/adzuna";
+import { isRelevant } from "@/lib/sources/filter";
 
 export type SourceRun = {
   source: string;
   found: number;
+  kept: number;
   inserted: number;
   ok: boolean;
   error?: string;
@@ -35,6 +37,7 @@ export async function runIngest(): Promise<{
         {
           source: "config",
           found: 0,
+          kept: 0,
           inserted: 0,
           ok: false,
           error: "SUPABASE_SERVICE_ROLE_KEY manquante",
@@ -66,13 +69,16 @@ export async function runIngest(): Promise<{
       for (const j of jobs) if (j.external_id) map.set(j.external_id, j);
       const unique = [...map.values()];
 
+      // Règles de pertinence : ne garder que les offres ciblées.
+      const relevant = unique.filter((j) => isRelevant(j).ok);
+
       const { data: existing } = await db
         .from("jp_jobs")
         .select("external_id")
         .eq("source", s.name);
       const have = new Set((existing ?? []).map((e) => e.external_id));
 
-      const toInsert = unique
+      const toInsert = relevant
         .filter((j) => !have.has(j.external_id))
         .map((j) => ({
           source: j.source,
@@ -97,18 +103,31 @@ export async function runIngest(): Promise<{
         inserted = toInsert.length;
       }
       total_inserted += inserted;
-      runs.push({ source: s.name, found: unique.length, inserted, ok: true });
+      runs.push({
+        source: s.name,
+        found: unique.length,
+        kept: relevant.length,
+        inserted,
+        ok: true,
+      });
       await db.from("jp_ingest_runs").insert({
         source: s.name,
         started_at: started,
         finished_at: new Date().toISOString(),
-        found: unique.length,
+        found: relevant.length,
         inserted,
         ok: true,
       });
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);
-      runs.push({ source: s.name, found: 0, inserted: 0, ok: false, error: msg });
+      runs.push({
+        source: s.name,
+        found: 0,
+        kept: 0,
+        inserted: 0,
+        ok: false,
+        error: msg,
+      });
       await db.from("jp_ingest_runs").insert({
         source: s.name,
         started_at: started,
