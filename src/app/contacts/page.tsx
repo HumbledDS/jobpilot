@@ -6,6 +6,7 @@ import { CopyButton } from "@/components/CopyButton";
 import { createContact, deleteContact, draftEmailForContact } from "./actions";
 
 export const dynamic = "force-dynamic";
+export const maxDuration = 60;
 
 export default async function ContactsPage() {
   const [contacts, companies] = await Promise.all([getContacts(), getCompanies()]);

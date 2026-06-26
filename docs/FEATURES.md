@@ -39,6 +39,12 @@ Statuts : [ ] à faire · [en cours] en cours · [fait] fait
 - [ ] **Tracker des 10 projets** (`jp_skill_projects`) : statut, repo, URL déployée
 - [ ] **Serveur MCP** au-dessus de la base (recherche d'offres / candidatures via LLM) -> projet portfolio #4
 
+## Automatisation candidatures
+- [fait] Co-pilote 1-clic : « Préparer la candidature » (crée le suivi, choisit le CV, génère lettre + email)
+- [ ] Relances automatiques (cron + envoi email Resend/Gmail) — *à faire plus tard*
+- [ ] Auto-envoi email sur le canal direct (quand un email recruteur existe) — *plus tard, nécessite Resend*
+- [ ] Pré-remplissage ATS via worker navigateur (Playwright) : ouvre la page, pré-remplit, upload CV, tu valides — *option avancée, à cadrer*
+
 ## Idées backlog
 - Rappels de relance (email via Resend / cron)
 - Détection de doublons d'offres multi-sources

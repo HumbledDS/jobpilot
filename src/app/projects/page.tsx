@@ -13,6 +13,7 @@ import {
 } from "./actions";
 
 export const dynamic = "force-dynamic";
+export const maxDuration = 60;
 
 const STATUS = [
   { v: "todo", label: "À faire" },

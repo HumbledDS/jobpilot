@@ -78,10 +78,19 @@ export type Application = {
   next_action_at: string | null;
   source_channel: string | null;
   notes: string | null;
+  draft_subject: string | null;
+  draft_email: string | null;
   created_at: string;
   updated_at: string;
   // joined
-  jp_jobs?: Pick<Job, "title" | "company_name" | "url" | "location" | "salary_min" | "salary_max"> | null;
+  jp_jobs?:
+    | (Pick<Job, "title" | "company_name" | "url" | "location" | "salary_min" | "salary_max"> & {
+        description?: string | null;
+        role_family?: string | null;
+      })
+    | null;
+  jp_cv_versions?: { label: string; file_url: string | null; target_role: string | null } | null;
+  jp_cover_letters?: { label: string | null; content: string | null } | null;
 };
 
 export type Contact = {

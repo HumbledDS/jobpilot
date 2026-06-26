@@ -23,6 +23,19 @@ export async function getApplications(): Promise<Application[]> {
   return (data as Application[]) ?? [];
 }
 
+export async function getApplicationById(id: string): Promise<Application | null> {
+  const db = getAdmin();
+  if (!db) return null;
+  const { data } = await db
+    .from("jp_applications")
+    .select(
+      "*, jp_jobs(title, company_name, url, location, salary_min, salary_max, description, role_family), jp_cv_versions(label, file_url, target_role), jp_cover_letters(label, content)",
+    )
+    .eq("id", id)
+    .maybeSingle();
+  return (data as Application) ?? null;
+}
+
 export async function getJobs(
   sort: "score" | "fresh" = "score",
 ): Promise<Job[]> {

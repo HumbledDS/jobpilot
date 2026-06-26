@@ -3,11 +3,13 @@ import { Card, Freshness, fmtSalary, SOURCE_LABELS, timeAgo } from "@/components
 import { scoreLabel } from "@/lib/scoring";
 import { extractEmails, aiEnabled } from "@/lib/ai";
 import { applyToJob } from "../actions";
+import { prepareApplication } from "../../applications/actions";
 import { createContactFromJob } from "../../contacts/actions";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
 export const dynamic = "force-dynamic";
+export const maxDuration = 60;
 
 export default async function JobDetailPage({
   params,
@@ -47,10 +49,18 @@ export default async function JobDetailPage({
         <span className="text-slate-400">publiée {timeAgo(job.posted_at)}</span>
       </div>
 
-      <div className="mt-4 flex flex-col gap-2 sm:flex-row">
+      <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:flex-wrap">
+        <form action={prepareApplication} className="contents sm:block">
+          <input type="hidden" name="job_id" value={job.id} />
+          <button className="btn-primary w-full sm:w-auto">
+            Préparer la candidature{aiEnabled() ? " (IA)" : ""}
+          </button>
+        </form>
         <form action={applyToJob} className="contents sm:block">
           <input type="hidden" name="id" value={job.id} />
-          <button className="btn-primary w-full sm:w-auto">Candidater</button>
+          <button className="w-full rounded-lg border border-slate-200 px-4 py-2 text-center text-sm hover:bg-slate-50 sm:w-auto">
+            Ajouter au suivi
+          </button>
         </form>
         {job.url && (
           <a href={job.url} target="_blank" rel="noreferrer" className="rounded-lg border border-slate-200 px-4 py-2 text-center text-sm hover:bg-slate-50">
@@ -58,6 +68,11 @@ export default async function JobDetailPage({
           </a>
         )}
       </div>
+      {aiEnabled() && (
+        <p className="mt-2 text-xs text-slate-400">
+          « Préparer la candidature » crée le suivi, choisit le CV adapté et génère lettre + email sur-mesure.
+        </p>
+      )}
 
       <Card className="mt-6">
         <div className="mb-2 text-sm font-semibold text-slate-700">Adéquation avec ton profil</div>

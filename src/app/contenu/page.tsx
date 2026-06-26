@@ -7,6 +7,7 @@ import { POST_STATUS_LABELS, type Post } from "@/lib/types";
 import { generateDraft, updatePost, setPostStatus, deletePost } from "./actions";
 
 export const dynamic = "force-dynamic";
+export const maxDuration = 60;
 
 const TOPICS = [
   "Deep Learning", "Data Engineering", "Django", "DevOps",

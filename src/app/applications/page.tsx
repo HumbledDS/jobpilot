@@ -11,6 +11,7 @@ import {
   updateApplicationStatus,
   deleteApplication,
 } from "./actions";
+import Link from "next/link";
 
 export const dynamic = "force-dynamic";
 
@@ -72,9 +73,9 @@ export default async function ApplicationsPage() {
                     key={a.id}
                     className="min-w-0 rounded-lg border border-slate-200 bg-white p-3 shadow-sm"
                   >
-                    <div className="break-words text-sm font-semibold text-slate-800">
+                    <Link href={`/applications/${a.id}`} className="block break-words text-sm font-semibold text-slate-800 hover:underline">
                       {a.jp_jobs?.title ?? "—"}
-                    </div>
+                    </Link>
                     <div className="break-words text-xs text-slate-500">
                       {a.jp_jobs?.company_name ?? ""}
                       {a.jp_jobs?.location ? ` · ${a.jp_jobs.location}` : ""}
