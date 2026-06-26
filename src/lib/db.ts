@@ -223,3 +223,23 @@ export async function getCoachTasks(): Promise<CoachTask[]> {
     .order("created_at", { ascending: false });
   return (data as CoachTask[]) ?? [];
 }
+
+export type AppEvent = {
+  id: string;
+  application_id: string;
+  kind: "statut" | "relance" | "entretien" | "email" | "note" | "offre" | "refus";
+  label: string | null;
+  event_at: string;
+  created_at: string;
+};
+
+export async function getAppEvents(applicationId: string): Promise<AppEvent[]> {
+  const db = getAdmin();
+  if (!db) return [];
+  const { data } = await db
+    .from("jp_app_events")
+    .select("*")
+    .eq("application_id", applicationId)
+    .order("event_at", { ascending: false });
+  return (data as AppEvent[]) ?? [];
+}

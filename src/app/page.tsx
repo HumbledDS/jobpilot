@@ -28,11 +28,13 @@ import {
 } from "@/lib/types";
 import { skillDemand, companiesHiring } from "@/lib/analytics";
 import { buildRecommendations, doneInWindow } from "@/lib/coach";
+import { aiEnabled } from "@/lib/ai";
 import {
   completeRecommendation,
   addCustomTask,
   completeTask,
   deleteTask,
+  generateAiFocus,
 } from "./_coach/actions";
 import Link from "next/link";
 
@@ -143,7 +145,10 @@ export default async function DashboardPage() {
     (r) => !doneInWindow(r.cadence, completedAt.get(r.key)),
   );
   const doneRecsCount = recs.length - activeRecs.length;
-  const customTodos = coachTasks.filter((t) => t.status === "todo");
+  const aiTasks = coachTasks.filter((t) => t.status === "todo" && t.key.startsWith("ai:"));
+  const customTodos = coachTasks.filter(
+    (t) => t.status === "todo" && !t.key.startsWith("ai:"),
+  );
   const dailyRecs = activeRecs.filter((r) => r.cadence === "daily");
   const weeklyRecs = activeRecs.filter((r) => r.cadence === "weekly");
 
@@ -183,12 +188,57 @@ export default async function DashboardPage() {
               Priorités du moment, calées sur ton marché, tes candidatures et tes projets.
             </div>
           </div>
-          {doneRecsCount > 0 && (
-            <span className="shrink-0 rounded-full bg-emerald-100 px-2 py-1 text-xs font-medium text-emerald-700">
-              {doneRecsCount} fait{doneRecsCount > 1 ? "s" : ""}
-            </span>
-          )}
+          <div className="flex shrink-0 items-center gap-2">
+            {doneRecsCount > 0 && (
+              <span className="rounded-full bg-emerald-100 px-2 py-1 text-xs font-medium text-emerald-700">
+                {doneRecsCount} fait{doneRecsCount > 1 ? "s" : ""}
+              </span>
+            )}
+            {aiEnabled() && (
+              <form action={generateAiFocus}>
+                <button className="rounded-lg border border-slate-300 px-2.5 py-1 text-xs font-medium text-slate-700 hover:bg-slate-100">
+                  {aiTasks.length ? "Régénérer le focus IA" : "Focus IA"}
+                </button>
+              </form>
+            )}
+          </div>
         </div>
+
+        {/* Focus généré par l'IA */}
+        {aiTasks.length > 0 && (
+          <div className="mb-4 rounded-lg border border-violet-200 bg-violet-50/40 p-3">
+            <div className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-violet-500">
+              Focus IA
+              <span className="rounded bg-violet-100 px-1.5 py-0.5 text-[10px] font-medium text-violet-600">personnalisé</span>
+            </div>
+            <ul className="space-y-2">
+              {aiTasks.map((t) => (
+                <li key={t.id} className="rounded-lg border border-violet-100 bg-white p-3">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="min-w-0">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="rounded bg-violet-100 px-1.5 py-0.5 text-[10px] font-medium text-violet-600">{t.category}</span>
+                        <span className="text-[10px] text-slate-400">{CADENCE_LABEL[t.cadence]}</span>
+                        <span className="text-sm font-medium text-slate-800">{t.label}</span>
+                      </div>
+                      {t.rationale && <p className="mt-1 text-xs text-slate-500">{t.rationale}</p>}
+                    </div>
+                    <div className="flex shrink-0 items-center gap-1">
+                      <form action={completeTask}>
+                        <input type="hidden" name="id" value={t.id} />
+                        <button className="rounded-lg border border-slate-200 px-2 py-1 text-xs font-medium text-slate-600 hover:bg-emerald-50 hover:text-emerald-700">Fait</button>
+                      </form>
+                      <form action={deleteTask}>
+                        <input type="hidden" name="id" value={t.id} />
+                        <button className="rounded px-1 text-xs text-rose-400 hover:bg-rose-50" aria-label="Supprimer">×</button>
+                      </form>
+                    </div>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
 
         {activeRecs.length === 0 ? (
           <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-700">

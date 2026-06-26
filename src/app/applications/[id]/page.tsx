@@ -1,5 +1,5 @@
-import { getApplicationById } from "@/lib/db";
-import { Card, fmtSalary } from "@/components/ui";
+import { getApplicationById, getAppEvents } from "@/lib/db";
+import { Card, fmtSalary, timeAgo } from "@/components/ui";
 import { CopyButton } from "@/components/CopyButton";
 import {
   APPLICATION_STATUSES,
@@ -10,6 +10,8 @@ import {
   updateApplicationStatus,
   deleteApplication,
   regenerateLetter,
+  addAppEvent,
+  deleteAppEvent,
 } from "../actions";
 import { aiEnabled } from "@/lib/ai";
 import Link from "next/link";
@@ -17,6 +19,16 @@ import { notFound } from "next/navigation";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
+
+const EVENT_STYLE: Record<string, { label: string; cls: string }> = {
+  statut: { label: "Statut", cls: "bg-slate-100 text-slate-600" },
+  relance: { label: "Relance", cls: "bg-amber-100 text-amber-700" },
+  entretien: { label: "Entretien", cls: "bg-violet-100 text-violet-700" },
+  email: { label: "Email", cls: "bg-blue-100 text-blue-700" },
+  offre: { label: "Offre", cls: "bg-emerald-100 text-emerald-700" },
+  refus: { label: "Refus", cls: "bg-rose-100 text-rose-600" },
+  note: { label: "Note", cls: "bg-slate-100 text-slate-500" },
+};
 
 export default async function ApplicationDetail({
   params,
@@ -26,11 +38,14 @@ export default async function ApplicationDetail({
   const { id } = await params;
   const app = await getApplicationById(id);
   if (!app) notFound();
+  const events = await getAppEvents(id);
 
   const job = app.jp_jobs;
   const cv = app.jp_cv_versions;
   const letter = app.jp_cover_letters;
   const sal = fmtSalary(job?.salary_min ?? null, job?.salary_max ?? null);
+  const nextAction = app.next_action_at ? new Date(app.next_action_at) : null;
+  const nextOverdue = nextAction ? nextAction.getTime() < Date.now() : false;
 
   return (
     <div className="max-w-3xl">
@@ -139,6 +154,59 @@ export default async function ApplicationDetail({
           <p className="whitespace-pre-wrap break-words rounded bg-slate-50 p-3 text-sm text-slate-700">{app.draft_email}</p>
         </Card>
       )}
+
+      {/* Timeline : relances / entretiens / notes */}
+      <Card className="mt-6">
+        <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+          <span className="text-sm font-semibold text-slate-700">Suivi</span>
+          {nextAction && (
+            <span className={`rounded px-2 py-0.5 text-xs font-medium ${nextOverdue ? "bg-rose-100 text-rose-700" : "bg-amber-100 text-amber-700"}`}>
+              Prochaine action : {nextAction.toLocaleDateString("fr-FR")}
+              {nextOverdue ? " (en retard)" : ""}
+            </span>
+          )}
+        </div>
+
+        <form action={addAppEvent} className="mb-4 grid grid-cols-1 gap-2 sm:grid-cols-[auto_1fr_auto_auto] sm:items-center">
+          <input type="hidden" name="application_id" value={app.id} />
+          <select name="kind" defaultValue="relance" className="rounded-lg border border-slate-200 px-2 py-2 text-sm">
+            <option value="relance">Relance</option>
+            <option value="entretien">Entretien</option>
+            <option value="email">Email</option>
+            <option value="note">Note</option>
+            <option value="offre">Offre</option>
+            <option value="refus">Refus</option>
+          </select>
+          <input name="label" placeholder="Détail (ex: relance LinkedIn au recruteur)" className="input" />
+          <input name="event_at" type="date" className="rounded-lg border border-slate-200 px-2 py-2 text-sm" />
+          <button className="rounded-lg bg-slate-800 px-3 py-2 text-sm font-medium text-white">Ajouter</button>
+        </form>
+
+        {events.length === 0 ? (
+          <div className="text-xs text-slate-400">Aucun événement. Ajoute une relance ou un entretien pour suivre l&apos;avancée.</div>
+        ) : (
+          <ol className="relative space-y-3 border-l border-slate-200 pl-4">
+            {events.map((e) => {
+              const st = EVENT_STYLE[e.kind] ?? EVENT_STYLE.note;
+              return (
+                <li key={e.id} className="relative">
+                  <span className="absolute -left-[21px] top-1 h-2.5 w-2.5 rounded-full border-2 border-white bg-slate-300" />
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className={`rounded px-1.5 py-0.5 text-[10px] font-medium ${st.cls}`}>{st.label}</span>
+                    <span className="text-xs text-slate-400">{new Date(e.event_at).toLocaleDateString("fr-FR")} · {timeAgo(e.event_at)}</span>
+                    <form action={deleteAppEvent} className="ml-auto">
+                      <input type="hidden" name="id" value={e.id} />
+                      <input type="hidden" name="application_id" value={app.id} />
+                      <button className="rounded px-1 text-xs text-rose-400 hover:bg-rose-50" aria-label="Supprimer">×</button>
+                    </form>
+                  </div>
+                  {e.label && <div className="mt-0.5 break-words text-sm text-slate-700">{e.label}</div>}
+                </li>
+              );
+            })}
+          </ol>
+        )}
+      </Card>
     </div>
   );
 }

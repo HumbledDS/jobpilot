@@ -2,6 +2,7 @@
 
 import { getAdmin } from "@/lib/supabase/admin";
 import { generateCoverLetterAI, generateApplicationEmailAI } from "@/lib/ai";
+import { STATUS_LABELS, type ApplicationStatus } from "@/lib/types";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
@@ -193,8 +194,49 @@ export async function updateApplicationStatus(formData: FormData) {
   if (status !== "a_postuler") patch.applied_at = new Date().toISOString();
   await db.from("jp_applications").update(patch).eq("id", id);
 
+  // Trace l'évolution dans la timeline.
+  await db.from("jp_app_events").insert({
+    application_id: id,
+    kind: "statut",
+    label: `Statut → ${STATUS_LABELS[status as ApplicationStatus] ?? status}`,
+  });
+
   revalidatePath("/applications");
+  revalidatePath(`/applications/${id}`);
   revalidatePath("/");
+}
+
+/** Ajoute un événement à la timeline (relance, entretien, note…). */
+export async function addAppEvent(formData: FormData) {
+  const db = getAdmin();
+  if (!db) return;
+  const appId = str(formData, "application_id");
+  const kind = str(formData, "kind") ?? "note";
+  if (!appId) return;
+  const at = str(formData, "event_at");
+  const eventAt = at ? new Date(at).toISOString() : new Date().toISOString();
+  await db.from("jp_app_events").insert({
+    application_id: appId,
+    kind,
+    label: str(formData, "label"),
+    event_at: eventAt,
+  });
+  // Une relance/un entretien à venir devient la prochaine action.
+  if ((kind === "relance" || kind === "entretien") && at && new Date(at).getTime() > Date.now()) {
+    await db.from("jp_applications").update({ next_action_at: eventAt }).eq("id", appId);
+  }
+  revalidatePath(`/applications/${appId}`);
+  revalidatePath("/");
+}
+
+export async function deleteAppEvent(formData: FormData) {
+  const db = getAdmin();
+  if (!db) return;
+  const id = str(formData, "id");
+  const appId = str(formData, "application_id");
+  if (!id) return;
+  await db.from("jp_app_events").delete().eq("id", id);
+  if (appId) revalidatePath(`/applications/${appId}`);
 }
 
 export async function deleteApplication(formData: FormData) {

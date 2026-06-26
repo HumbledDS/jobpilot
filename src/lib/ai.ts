@@ -165,3 +165,50 @@ Réponds UNIQUEMENT en JSON: {"subject": "...", "body": "..."}. Le body inclut l
     body: parsed.body ?? "",
   };
 }
+
+export type AiFocusAction = {
+  label: string;
+  category: string;
+  cadence: "daily" | "weekly";
+  rationale: string;
+};
+
+/** Coach génératif : un focus priorisé, calé sur le contexte de recherche. */
+export async function generateCoachFocusAI(ctx: {
+  appsThisWeek: number;
+  weeklyAppGoal: number;
+  responseRate: number;
+  sentTotal: number;
+  pendingFollowups: number;
+  strongMatches: number;
+  topGapSkills: string[];
+  inProgressProjects: number;
+  remainingProjects: number;
+  topCompanies: string[];
+  postsThisWeek: number;
+  weeklyPostGoal: number;
+  recentDone: string[];
+}): Promise<AiFocusAction[] | null> {
+  const system = `Tu es le coach de recherche d'emploi de ${PROFILE_CONTEXT}
+Objectif : décrocher un poste Data/Cloud/IA à 50k€+ en Île-de-France.
+Tu donnes un focus court, concret et priorisé, calé STRICTEMENT sur le contexte fourni. Zéro généralité.
+Réponds UNIQUEMENT en JSON : {"actions":[{"label","category","cadence","rationale"}]} avec 3 à 4 actions.
+- label : action impérative et précise (max ~12 mots).
+- category : une de [Candidater, Relance, Compétence, Projet, Visibilité, Ciblage, Réseau].
+- cadence : "daily" ou "weekly".
+- rationale : 1 phrase qui justifie en CITANT le contexte (chiffres, entreprises, compétences précises).`;
+  const user = `Contexte du moment :
+- Candidatures cette semaine : ${ctx.appsThisWeek}/${ctx.weeklyAppGoal} (taux de réponse ${ctx.responseRate}% sur ${ctx.sentTotal} envoyées)
+- Candidatures en attente à relancer : ${ctx.pendingFollowups}
+- Offres à fort match non encore traitées : ${ctx.strongMatches}
+- Compétences les plus demandées hors de son profil : ${ctx.topGapSkills.join(", ") || "—"}
+- Projets en cours : ${ctx.inProgressProjects} ; projets restants à aboutir : ${ctx.remainingProjects}
+- Entreprises établies qui recrutent activement : ${ctx.topCompanies.join(", ") || "—"}
+- Posts LinkedIn cette semaine : ${ctx.postsThisWeek}/${ctx.weeklyPostGoal}
+- Déjà fait récemment (ne pas reproposer) : ${ctx.recentDone.join(" ; ") || "rien"}
+Donne le focus prioritaire.`;
+  const out = await complete(system, user, 900);
+  if (!out) return null;
+  const parsed = parseJson<{ actions: AiFocusAction[] }>(out);
+  return parsed?.actions ?? null;
+}
