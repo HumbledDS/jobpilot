@@ -73,6 +73,67 @@ function trustForName(name: string): Trust | null {
   return null;
 }
 
+/** Confiance d'une entreprise par nom puis catégorie du référentiel. */
+export function resolveTrust(
+  name: string | null,
+  targets: { name: string; category: string | null }[],
+): Trust {
+  if (!name) return "inconnue";
+  const byName = trustForName(name);
+  if (byName) return byName;
+  const c = name.toLowerCase();
+  const t = targets.find((x) => {
+    const n = x.name.toLowerCase();
+    return c.includes(n) || n.includes(c);
+  });
+  return trustForCategory(t?.category ?? null);
+}
+
+/** Segmentation du marché : employeurs établis vs intermédiaires (ESN/freelance). */
+export function offerSegments(
+  jobs: Job[],
+  targets: { name: string; category: string | null }[],
+) {
+  let etabli = 0, intermediaire = 0, autre = 0, direct = 0;
+  for (const j of jobs) {
+    if (j.from_target) direct++;
+    const t = resolveTrust(j.company_name, targets);
+    if (t === "solide" || t === "ok") etabli++;
+    else if (t === "esn" || t === "freelance") intermediaire++;
+    else autre++;
+  }
+  const n = jobs.length || 1;
+  return {
+    total: jobs.length,
+    direct,
+    etabli,
+    intermediaire,
+    autre,
+    pctEtabli: Math.round((etabli / n) * 100),
+    pctInter: Math.round((intermediaire / n) * 100),
+  };
+}
+
+// Divisions NAF -> secteur lisible.
+const NAF_SECTOR: Record<string, string> = {
+  "58": "Édition / logiciel", "59": "Audiovisuel", "60": "Médias", "61": "Télécoms",
+  "62": "Informatique / logiciel", "63": "Services d'information",
+  "64": "Banque / finance", "65": "Assurance", "66": "Services financiers",
+  "68": "Immobilier", "70": "Conseil / siège", "71": "Ingénierie", "72": "R&D",
+  "73": "Publicité / marketing", "74": "Activités spécialisées", "77": "Location",
+  "78": "RH / recrutement", "82": "Services aux entreprises",
+  "46": "Commerce de gros", "47": "Commerce de détail", "45": "Automobile",
+  "35": "Énergie", "49": "Transport", "50": "Transport maritime", "51": "Transport aérien",
+  "52": "Logistique", "53": "Courrier", "85": "Enseignement", "86": "Santé",
+  "10": "Industrie", "20": "Chimie", "21": "Pharmacie", "26": "Électronique",
+  "27": "Équipements", "28": "Machines", "29": "Automobile (industrie)", "30": "Aéronautique",
+};
+export function nafSector(code: string | null | undefined): string | null {
+  if (!code) return null;
+  const d = code.replace(/\D/g, "").slice(0, 2);
+  return NAF_SECTOR[d] ?? "Autre secteur";
+}
+
 function trustForCategory(cat: string | null): Trust {
   if (!cat) return "inconnue";
   if (SOLID_CATS.has(cat)) return "solide";
