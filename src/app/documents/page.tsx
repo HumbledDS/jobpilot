@@ -1,10 +1,12 @@
 import { getCvVersions, getCoverLetters } from "@/lib/db";
 import { hasAdmin } from "@/lib/supabase/admin";
+import { aiEnabled } from "@/lib/ai";
 import { PageHeader, Card, SetupBanner, EmptyState } from "@/components/ui";
 import {
   createCvVersion,
   deleteCvVersion,
   createCoverLetter,
+  generateCoverLetter,
   deleteCoverLetter,
 } from "./actions";
 
@@ -75,8 +77,28 @@ export default async function DocumentsPage() {
         {/* Cover letters */}
         <div>
           <Card className="mb-4">
+            <div className="mb-3 flex items-center justify-between">
+              <span className="text-sm font-semibold text-slate-700">
+                Générer une lettre avec l&apos;IA
+              </span>
+              <span className={`rounded px-1.5 py-0.5 text-[11px] ${aiEnabled() ? "bg-emerald-100 text-emerald-700" : "bg-slate-100 text-slate-400"}`}>
+                {aiEnabled() ? "IA active" : "clé IA requise"}
+              </span>
+            </div>
+            <form action={generateCoverLetter} className="grid grid-cols-1 gap-3">
+              <input name="job_title" required placeholder="Intitulé du poste *" className="input" />
+              <input name="company" placeholder="Entreprise" className="input" />
+              <input name="tone" placeholder="Ton (ex: direct, formel)" className="input" />
+              <textarea name="job_description" placeholder="Description de l'offre (collée ici)…" rows={3} className="input" />
+              <button className="btn-primary" disabled={!aiEnabled()}>
+                {aiEnabled() ? "Générer la lettre (Claude)" : "Ajoute ANTHROPIC_API_KEY"}
+              </button>
+            </form>
+          </Card>
+
+          <Card className="mb-4">
             <div className="mb-3 text-sm font-semibold text-slate-700">
-              + Lettre de motivation
+              + Lettre de motivation (manuelle)
             </div>
             <form action={createCoverLetter} className="grid grid-cols-1 gap-3">
               <input name="label" required placeholder="Label (ex: LM Data Engineer) *" className="input" />

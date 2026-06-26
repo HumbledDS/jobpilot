@@ -1,6 +1,7 @@
 "use server";
 
 import { getAdmin } from "@/lib/supabase/admin";
+import { generateCoverLetterAI } from "@/lib/ai";
 import { revalidatePath } from "next/cache";
 
 const str = (fd: FormData, k: string) => {
@@ -40,6 +41,27 @@ export async function createCoverLetter(formData: FormData) {
     label,
     tone: str(formData, "tone"),
     content: str(formData, "content"),
+  });
+  revalidatePath("/documents");
+}
+
+export async function generateCoverLetter(formData: FormData) {
+  const db = getAdmin();
+  if (!db) return;
+  const jobTitle = str(formData, "job_title");
+  if (!jobTitle) return;
+  const company = str(formData, "company");
+  const content = await generateCoverLetterAI({
+    jobTitle,
+    company,
+    jobDescription: str(formData, "job_description"),
+    tone: str(formData, "tone"),
+  }).catch(() => null);
+  if (!content) return; // AI disabled or failed
+  await db.from("jp_cover_letters").insert({
+    label: `LM ${jobTitle}${company ? " - " + company : ""}`,
+    tone: str(formData, "tone"),
+    content,
   });
   revalidatePath("/documents");
 }

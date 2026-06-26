@@ -1,5 +1,6 @@
 import { getPosts } from "@/lib/db";
 import { hasAdmin } from "@/lib/supabase/admin";
+import { aiEnabled } from "@/lib/ai";
 import { PageHeader, Card, SetupBanner, EmptyState } from "@/components/ui";
 import { CopyButton } from "@/components/CopyButton";
 import { POST_STATUS_LABELS, type Post } from "@/lib/types";
@@ -48,7 +49,9 @@ export default async function ContenuPage() {
           <button className="btn-primary">Générer</button>
         </form>
         <p className="mt-2 text-xs text-slate-400">
-          Le canevas est un point de départ structuré (accroche + corps + hashtags) que tu complètes. Une génération par IA pourra être branchée avec une clé API.
+          {aiEnabled()
+            ? "IA active (Claude Opus 4.8) : « Générer » rédige un vrai post adapté au sujet et à ton profil, que tu peux ensuite éditer."
+            : "Mode canevas (sans IA) : structure prête à compléter. Ajoute ANTHROPIC_API_KEY pour une génération rédigée par Claude."}
         </p>
       </Card>
 

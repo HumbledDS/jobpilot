@@ -1,0 +1,87 @@
+import Anthropic from "@anthropic-ai/sdk";
+
+/** AI is optional: everything degrades gracefully when no key is set. */
+export function aiEnabled() {
+  return Boolean(process.env.ANTHROPIC_API_KEY);
+}
+
+const MODEL = process.env.AI_MODEL || "claude-opus-4-8";
+
+function client() {
+  if (!process.env.ANTHROPIC_API_KEY) return null;
+  return new Anthropic(); // reads ANTHROPIC_API_KEY from env
+}
+
+async function complete(
+  system: string,
+  user: string,
+  maxTokens = 1500,
+): Promise<string | null> {
+  const c = client();
+  if (!c) return null;
+  const res = await c.messages.create({
+    model: MODEL,
+    max_tokens: maxTokens,
+    system,
+    messages: [{ role: "user", content: user }],
+  });
+  return res.content
+    .filter((b) => b.type === "text")
+    .map((b) => (b as { text: string }).text)
+    .join("\n")
+    .trim();
+}
+
+function parseJson<T>(text: string): T | null {
+  const cleaned = text.replace(/^```(?:json)?/i, "").replace(/```$/i, "").trim();
+  try {
+    return JSON.parse(cleaned) as T;
+  } catch {
+    const m = cleaned.match(/\{[\s\S]*\}/);
+    if (m) {
+      try {
+        return JSON.parse(m[0]) as T;
+      } catch {}
+    }
+    return null;
+  }
+}
+
+const PROFILE_CONTEXT = `Babacar Gueye — Forward Deployed / Solutions Engineer, profil Cloud & Data.
+Socle maths/stats (M2 Stats + DU Big Data), ~3 ans de pratique (stages, CDD quant, missions freelance).
+Stack: Python, SQL, Spark, Airflow, dbt, Snowflake, Databricks, AWS/GCP/Azure, Docker, Kubernetes, Terraform, APIs, MCP.
+Enseigne la data (Deep Learning, Data Engineering, Django, DevOps) en Master. Cible: postes data/cloud/IA à 50k€+ en Île-de-France.`;
+
+/** Generate a LinkedIn post draft. Returns null if AI disabled. */
+export async function generatePostAI(input: {
+  topic: string;
+  angle: string;
+  course?: string | null;
+}): Promise<{ hook: string; body: string; hashtags: string[] } | null> {
+  const system = `Tu es un assistant qui écrit des posts LinkedIn techniques en français pour ${PROFILE_CONTEXT}
+Règles: ton authentique et expert, jamais arrogant. Pas d'emojis. Pas de superlatifs creux. Accroche courte et percutante, corps clair et structuré (listes courtes ok), termine par une question d'engagement. 150-250 mots max pour le corps.
+Réponds UNIQUEMENT en JSON: {"hook": "...", "body": "...", "hashtags": ["#...","#..."]}`;
+  const user = `Sujet: ${input.topic}\nAngle: ${input.angle}${input.course ? `\nContexte (cours enseigné): ${input.course}` : ""}\nÉcris le post.`;
+  const out = await complete(system, user, 1500);
+  if (!out) return null;
+  const parsed = parseJson<{ hook: string; body: string; hashtags: string[] }>(out);
+  if (!parsed) return { hook: "", body: out, hashtags: [] };
+  return {
+    hook: parsed.hook ?? "",
+    body: parsed.body ?? "",
+    hashtags: Array.isArray(parsed.hashtags) ? parsed.hashtags : [],
+  };
+}
+
+/** Generate a cover letter tailored to an offer. Returns null if AI disabled. */
+export async function generateCoverLetterAI(input: {
+  jobTitle: string;
+  company?: string | null;
+  jobDescription?: string | null;
+  tone?: string | null;
+}): Promise<string | null> {
+  const system = `Tu écris des lettres de motivation en français pour ${PROFILE_CONTEXT}
+Règles: honnête (ne jamais inventer d'expérience), concis (250-320 mots), structuré (accroche, adéquation profil/poste, valeur ajoutée, conclusion), ${input.tone ? `ton ${input.tone}, ` : ""}orienté impact. Pas d'emojis. Pas de formules creuses ("dynamique et motivé").`;
+  const user = `Poste: ${input.jobTitle}${input.company ? `\nEntreprise: ${input.company}` : ""}${input.jobDescription ? `\nDescription de l'offre:\n${input.jobDescription.slice(0, 2000)}` : ""}\nÉcris la lettre.`;
+  return complete(system, user, 1200);
+}

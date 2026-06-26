@@ -1,6 +1,7 @@
 "use server";
 
 import { getAdmin } from "@/lib/supabase/admin";
+import { generatePostAI } from "@/lib/ai";
 import { revalidatePath } from "next/cache";
 
 const str = (fd: FormData, k: string) => {
@@ -58,7 +59,18 @@ export async function generateDraft(formData: FormData) {
   const angle = str(formData, "angle") ?? "Explication pédagogique";
   const course = str(formData, "course");
   const title = str(formData, "title") ?? `${topic} — ${angle}`;
-  const { hook, body, hashtags } = buildDraft(topic, angle, course);
+
+  // Prefer AI generation when a key is configured; otherwise use the template.
+  let hook: string;
+  let body: string;
+  let hashtags: string[];
+  const ai = await generatePostAI({ topic, angle, course }).catch(() => null);
+  if (ai) {
+    ({ hook, body, hashtags } = ai);
+  } else {
+    ({ hook, body, hashtags } = buildDraft(topic, angle, course));
+  }
+
   await db.from("jp_posts").insert({
     title,
     topic,
