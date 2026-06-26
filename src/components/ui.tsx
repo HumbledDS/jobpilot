@@ -92,6 +92,7 @@ export const SOURCE_LABELS: Record<string, string> = {
   france_travail: "France Travail",
   adzuna: "Adzuna",
   manual: "Manuel",
+  targets: "Entreprise cible",
 };
 
 /** Days since a date (0 = today). null if no date. */
