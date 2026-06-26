@@ -4,6 +4,8 @@ import {
   getContacts,
   getSkillProjects,
   getRecentIngestRuns,
+  getSettings,
+  getPosts,
 } from "@/lib/db";
 import { hasAdmin } from "@/lib/supabase/admin";
 import {
@@ -26,13 +28,24 @@ import Link from "next/link";
 export const dynamic = "force-dynamic";
 
 export default async function DashboardPage() {
-  const [apps, jobs, contacts, projects, ingestRuns] = await Promise.all([
-    getApplications(),
-    getJobs(),
-    getContacts(),
-    getSkillProjects(),
-    getRecentIngestRuns(),
-  ]);
+  const [apps, jobs, contacts, projects, ingestRuns, settings, posts] =
+    await Promise.all([
+      getApplications(),
+      getJobs(),
+      getContacts(),
+      getSkillProjects(),
+      getRecentIngestRuns(),
+      getSettings(),
+      getPosts(),
+    ]);
+
+  const weekAgo = Date.now() - 7 * 86400000;
+  const appsThisWeek = apps.filter(
+    (a) => new Date(a.created_at).getTime() >= weekAgo,
+  ).length;
+  const postsThisWeek = posts.filter(
+    (p) => p.published_at && new Date(p.published_at).getTime() >= weekAgo,
+  ).length;
 
   const ALL_SOURCES = ["apec", "france_travail", "adzuna", "manual"];
   const jobsBySource = (s: string) => jobs.filter((j) => j.source === s).length;
@@ -73,6 +86,31 @@ export default async function DashboardPage() {
         <StatCard label="Taux de réponse" value={`${responseRate}%`} hint="entretien+ / envoyées" />
         <StatCard label="Offres reçues" value={byStatus("offre")} />
       </div>
+
+      <Card className="mt-6">
+        <div className="mb-3 text-sm font-semibold text-slate-700">
+          Cadence cette semaine
+        </div>
+        <div className="grid grid-cols-2 gap-6">
+          {[
+            { label: "Candidatures", n: appsThisWeek, goal: settings.weekly_application_goal },
+            { label: "Posts publiés", n: postsThisWeek, goal: settings.weekly_post_goal },
+          ].map((c) => {
+            const pct = c.goal ? Math.min(100, Math.round((c.n / c.goal) * 100)) : 0;
+            return (
+              <div key={c.label}>
+                <div className="mb-1 flex items-center justify-between text-xs">
+                  <span className="text-slate-500">{c.label}</span>
+                  <span className="font-medium text-slate-700">{c.n} / {c.goal}</span>
+                </div>
+                <div className="h-3 w-full overflow-hidden rounded bg-slate-100">
+                  <div className={`h-full rounded ${pct >= 100 ? "bg-emerald-500" : "bg-slate-800"}`} style={{ width: `${pct}%` }} />
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </Card>
 
       <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-3">
         <Card className="lg:col-span-2">

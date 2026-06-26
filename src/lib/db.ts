@@ -42,6 +42,13 @@ export async function getJobs(
   return (data as Job[]) ?? [];
 }
 
+export async function getJobById(id: string): Promise<Job | null> {
+  const db = getAdmin();
+  if (!db) return null;
+  const { data } = await db.from("jp_jobs").select("*").eq("id", id).maybeSingle();
+  return (data as Job) ?? null;
+}
+
 export type IngestRun = {
   source: string;
   finished_at: string | null;
@@ -125,6 +132,31 @@ export async function getProfile(): Promise<Profile | null> {
   if (!db) return null;
   const { data } = await db.from("jp_profile").select("*").eq("id", 1).maybeSingle();
   return (data as Profile) ?? null;
+}
+
+export async function getPosts(): Promise<import("@/lib/types").Post[]> {
+  const db = getAdmin();
+  if (!db) return [];
+  const { data } = await db
+    .from("jp_posts")
+    .select("*")
+    .order("updated_at", { ascending: false });
+  return (data as import("@/lib/types").Post[]) ?? [];
+}
+
+export async function getSettings(): Promise<{
+  weekly_application_goal: number;
+  weekly_post_goal: number;
+}> {
+  const db = getAdmin();
+  if (!db) return { weekly_application_goal: 10, weekly_post_goal: 2 };
+  const { data } = await db.from("jp_settings").select("*").eq("id", 1).maybeSingle();
+  return (
+    (data as { weekly_application_goal: number; weekly_post_goal: number }) ?? {
+      weekly_application_goal: 10,
+      weekly_post_goal: 2,
+    }
+  );
 }
 
 export async function getSkillProjects(): Promise<SkillProject[]> {

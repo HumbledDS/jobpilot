@@ -115,7 +115,9 @@ export default async function JobsPage({
                         {j.match_score ?? "—"} · {sl.label}
                       </span>
                       <Freshness postedAt={j.posted_at} />
-                      <span className="text-sm font-semibold text-slate-800">{j.title}</span>
+                      <Link href={`/jobs/${j.id}`} className="text-sm font-semibold text-slate-800 hover:underline">
+                        {j.title}
+                      </Link>
                       <span className="rounded bg-slate-100 px-1.5 py-0.5 text-[10px] uppercase text-slate-500">
                         {SOURCE_LABELS[j.source] ?? j.source}
                       </span>

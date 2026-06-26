@@ -116,6 +116,26 @@ export type CoverLetter = {
   created_at: string;
 };
 
+export type Post = {
+  id: string;
+  title: string;
+  topic: string | null;
+  course: string | null;
+  angle: string | null;
+  hook: string | null;
+  body: string | null;
+  hashtags: string[] | null;
+  status: "idea" | "draft" | "published";
+  scheduled_for: string | null;
+  published_at: string | null;
+};
+
+export const POST_STATUS_LABELS: Record<Post["status"], string> = {
+  idea: "Idées",
+  draft: "Brouillons",
+  published: "Publiés",
+};
+
 export type SkillProject = {
   id: string;
   name: string;
