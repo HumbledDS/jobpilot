@@ -16,7 +16,6 @@ export async function fetchAdzuna(
     where: opts.where ?? "Île-de-France",
     results_per_page: "50",
     salary_min: String(opts.salaryMin ?? 45000),
-    content_type: "application/json",
   });
   const res = await fetch(
     `https://api.adzuna.com/v1/api/jobs/fr/search/1?${qs.toString()}`,
