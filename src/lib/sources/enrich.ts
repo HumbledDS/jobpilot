@@ -124,3 +124,75 @@ export function effectifRank(code: string | null | undefined): number {
   if (!code) return -1;
   return order.indexOf(code);
 }
+
+const TYPE_PRIO: Record<string, number> = { C: 3, K: 2, S: 1 };
+
+/**
+ * Croissance du CA multi-années via l'API Opendatasoft ratios_inpi_bce (INPI, gratuit, sans clé).
+ * Nettoie les exercices "moignon" (filiale/partiel) et plafonne les valeurs aberrantes.
+ */
+export async function enrichFinancials(cap = 120): Promise<EnrichResult> {
+  const db = getAdmin();
+  if (!db) return { ok: false, error: "service role manquante", processed: 0, matched: 0 };
+
+  const { data: companies } = await db
+    .from("jp_companies")
+    .select("id, siren, financials_at")
+    .not("siren", "is", null)
+    .order("financials_at", { ascending: true, nullsFirst: true })
+    .limit(cap);
+
+  const list = companies ?? [];
+  let matched = 0;
+
+  await chunk(list, 3, async (c) => {
+    try {
+      const url = `https://data.economie.gouv.fr/api/explore/v2.1/catalog/datasets/ratios_inpi_bce/records?where=siren%3D%22${c.siren}%22&select=date_cloture_exercice,chiffre_d_affaires,resultat_net,type_bilan&order_by=date_cloture_exercice&limit=100`;
+      const res = await fetch(url, { cache: "no-store" });
+      if (!res.ok) return;
+      const data = (await res.json()) as {
+        results?: { date_cloture_exercice?: string; chiffre_d_affaires?: number; resultat_net?: number; type_bilan?: string }[];
+      };
+      const byYear = new Map<number, { year: number; ca: number; rn: number | null; prio: number }>();
+      for (const r of data.results ?? []) {
+        if (!r.date_cloture_exercice || r.chiffre_d_affaires == null) continue;
+        const y = Number(r.date_cloture_exercice.slice(0, 4));
+        const prio = TYPE_PRIO[r.type_bilan ?? ""] ?? 0;
+        const ex = byYear.get(y);
+        if (!ex || prio > ex.prio) byYear.set(y, { year: y, ca: r.chiffre_d_affaires, rn: r.resultat_net ?? null, prio });
+      }
+      const s = [...byYear.values()].sort((a, b) => a.year - b.year);
+      if (!s.length) return;
+      const cas = s.map((x) => x.ca).filter((v) => v > 0).sort((a, b) => a - b);
+      const median = cas.length ? cas[Math.floor(cas.length / 2)] : 0;
+      const clean = s.filter((x) => x.ca > 0 && (median === 0 || x.ca >= median * 0.15));
+      const latest = clean[clean.length - 1] ?? s[s.length - 1];
+      const update: Record<string, unknown> = {
+        ca: latest.ca,
+        ca_year: latest.year,
+        resultat_net: latest.rn,
+        ca_history: clean.slice(-6).map((x) => ({ year: x.year, ca: x.ca })),
+        financials_at: new Date().toISOString(),
+        ca_prev: null,
+        ca_growth: null,
+        ca_cagr: null,
+      };
+      if (clean.length >= 2) {
+        const prev = clean[clean.length - 2];
+        const first = clean[0];
+        const span = latest.year - first.year;
+        const yoy = prev.ca > 0 ? Math.round(((latest.ca - prev.ca) / prev.ca) * 1000) / 10 : null;
+        const cagr = span > 0 && first.ca > 0 ? Math.round((Math.pow(latest.ca / first.ca, 1 / span) - 1) * 1000) / 10 : null;
+        update.ca_prev = prev.ca;
+        update.ca_growth = yoy != null && Math.abs(yoy) <= 400 ? yoy : null;
+        update.ca_cagr = cagr != null && cagr <= 150 && cagr >= -95 ? cagr : null;
+      }
+      matched++;
+      await db.from("jp_companies").update(update).eq("id", c.id);
+    } catch {
+      /* réessai au prochain passage */
+    }
+  });
+
+  return { ok: true, processed: list.length, matched };
+}

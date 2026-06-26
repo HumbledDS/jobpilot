@@ -136,6 +136,14 @@ export default async function MarchePage() {
                         )}
                         {c?.effectif_label && <span className="hidden text-xs text-slate-400 sm:inline">{c.effectif_label} sal.</span>}
                         {fmtCA(c?.ca) && <span className="text-xs font-medium text-emerald-600">CA {fmtCA(c?.ca)}</span>}
+                        {(c?.ca_cagr ?? c?.ca_growth) != null && (() => {
+                          const g = (c?.ca_cagr ?? c?.ca_growth) as number;
+                          return (
+                            <span className={`text-[11px] ${g > 0 ? "text-emerald-600" : "text-rose-500"}`}>
+                              {g > 0 ? "+" : ""}{g}%{c?.ca_cagr != null ? "/an" : ""}
+                            </span>
+                          );
+                        })()}
                         <Link href={`/jobs?q=${encodeURIComponent(d.name)}`} className="text-xs text-blue-600 underline">voir</Link>
                       </div>
                     );

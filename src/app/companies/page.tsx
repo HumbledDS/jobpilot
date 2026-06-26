@@ -30,6 +30,7 @@ export default async function CompaniesPage({
       category: c.category,
       categorieEntreprise: c.categorie_entreprise,
       caGrowth: c.ca_growth,
+      caCagr: c.ca_cagr,
       ca: c.ca,
       effectifLabel: c.effectif_label,
       effectifCode: c.effectif_code,
@@ -88,7 +89,7 @@ export default async function CompaniesPage({
           Méfiance avec les ESN qui publient beaucoup d&apos;offres similaires : souvent du sourcing de candidats (CV mis en vivier) plus que des postes réels. Elles sont signalées « ESN — vérifier ».
         </p>
         <p className="mt-1 text-[11px] text-slate-500">
-          Le classement intègre l&apos;<strong>assise réelle</strong> (catégorie PME/ETI/GE, effectifs, CA) issue des données publiques (data.gouv) : les boîtes établies remontent. Note : l&apos;open data ne donne que la dernière année de comptes (pas la croissance YoY, qui exigerait Pappers/INPI) et, pour certains grands groupes, le CA affiché est celui de l&apos;entité légale filiale.
+          Le classement intègre l&apos;<strong>assise réelle</strong> (catégorie PME/ETI/GE, effectifs, CA et sa <strong>croissance annuelle</strong>) — données publiques gratuites (Sirene + comptes INPI multi-années). Les boîtes établies <strong>et en croissance</strong> remontent. Note : pour certains grands groupes, le CA est celui d&apos;une entité légale filiale.
         </p>
         <div className="mt-3 flex flex-col gap-3 border-t border-slate-200 pt-3 sm:flex-row sm:flex-wrap sm:items-center">
           <form action={sourceTargets}>
@@ -142,11 +143,15 @@ export default async function CompaniesPage({
                   {h.effectifLabel && (
                     <span className="hidden text-xs text-slate-400 sm:inline">{h.effectifLabel} sal.</span>
                   )}
-                  {h.caGrowth != null && (
-                    <span className={`rounded px-1.5 py-0.5 text-[10px] font-medium ${h.caGrowth > 0 ? "bg-emerald-100 text-emerald-700" : "bg-rose-100 text-rose-600"}`}>
-                      CA {h.caGrowth > 0 ? "+" : ""}{h.caGrowth}%
-                    </span>
-                  )}
+                  {(h.caCagr ?? h.caGrowth) != null && (() => {
+                    const g = (h.caCagr ?? h.caGrowth) as number;
+                    const perYear = h.caCagr != null;
+                    return (
+                      <span className={`rounded px-1.5 py-0.5 text-[10px] font-medium ${g > 0 ? "bg-emerald-100 text-emerald-700" : "bg-rose-100 text-rose-600"}`} title={perYear ? "Croissance annuelle moyenne du CA (CAGR)" : "Croissance du CA (dernière année)"}>
+                        CA {g > 0 ? "+" : ""}{g}%{perYear ? "/an" : ""}
+                      </span>
+                    );
+                  })()}
                   {h.harvestFlag && (
                     <span className="rounded bg-amber-50 px-1.5 py-0.5 text-[10px] font-medium text-amber-600">publie en volume</span>
                   )}
@@ -199,11 +204,14 @@ export default async function CompaniesPage({
                   {fmtCA(c.ca) && (
                     <span className="rounded bg-slate-100 px-1.5 py-0.5 text-[10px] text-slate-500">
                       CA {fmtCA(c.ca)}
-                      {c.ca_growth != null && (
-                        <span className={c.ca_growth > 0 ? "text-emerald-600" : "text-rose-500"}>
-                          {" "}({c.ca_growth > 0 ? "+" : ""}{c.ca_growth}%)
-                        </span>
-                      )}
+                      {(c.ca_cagr ?? c.ca_growth) != null && (() => {
+                        const g = (c.ca_cagr ?? c.ca_growth) as number;
+                        return (
+                          <span className={g > 0 ? "text-emerald-600" : "text-rose-500"}>
+                            {" "}({g > 0 ? "+" : ""}{g}%{c.ca_cagr != null ? "/an" : ""})
+                          </span>
+                        );
+                      })()}
                     </span>
                   )}
                 </div>

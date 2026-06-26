@@ -78,9 +78,12 @@ export type Company = {
   ca_year?: number | null;
   ca_prev?: number | null;
   ca_growth?: number | null;
+  ca_cagr?: number | null;
+  ca_history?: { year: number; ca: number }[] | null;
   resultat_net?: number | null;
   date_creation?: string | null;
   enriched_at?: string | null;
+  financials_at?: string | null;
 };
 
 export type Application = {

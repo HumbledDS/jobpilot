@@ -147,6 +147,7 @@ export type TargetMeta = {
   category: string | null;
   categorieEntreprise?: string | null; // PME / ETI / GE
   caGrowth?: number | null;
+  caCagr?: number | null;
   ca?: number | null;
   effectifLabel?: string | null;
   effectifCode?: string | null;
@@ -165,6 +166,7 @@ export type HiringRow = {
   priority: number;
   categorieEntreprise?: string | null;
   caGrowth?: number | null;
+  caCagr?: number | null;
   ca?: number | null;
   effectifLabel?: string | null;
 };
@@ -232,10 +234,12 @@ export function companiesHiring(
       if (t?.categorieEntreprise === "GE") priority += 12;
       else if (t?.categorieEntreprise === "ETI") priority += 6;
       if (t?.effectifCode && BIG_EFFECTIF.has(t.effectifCode)) priority += 5;
-      if (t?.caGrowth != null) {
-        if (t.caGrowth >= 15) priority += 10;
-        else if (t.caGrowth > 0) priority += 5;
-        else if (t.caGrowth < 0) priority -= 8;
+      // Croissance : on préfère le CAGR (plus stable) au YoY.
+      const growth = t?.caCagr ?? t?.caGrowth;
+      if (growth != null) {
+        if (growth >= 15) priority += 10;
+        else if (growth > 0) priority += 5;
+        else if (growth < 0) priority -= 8;
       }
       return {
         company,
@@ -250,6 +254,7 @@ export function companiesHiring(
         priority,
         categorieEntreprise: t?.categorieEntreprise ?? null,
         caGrowth: t?.caGrowth ?? null,
+        caCagr: t?.caCagr ?? null,
         ca: t?.ca ?? null,
         effectifLabel: t?.effectifLabel ?? null,
       };
