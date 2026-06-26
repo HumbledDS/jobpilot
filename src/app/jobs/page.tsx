@@ -1,18 +1,31 @@
 import { getJobs } from "@/lib/db";
 import { hasAdmin } from "@/lib/supabase/admin";
 import { PageHeader, Card, SetupBanner, EmptyState, fmtSalary } from "@/components/ui";
-import { createJob, deleteJob, applyToJob } from "./actions";
+import { createJob, deleteJob, applyToJob, ingestNow } from "./actions";
 
 export const dynamic = "force-dynamic";
 
 export default async function JobsPage() {
   const jobs = await getJobs();
+  const bySource = jobs.reduce<Record<string, number>>((acc, j) => {
+    acc[j.source] = (acc[j.source] ?? 0) + 1;
+    return acc;
+  }, {});
 
   return (
     <div>
       <PageHeader
         title="Offres"
-        subtitle="Offres en base (ajout manuel aujourd'hui, ingestion API à venir)"
+        subtitle={`${jobs.length} offres en base · sources : ${
+          Object.entries(bySource)
+            .map(([s, n]) => `${s} (${n})`)
+            .join(" · ") || "—"
+        }`}
+        action={
+          <form action={ingestNow}>
+            <button className="btn-primary">⟳ Ingérer (APEC + APIs)</button>
+          </form>
+        }
       />
       {!hasAdmin() && <SetupBanner />}
 

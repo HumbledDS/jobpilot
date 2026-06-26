@@ -1,7 +1,14 @@
 "use server";
 
 import { getAdmin } from "@/lib/supabase/admin";
+import { runIngest } from "@/lib/ingest";
 import { revalidatePath } from "next/cache";
+
+export async function ingestNow() {
+  await runIngest();
+  revalidatePath("/jobs");
+  revalidatePath("/");
+}
 
 const str = (fd: FormData, k: string) => {
   const v = String(fd.get(k) ?? "").trim();

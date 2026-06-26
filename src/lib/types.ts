@@ -57,6 +57,9 @@ export type Company = {
   website: string | null;
   linkedin_url: string | null;
   notes: string | null;
+  is_target: boolean;
+  category: string | null;
+  careers_url: string | null;
 };
 
 export type Application = {

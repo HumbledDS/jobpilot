@@ -41,6 +41,18 @@ export async function getCompanies(): Promise<Company[]> {
   return (data as Company[]) ?? [];
 }
 
+export async function getTargetCompanies(): Promise<Company[]> {
+  const db = getAdmin();
+  if (!db) return [];
+  const { data } = await db
+    .from("jp_companies")
+    .select("*")
+    .eq("is_target", true)
+    .order("category")
+    .order("name");
+  return (data as Company[]) ?? [];
+}
+
 export async function getContacts(): Promise<Contact[]> {
   const db = getAdmin();
   if (!db) return [];
