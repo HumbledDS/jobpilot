@@ -88,7 +88,7 @@ export default async function CompaniesPage({
           Méfiance avec les ESN qui publient beaucoup d&apos;offres similaires : souvent du sourcing de candidats (CV mis en vivier) plus que des postes réels. Elles sont signalées « ESN — vérifier ».
         </p>
         <p className="mt-1 text-[11px] text-slate-500">
-          Le classement intègre désormais l&apos;<strong>assise réelle</strong> (taille/catégorie, CA et sa croissance) issue des données publiques (data.gouv) : grands comptes et boîtes en croissance remontent.
+          Le classement intègre l&apos;<strong>assise réelle</strong> (catégorie PME/ETI/GE, effectifs, CA) issue des données publiques (data.gouv) : les boîtes établies remontent. Note : l&apos;open data ne donne que la dernière année de comptes (pas la croissance YoY, qui exigerait Pappers/INPI) et, pour certains grands groupes, le CA affiché est celui de l&apos;entité légale filiale.
         </p>
         <div className="mt-3 flex flex-col gap-3 border-t border-slate-200 pt-3 sm:flex-row sm:flex-wrap sm:items-center">
           <form action={sourceTargets}>
