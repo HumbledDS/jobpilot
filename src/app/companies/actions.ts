@@ -2,7 +2,13 @@
 
 import { getTargetCompanies } from "@/lib/db";
 import { ingestTargets } from "@/lib/sources/targets";
+import { enrichCompanies } from "@/lib/sources/enrich";
 import { revalidatePath } from "next/cache";
+
+export async function enrichNow() {
+  await enrichCompanies(120);
+  revalidatePath("/companies");
+}
 
 // On source en priorité les entreprises établies (vrais employeurs en interne).
 const PRIORITY_CATS = new Set([

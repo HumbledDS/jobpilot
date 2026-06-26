@@ -2,8 +2,15 @@ import { getTargetCompanies, getJobs } from "@/lib/db";
 import { hasAdmin } from "@/lib/supabase/admin";
 import { PageHeader, Card, SetupBanner, EmptyState } from "@/components/ui";
 import { companiesHiring } from "@/lib/analytics";
-import { sourceTargets } from "./actions";
+import { sourceTargets, enrichNow } from "./actions";
 import Link from "next/link";
+
+function fmtCA(v?: number | null): string | null {
+  if (v == null) return null;
+  if (Math.abs(v) >= 1e9) return `${(v / 1e9).toFixed(1)} Md€`;
+  if (Math.abs(v) >= 1e6) return `${Math.round(v / 1e6)} M€`;
+  return `${Math.round(v / 1e3)} k€`;
+}
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
@@ -18,7 +25,15 @@ export default async function CompaniesPage({
 
   const hiring = companiesHiring(
     jobs,
-    all.map((c) => ({ name: c.name, category: c.category })),
+    all.map((c) => ({
+      name: c.name,
+      category: c.category,
+      categorieEntreprise: c.categorie_entreprise,
+      caGrowth: c.ca_growth,
+      ca: c.ca,
+      effectifLabel: c.effectif_label,
+      effectifCode: c.effectif_code,
+    })),
   );
   const priority = hiring.filter(
     (h) => (h.trust === "solide" || h.trust === "ok") && h.offers >= 2,
@@ -26,6 +41,7 @@ export default async function CompaniesPage({
   const top = hiring.slice(0, 14);
 
   const directCount = jobs.filter((j) => j.from_target).length;
+  const enrichedCount = all.filter((c) => c.enriched_at).length;
 
   const TRUST_BADGE: Record<string, { label: string; cls: string } | null> = {
     solide: { label: "établie", cls: "bg-emerald-100 text-emerald-700" },
@@ -71,20 +87,30 @@ export default async function CompaniesPage({
         <p className="mt-1 text-[11px] text-amber-600">
           Méfiance avec les ESN qui publient beaucoup d&apos;offres similaires : souvent du sourcing de candidats (CV mis en vivier) plus que des postes réels. Elles sont signalées « ESN — vérifier ».
         </p>
-        <p className="mt-1 text-[11px] text-slate-400">
-          Pour ajouter le CA, la croissance et l&apos;évolution d&apos;effectifs, il faut une source externe (INSEE Sirene, gratuite) — on peut l&apos;enrichir ensuite.
+        <p className="mt-1 text-[11px] text-slate-500">
+          Le classement intègre désormais l&apos;<strong>assise réelle</strong> (taille/catégorie, CA et sa croissance) issue des données publiques (data.gouv) : grands comptes et boîtes en croissance remontent.
         </p>
-        <div className="mt-3 flex flex-wrap items-center gap-3 border-t border-slate-200 pt-3">
+        <div className="mt-3 flex flex-col gap-3 border-t border-slate-200 pt-3 sm:flex-row sm:flex-wrap sm:items-center">
           <form action={sourceTargets}>
             <button className="btn-primary" disabled={!hasAdmin()}>
-              Sourcer les offres des entreprises cibles
+              Sourcer les offres (ATS)
+            </button>
+          </form>
+          <form action={enrichNow}>
+            <button className="rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100" disabled={!hasAdmin()}>
+              Enrichir (CA / effectifs)
             </button>
           </form>
           <span className="text-xs text-slate-500">
-            Interroge directement un lot d&apos;entreprises établies (vrais postes internes), en filtrant les intermédiaires.
             {directCount > 0 && (
               <>
-                {" "}<strong className="text-slate-700">{directCount}</strong> offre(s) directe(s) déjà sourcée(s).
+                <strong className="text-slate-700">{directCount}</strong> offre(s) directe(s)
+              </>
+            )}
+            {enrichedCount > 0 && (
+              <>
+                {directCount > 0 ? " · " : ""}
+                <strong className="text-slate-700">{enrichedCount}</strong>/{all.length} enrichie(s)
               </>
             )}
           </span>
@@ -113,6 +139,14 @@ export default async function CompaniesPage({
                   <span className="text-xs text-slate-500">{h.offers} offre(s)</span>
                   {sal && <span className="text-xs font-medium text-emerald-600">{sal}</span>}
                   <span className="text-xs text-slate-400">match {h.avgScore}</span>
+                  {h.effectifLabel && (
+                    <span className="hidden text-xs text-slate-400 sm:inline">{h.effectifLabel} sal.</span>
+                  )}
+                  {h.caGrowth != null && (
+                    <span className={`rounded px-1.5 py-0.5 text-[10px] font-medium ${h.caGrowth > 0 ? "bg-emerald-100 text-emerald-700" : "bg-rose-100 text-rose-600"}`}>
+                      CA {h.caGrowth > 0 ? "+" : ""}{h.caGrowth}%
+                    </span>
+                  )}
                   {h.harvestFlag && (
                     <span className="rounded bg-amber-50 px-1.5 py-0.5 text-[10px] font-medium text-amber-600">publie en volume</span>
                   )}
@@ -154,6 +188,26 @@ export default async function CompaniesPage({
                 <div className="break-words text-sm font-semibold text-slate-800">{c.name}</div>
                 <div className="text-[11px] uppercase tracking-wide text-slate-400">{c.category}</div>
               </div>
+              {(c.categorie_entreprise || c.effectif_label || c.ca != null) && (
+                <div className="flex flex-wrap items-center gap-1.5">
+                  {c.categorie_entreprise && (
+                    <span className="rounded bg-slate-100 px-1.5 py-0.5 text-[10px] font-medium text-slate-600">{c.categorie_entreprise}</span>
+                  )}
+                  {c.effectif_label && (
+                    <span className="rounded bg-slate-100 px-1.5 py-0.5 text-[10px] text-slate-500">{c.effectif_label} sal.</span>
+                  )}
+                  {fmtCA(c.ca) && (
+                    <span className="rounded bg-slate-100 px-1.5 py-0.5 text-[10px] text-slate-500">
+                      CA {fmtCA(c.ca)}
+                      {c.ca_growth != null && (
+                        <span className={c.ca_growth > 0 ? "text-emerald-600" : "text-rose-500"}>
+                          {" "}({c.ca_growth > 0 ? "+" : ""}{c.ca_growth}%)
+                        </span>
+                      )}
+                    </span>
+                  )}
+                </div>
+              )}
               <div className="mt-auto flex gap-3 text-xs">
                 <Link href={`/jobs?q=${encodeURIComponent(c.name)}`} className="text-blue-600 underline">offres ici</Link>
                 <a href={linkedinUrl(c.name)} target="_blank" rel="noreferrer" className="text-blue-600 underline">LinkedIn</a>

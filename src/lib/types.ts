@@ -66,6 +66,21 @@ export type Company = {
   is_target: boolean;
   category: string | null;
   careers_url: string | null;
+  // Enrichissement INSEE / data.gouv
+  siren?: string | null;
+  insee_name?: string | null;
+  categorie_entreprise?: string | null; // PME / ETI / GE
+  effectif_code?: string | null;
+  effectif_label?: string | null;
+  effectif_year?: number | null;
+  naf_code?: string | null;
+  ca?: number | null;
+  ca_year?: number | null;
+  ca_prev?: number | null;
+  ca_growth?: number | null;
+  resultat_net?: number | null;
+  date_creation?: string | null;
+  enriched_at?: string | null;
 };
 
 export type Application = {

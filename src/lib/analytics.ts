@@ -81,6 +81,16 @@ function trustForCategory(cat: string | null): Trust {
   return "inconnue";
 }
 
+export type TargetMeta = {
+  name: string;
+  category: string | null;
+  categorieEntreprise?: string | null; // PME / ETI / GE
+  caGrowth?: number | null;
+  ca?: number | null;
+  effectifLabel?: string | null;
+  effectifCode?: string | null;
+};
+
 export type HiringRow = {
   company: string;
   offers: number;
@@ -92,7 +102,13 @@ export type HiringRow = {
   trust: Trust;
   harvestFlag: boolean; // ESN/inconnue qui publie beaucoup -> sourcing probable
   priority: number;
+  categorieEntreprise?: string | null;
+  caGrowth?: number | null;
+  ca?: number | null;
+  effectifLabel?: string | null;
 };
+
+const BIG_EFFECTIF = new Set(["42", "51", "52", "53"]); // >= 1000 salariés
 
 /**
  * Which companies are actively hiring (targeting signal), pondéré par la confiance.
@@ -101,7 +117,7 @@ export type HiringRow = {
  */
 export function companiesHiring(
   jobs: Job[],
-  targets: { name: string; category: string | null }[] = [],
+  targets: TargetMeta[] = [],
 ): HiringRow[] {
   const m = new Map<
     string,
@@ -121,20 +137,22 @@ export function companiesHiring(
     m.set(name, e);
   }
 
-  const findCategory = (company: string): string | null => {
+  const findTarget = (company: string): TargetMeta | null => {
     const c = company.toLowerCase();
-    const t = targets.find((x) => {
-      const n = x.name.toLowerCase();
-      return c.includes(n) || n.includes(c);
-    });
-    return t?.category ?? null;
+    return (
+      targets.find((x) => {
+        const n = x.name.toLowerCase();
+        return c.includes(n) || n.includes(c);
+      }) ?? null
+    );
   };
 
   return [...m]
     .map(([company, e]) => {
       const avgSalary = e.sal.length ? Math.round(e.sal.reduce((a, b) => a + b, 0) / e.sal.length) : null;
       const avgScore = e.scores.length ? Math.round(e.scores.reduce((a, b) => a + b, 0) / e.scores.length) : 0;
-      const category = findCategory(company);
+      const t = findTarget(company);
+      const category = t?.category ?? null;
       // Le nom prime (freelance/ESN-mission), sinon la catégorie du référentiel.
       const trust = trustForName(company) ?? trustForCategory(category);
       const harvestFlag =
@@ -149,6 +167,15 @@ export function companiesHiring(
       if (avgSalary && avgSalary >= 60000) priority += 10;
       else if (avgSalary && avgSalary >= 50000) priority += 5;
       if (harvestFlag) priority -= 15;
+      // Assise (enrichissement INSEE/data.gouv) : taille + croissance du CA
+      if (t?.categorieEntreprise === "GE") priority += 12;
+      else if (t?.categorieEntreprise === "ETI") priority += 6;
+      if (t?.effectifCode && BIG_EFFECTIF.has(t.effectifCode)) priority += 5;
+      if (t?.caGrowth != null) {
+        if (t.caGrowth >= 15) priority += 10;
+        else if (t.caGrowth > 0) priority += 5;
+        else if (t.caGrowth < 0) priority -= 8;
+      }
       return {
         company,
         offers: e.offers,
@@ -160,6 +187,10 @@ export function companiesHiring(
         trust,
         harvestFlag,
         priority,
+        categorieEntreprise: t?.categorieEntreprise ?? null,
+        caGrowth: t?.caGrowth ?? null,
+        ca: t?.ca ?? null,
+        effectifLabel: t?.effectifLabel ?? null,
       };
     })
     .sort((a, b) => b.priority - a.priority || b.offers - a.offers);
