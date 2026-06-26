@@ -25,6 +25,13 @@ export default async function MarchePage() {
   // Top suggestions : meilleures offres par score.
   const topMatches = jobs.slice(0, 5);
 
+  // Insight de tête
+  const top10 = demand.slice(0, 10);
+  const covered = top10.filter((d) => profileSkills.has(d.skill)).length;
+  const coverPct = top10.length ? Math.round((covered / top10.length) * 100) : 0;
+  const topRole = roles.find((r) => r.role !== "Autre");
+  const topGap = gaps[0]?.skill;
+
   return (
     <div>
       <PageHeader
@@ -37,6 +44,28 @@ export default async function MarchePage() {
         <EmptyState>Ingère des offres pour générer l&apos;analyse.</EmptyState>
       ) : (
         <div className="space-y-6">
+          {/* Insight de tête */}
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+            <Card className="md:col-span-2">
+              <div className="text-xs font-medium uppercase tracking-wide text-slate-400">À retenir</div>
+              <p className="mt-1 text-sm text-slate-700">
+                Tu couvres <strong>{coverPct}%</strong> des {top10.length} compétences les plus demandées.
+                {topRole && <> Le métier le plus offert : <strong>{topRole.role}</strong>{topRole.avgSalary ? ` (~${Math.round(topRole.avgSalary / 1000)}k)` : ""}.</>}
+                {topGap && <> Priorité à monter : <strong>{topGap}</strong>.</>}
+              </p>
+            </Card>
+            <Card>
+              <div className="text-xs font-medium uppercase tracking-wide text-slate-400">Couverture skills</div>
+              <div className="mt-1 text-3xl font-bold text-slate-900">{coverPct}%</div>
+              <div className="text-[11px] text-slate-400">du top 10 demandé</div>
+            </Card>
+            <Card>
+              <div className="text-xs font-medium uppercase tracking-wide text-slate-400">Salaire médian</div>
+              <div className="mt-1 text-3xl font-bold text-slate-900">{sal.median ? `${Math.round(sal.median / 1000)}k` : "—"}</div>
+              <div className="text-[11px] text-slate-400">{sal.n} offres chiffrées</div>
+            </Card>
+          </div>
+
           {/* Profil */}
           <Card>
             <div className="mb-1 text-sm font-semibold text-slate-700">Ton profil</div>

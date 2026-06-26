@@ -99,70 +99,95 @@ export default async function JobsPage({
 
       {/* Recherche & filtres */}
       <Card className="mb-4">
-        <form action="/jobs" method="get" className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          <input
-            name="q"
-            defaultValue={q}
-            placeholder="Rechercher (intitulé, entreprise)…"
-            className="input sm:col-span-2 lg:col-span-4"
-          />
-          <select name="source" defaultValue={source} className="input">
-            <option value="">Toutes les sources</option>
-            {sources.map((s) => (
-              <option key={s} value={s}>{SOURCE_LABELS[s] ?? s}</option>
-            ))}
-          </select>
-          <select name="salary" defaultValue={sp.salary ?? ""} className="input">
-            <option value="">Salaire : tous</option>
-            <option value="45000">≥ 45k</option>
-            <option value="50000">≥ 50k</option>
-            <option value="60000">≥ 60k</option>
-            <option value="70000">≥ 70k</option>
-          </select>
-          <select name="remote" defaultValue={remote} className="input">
-            <option value="">Mode : tous</option>
-            <option value="onsite">Sur site</option>
-            <option value="hybrid">Hybride</option>
-            <option value="remote">Télétravail</option>
-          </select>
-          <select name="minScore" defaultValue={sp.minScore ?? ""} className="input">
-            <option value="">Match : tous</option>
-            <option value="40">≥ 40</option>
-            <option value="55">≥ 55 (bon)</option>
-            <option value="75">≥ 75 (fort)</option>
-          </select>
-          <select name="role" defaultValue={role} className="input">
-            <option value="">Métier : tous</option>
-            {roleOptions.map((r) => (
-              <option key={r} value={r}>{r}</option>
-            ))}
-          </select>
-          <select name="sort" defaultValue={sp.sort ?? "score"} className="input">
-            <option value="score">Tri : pertinence</option>
-            <option value="fresh">Tri : fraîcheur</option>
-          </select>
-          <div className="flex items-center gap-2">
-            <button className="btn-primary">Filtrer</button>
-            {activeFilters > 0 && (
-              <Link href="/jobs" className="text-xs text-slate-500 hover:underline">
-                Réinitialiser
-              </Link>
-            )}
+        <form action="/jobs" method="get" className="flex flex-col gap-3">
+          {/* Ligne 1 : recherche proéminente + actions */}
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+            <div className="relative flex-1">
+              <svg
+                aria-hidden="true"
+                viewBox="0 0 24 24"
+                className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <circle cx="11" cy="11" r="7" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+              </svg>
+              <input
+                name="q"
+                defaultValue={q}
+                placeholder="Rechercher un intitulé ou une entreprise…"
+                className="input w-full pl-9"
+              />
+            </div>
+            <div className="flex items-center gap-2">
+              <button className="btn-primary">Filtrer</button>
+              {activeFilters > 0 && (
+                <Link
+                  href="/jobs"
+                  className="rounded-md px-3 py-2 text-xs font-medium text-slate-500 hover:bg-slate-100 hover:text-slate-700"
+                >
+                  Réinitialiser
+                </Link>
+              )}
+            </div>
+          </div>
+
+          {/* Ligne 2 : filtres groupés */}
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-5">
+            <select name="source" defaultValue={source} className="input">
+              <option value="">Toutes les sources</option>
+              {sources.map((s) => (
+                <option key={s} value={s}>{SOURCE_LABELS[s] ?? s}</option>
+              ))}
+            </select>
+            <select name="salary" defaultValue={sp.salary ?? ""} className="input">
+              <option value="">Salaire : tous</option>
+              <option value="45000">≥ 45k</option>
+              <option value="50000">≥ 50k</option>
+              <option value="60000">≥ 60k</option>
+              <option value="70000">≥ 70k</option>
+            </select>
+            <select name="remote" defaultValue={remote} className="input">
+              <option value="">Mode : tous</option>
+              <option value="onsite">Sur site</option>
+              <option value="hybrid">Hybride</option>
+              <option value="remote">Télétravail</option>
+            </select>
+            <select name="minScore" defaultValue={sp.minScore ?? ""} className="input">
+              <option value="">Match : tous</option>
+              <option value="40">≥ 40</option>
+              <option value="55">≥ 55 (bon)</option>
+              <option value="75">≥ 75 (fort)</option>
+            </select>
+            <select name="role" defaultValue={role} className="input">
+              <option value="">Métier : tous</option>
+              {roleOptions.map((r) => (
+                <option key={r} value={r}>{r}</option>
+              ))}
+            </select>
+            <select name="sort" defaultValue={sp.sort ?? "score"} className="input">
+              <option value="score">Tri : pertinence</option>
+              <option value="fresh">Tri : fraîcheur</option>
+            </select>
           </div>
         </form>
 
         {/* Recherches sauvegardées */}
         <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-slate-100 pt-3">
-          <span className="text-xs text-slate-400">Sauvegardées :</span>
+          <span className="text-xs font-medium text-slate-400">Recherches sauvegardées</span>
           {saved.length === 0 && (
-            <span className="text-xs text-slate-300">aucune</span>
+            <span className="text-xs text-slate-300">aucune pour l&apos;instant</span>
           )}
           {saved.map((s) => (
-            <span key={s.id} className="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-white px-2 py-1 text-xs">
-              <Link href={hrefFor(s.query)} className="text-slate-700 hover:underline">{s.name}</Link>
+            <span key={s.id} className="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-slate-50 py-1 pl-3 pr-1.5 text-xs">
+              <Link href={hrefFor(s.query)} className="font-medium text-slate-700 hover:text-slate-900">{s.name}</Link>
               <form action={deleteSavedSearch}>
                 <input type="hidden" name="id" value={s.id} />
-                <button className="text-rose-400 hover:text-rose-600" aria-label="Supprimer">×</button>
+                <button className="flex h-4 w-4 items-center justify-center rounded-full text-slate-400 hover:bg-rose-100 hover:text-rose-600" aria-label="Supprimer">×</button>
               </form>
             </span>
           ))}
@@ -171,8 +196,8 @@ export default async function JobsPage({
               {Object.entries(currentQuery).map(([k, v]) => (
                 <input key={k} type="hidden" name={k} value={v} />
               ))}
-              <input name="name" required placeholder="Nom de la recherche" className="rounded border border-slate-200 px-2 py-1 text-xs" />
-              <button className="rounded bg-slate-800 px-2 py-1 text-xs text-white">Sauvegarder</button>
+              <input name="name" required placeholder="Nom de la recherche" className="rounded-md border border-slate-200 px-2 py-1.5 text-xs focus:border-slate-400 focus:outline-none" />
+              <button className="rounded-md bg-slate-800 px-3 py-1.5 text-xs font-medium text-white hover:bg-slate-700">Sauvegarder</button>
             </form>
           )}
         </div>
@@ -203,63 +228,79 @@ export default async function JobsPage({
             : "Aucune offre. Clique sur « Ingérer » pour récupérer les offres."}
         </EmptyState>
       ) : (
-        <div className="space-y-2">
+        <div className="space-y-2.5">
           {jobs.map((j) => {
             const sal = fmtSalary(j.salary_min, j.salary_max);
             const sl = scoreLabel(j.match_score);
+            const isTop = (j.match_score ?? 0) >= 75;
             return (
-              <Card key={j.id} className="p-4">
-                <div className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
-                  <div className="min-w-0">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <span
-                        className={`rounded border px-1.5 py-0.5 text-[11px] font-bold ${sl.cls}`}
-                        title="Score de matching avec ton profil"
-                      >
-                        {j.match_score ?? "—"} · {sl.label}
-                      </span>
-                      <Freshness postedAt={j.posted_at} />
-                      <Link href={`/jobs/${j.id}`} className="break-words text-sm font-semibold text-slate-800 hover:underline">
-                        {j.title}
-                      </Link>
-                      <span className="rounded bg-slate-100 px-1.5 py-0.5 text-[10px] uppercase text-slate-500">
-                        {SOURCE_LABELS[j.source] ?? j.source}
-                      </span>
-                    </div>
-                    <div className="mt-1 flex flex-wrap gap-x-3 gap-y-0.5 text-xs text-slate-500">
-                      {j.company_name && <span className="font-medium text-slate-600">{j.company_name}</span>}
-                      {j.location && <span>{j.location}</span>}
-                      {j.role_family && j.role_family !== "Autre" && <span>{j.role_family}</span>}
-                      {sal && <span className="font-medium text-emerald-600">{sal}</span>}
-                      <span className="text-slate-400">publiée {timeAgo(j.posted_at)}</span>
-                    </div>
-                    {(j.matched_skills?.length || j.missing_skills?.length) ? (
-                      <div className="mt-2 flex flex-wrap gap-1">
-                        {(j.matched_skills ?? []).map((s) => (
-                          <span key={s} className="rounded bg-emerald-50 px-1.5 py-0.5 text-[11px] text-emerald-700">
-                            {s}
-                          </span>
-                        ))}
-                        {(j.missing_skills ?? []).map((s) => (
-                          <span key={s} className="rounded bg-slate-100 px-1.5 py-0.5 text-[11px] text-slate-500" title="Compétence demandée que tu n'as pas listée">
-                            +{s}
-                          </span>
-                        ))}
-                      </div>
-                    ) : null}
+              <Card
+                key={j.id}
+                className={`p-4 transition-colors hover:border-slate-300 ${
+                  isTop ? "border-emerald-200 bg-emerald-50/30" : ""
+                }`}
+              >
+                <div className="flex gap-3">
+                  {/* Pastille de score */}
+                  <div
+                    className={`flex h-12 w-12 shrink-0 flex-col items-center justify-center rounded-lg border text-center font-bold ${sl.cls}`}
+                    title="Score de matching avec ton profil"
+                  >
+                    <span className="text-base leading-none">{j.match_score ?? "—"}</span>
+                    <span className="mt-0.5 text-[9px] font-semibold uppercase leading-none opacity-80">{sl.label}</span>
                   </div>
-                  <div className="flex shrink-0 flex-wrap items-center gap-2 border-t border-slate-100 pt-2 md:border-0 md:pt-0">
-                    <form action={applyToJob}>
-                      <input type="hidden" name="id" value={j.id} />
-                      <button className="rounded bg-slate-800 px-3 py-1.5 text-xs text-white">Candidater</button>
-                    </form>
-                    {j.url && (
-                      <a href={j.url} target="_blank" rel="noreferrer" className="rounded px-3 py-1.5 text-xs text-blue-600 underline">Voir</a>
-                    )}
-                    <form action={deleteJob} className="ml-auto md:ml-0">
-                      <input type="hidden" name="id" value={j.id} />
-                      <button className="rounded px-3 py-1.5 text-xs text-rose-500 hover:bg-rose-50" aria-label="Supprimer">×</button>
-                    </form>
+
+                  <div className="flex min-w-0 flex-1 flex-col gap-2 md:flex-row md:items-start md:justify-between">
+                    <div className="min-w-0">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <Link href={`/jobs/${j.id}`} className="break-words text-sm font-semibold text-slate-800 hover:text-slate-950 hover:underline">
+                          {j.title}
+                        </Link>
+                        {isTop && (
+                          <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-emerald-700">
+                            Top match
+                          </span>
+                        )}
+                        <Freshness postedAt={j.posted_at} />
+                        <span className="rounded bg-slate-100 px-1.5 py-0.5 text-[10px] uppercase text-slate-500">
+                          {SOURCE_LABELS[j.source] ?? j.source}
+                        </span>
+                      </div>
+                      <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-xs text-slate-500">
+                        {j.company_name && <span className="font-semibold text-slate-700">{j.company_name}</span>}
+                        {j.location && <span>{j.location}</span>}
+                        {j.role_family && j.role_family !== "Autre" && <span>{j.role_family}</span>}
+                        {sal && <span className="font-semibold text-emerald-600">{sal}</span>}
+                        <span className="text-slate-400">publiée {timeAgo(j.posted_at)}</span>
+                      </div>
+                      {(j.matched_skills?.length || j.missing_skills?.length) ? (
+                        <div className="mt-2 flex flex-wrap gap-1">
+                          {(j.matched_skills ?? []).map((s) => (
+                            <span key={s} className="rounded bg-emerald-50 px-1.5 py-0.5 text-[11px] font-medium text-emerald-700" title="Compétence que tu maîtrises">
+                              {s}
+                            </span>
+                          ))}
+                          {(j.missing_skills ?? []).map((s) => (
+                            <span key={s} className="rounded border border-dashed border-slate-200 bg-slate-50 px-1.5 py-0.5 text-[11px] text-slate-400" title="Compétence demandée que tu n'as pas listée">
+                              +{s}
+                            </span>
+                          ))}
+                        </div>
+                      ) : null}
+                    </div>
+                    <div className="flex shrink-0 flex-wrap items-center gap-2 border-t border-slate-100 pt-2 md:border-0 md:pt-0">
+                      <form action={applyToJob}>
+                        <input type="hidden" name="id" value={j.id} />
+                        <button className="rounded-md bg-slate-800 px-3 py-1.5 text-xs font-medium text-white hover:bg-slate-700">Candidater</button>
+                      </form>
+                      {j.url && (
+                        <a href={j.url} target="_blank" rel="noreferrer" className="rounded-md border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-50">Voir</a>
+                      )}
+                      <form action={deleteJob} className="ml-auto md:ml-0">
+                        <input type="hidden" name="id" value={j.id} />
+                        <button className="rounded-md px-2.5 py-1.5 text-xs text-rose-500 hover:bg-rose-50" aria-label="Supprimer">×</button>
+                      </form>
+                    </div>
                   </div>
                 </div>
               </Card>
