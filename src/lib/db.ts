@@ -127,6 +127,22 @@ export type Profile = {
   seniority: string | null;
 };
 
+export type SavedSearch = {
+  id: string;
+  name: string;
+  query: Record<string, string>;
+};
+
+export async function getSavedSearches(): Promise<SavedSearch[]> {
+  const db = getAdmin();
+  if (!db) return [];
+  const { data } = await db
+    .from("jp_saved_searches")
+    .select("id, name, query")
+    .order("created_at", { ascending: false });
+  return (data as SavedSearch[]) ?? [];
+}
+
 export async function getProfile(): Promise<Profile | null> {
   const db = getAdmin();
   if (!db) return null;

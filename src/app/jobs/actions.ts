@@ -46,6 +46,31 @@ export async function deleteJob(formData: FormData) {
   revalidatePath("/jobs");
 }
 
+const FILTER_KEYS = ["q", "source", "sort", "salary", "remote", "minScore", "role"];
+
+export async function saveSearch(formData: FormData) {
+  const db = getAdmin();
+  if (!db) return;
+  const name = str(formData, "name");
+  if (!name) return;
+  const query: Record<string, string> = {};
+  for (const k of FILTER_KEYS) {
+    const v = str(formData, k);
+    if (v) query[k] = v;
+  }
+  await db.from("jp_saved_searches").insert({ name, query });
+  revalidatePath("/jobs");
+}
+
+export async function deleteSavedSearch(formData: FormData) {
+  const db = getAdmin();
+  if (!db) return;
+  const id = str(formData, "id");
+  if (!id) return;
+  await db.from("jp_saved_searches").delete().eq("id", id);
+  revalidatePath("/jobs");
+}
+
 export async function applyToJob(formData: FormData) {
   const db = getAdmin();
   if (!db) return;

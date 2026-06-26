@@ -1,4 +1,4 @@
-import { getJobs } from "@/lib/db";
+import { getJobs, getSavedSearches } from "@/lib/db";
 import { hasAdmin } from "@/lib/supabase/admin";
 import {
   PageHeader,
@@ -11,70 +11,172 @@ import {
   timeAgo,
 } from "@/components/ui";
 import { scoreLabel } from "@/lib/scoring";
-import { createJob, deleteJob, applyToJob, ingestNow } from "./actions";
+import {
+  createJob,
+  deleteJob,
+  applyToJob,
+  ingestNow,
+  saveSearch,
+  deleteSavedSearch,
+} from "./actions";
 import Link from "next/link";
 
 export const dynamic = "force-dynamic";
 
+type SP = {
+  q?: string;
+  source?: string;
+  sort?: string;
+  salary?: string;
+  remote?: string;
+  minScore?: string;
+  role?: string;
+};
+
+function hrefFor(query: Record<string, string>) {
+  const p = new URLSearchParams(query);
+  const s = p.toString();
+  return s ? `/jobs?${s}` : "/jobs";
+}
+
 export default async function JobsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ source?: string; sort?: string }>;
+  searchParams: Promise<SP>;
 }) {
-  const { source, sort } = await searchParams;
-  const sortMode = sort === "fresh" ? "fresh" : "score";
-  const all = await getJobs(sortMode);
+  const sp = await searchParams;
+  const q = (sp.q ?? "").trim();
+  const source = sp.source ?? "";
+  const sortMode = sp.sort === "fresh" ? "fresh" : "score";
+  const salary = sp.salary ? Number(sp.salary) : 0;
+  const remote = sp.remote ?? "";
+  const minScore = sp.minScore ? Number(sp.minScore) : 0;
+  const role = sp.role ?? "";
 
-  const bySource = all.reduce<Record<string, number>>((acc, j) => {
-    acc[j.source] = (acc[j.source] ?? 0) + 1;
-    return acc;
-  }, {});
-  const jobs = source ? all.filter((j) => j.source === source) : all;
+  const all = await getJobs(sortMode);
+  const saved = await getSavedSearches();
+
+  const sources = [...new Set(all.map((j) => j.source))];
+  const roleOptions = [
+    ...new Set(
+      all.map((j) => j.role_family).filter((r): r is string => !!r && r !== "Autre"),
+    ),
+  ].sort();
+
+  const jobs = all.filter((j) => {
+    if (q && !`${j.title} ${j.company_name ?? ""}`.toLowerCase().includes(q.toLowerCase()))
+      return false;
+    if (source && j.source !== source) return false;
+    if (salary && (j.salary_max ?? j.salary_min ?? 0) < salary) return false;
+    if (minScore && (j.match_score ?? 0) < minScore) return false;
+    if (role && j.role_family !== role) return false;
+    if (remote) {
+      const blob = `${j.remote ?? ""} ${j.location ?? ""} ${j.title}`.toLowerCase();
+      if (remote === "remote") {
+        if (!/remote|t[ée]l[ée]travail|distanciel/.test(blob)) return false;
+      } else if (j.remote !== remote) return false;
+    }
+    return true;
+  });
+
+  const activeFilters = [q, source, salary, remote, minScore, role].filter(Boolean).length;
+  const currentQuery: Record<string, string> = {};
+  for (const [k, v] of Object.entries({ q, source, sort: sp.sort ?? "", salary: sp.salary ?? "", remote, minScore: sp.minScore ?? "", role }))
+    if (v) currentQuery[k] = String(v);
 
   return (
     <div>
       <PageHeader
         title="Offres"
-        subtitle={`${all.length} offres ciblées — classées par pertinence avec ton profil (data/cloud/IA · IDF · hors alternance/stage)`}
+        subtitle={`${jobs.length} offre(s)${activeFilters ? ` filtrée(s) sur ${all.length}` : " ciblées, classées par pertinence"}`}
         action={
           <form action={ingestNow}>
-            <button className="btn-primary">Ingérer (APEC + France Travail)</button>
+            <button className="btn-primary">Ingérer (3 sources)</button>
           </form>
         }
       />
       {!hasAdmin() && <SetupBanner />}
 
-      <div className="mb-4 flex flex-wrap items-center gap-2">
-        <span className="text-xs text-slate-400">Trier :</span>
-        <Link
-          href={`/jobs${source ? `?source=${source}` : ""}`}
-          className={`rounded-full border px-3 py-1 text-xs font-medium ${sortMode === "score" ? "border-slate-900 bg-slate-900 text-white" : "border-slate-200 bg-white text-slate-600"}`}
-        >
-          Pertinence
-        </Link>
-        <Link
-          href={`/jobs?sort=fresh${source ? `&source=${source}` : ""}`}
-          className={`rounded-full border px-3 py-1 text-xs font-medium ${sortMode === "fresh" ? "border-slate-900 bg-slate-900 text-white" : "border-slate-200 bg-white text-slate-600"}`}
-        >
-          Fraîcheur
-        </Link>
-        <span className="mx-2 text-slate-300">|</span>
-        <Link
-          href={`/jobs${sortMode === "fresh" ? "?sort=fresh" : ""}`}
-          className={`rounded-full border px-3 py-1 text-xs font-medium ${!source ? "border-slate-900 bg-slate-900 text-white" : "border-slate-200 bg-white text-slate-600"}`}
-        >
-          Toutes ({all.length})
-        </Link>
-        {Object.entries(bySource).map(([s, n]) => (
-          <Link
-            key={s}
-            href={`/jobs?source=${s}${sortMode === "fresh" ? "&sort=fresh" : ""}`}
-            className={`rounded-full border px-3 py-1 text-xs font-medium ${source === s ? "border-slate-900 bg-slate-900 text-white" : "border-slate-200 bg-white text-slate-600"}`}
-          >
-            {SOURCE_LABELS[s] ?? s} ({n})
-          </Link>
-        ))}
-      </div>
+      {/* Recherche & filtres */}
+      <Card className="mb-4">
+        <form action="/jobs" method="get" className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <input
+            name="q"
+            defaultValue={q}
+            placeholder="Rechercher (intitulé, entreprise)…"
+            className="input sm:col-span-2 lg:col-span-4"
+          />
+          <select name="source" defaultValue={source} className="input">
+            <option value="">Toutes les sources</option>
+            {sources.map((s) => (
+              <option key={s} value={s}>{SOURCE_LABELS[s] ?? s}</option>
+            ))}
+          </select>
+          <select name="salary" defaultValue={sp.salary ?? ""} className="input">
+            <option value="">Salaire : tous</option>
+            <option value="45000">≥ 45k</option>
+            <option value="50000">≥ 50k</option>
+            <option value="60000">≥ 60k</option>
+            <option value="70000">≥ 70k</option>
+          </select>
+          <select name="remote" defaultValue={remote} className="input">
+            <option value="">Mode : tous</option>
+            <option value="onsite">Sur site</option>
+            <option value="hybrid">Hybride</option>
+            <option value="remote">Télétravail</option>
+          </select>
+          <select name="minScore" defaultValue={sp.minScore ?? ""} className="input">
+            <option value="">Match : tous</option>
+            <option value="40">≥ 40</option>
+            <option value="55">≥ 55 (bon)</option>
+            <option value="75">≥ 75 (fort)</option>
+          </select>
+          <select name="role" defaultValue={role} className="input">
+            <option value="">Métier : tous</option>
+            {roleOptions.map((r) => (
+              <option key={r} value={r}>{r}</option>
+            ))}
+          </select>
+          <select name="sort" defaultValue={sp.sort ?? "score"} className="input">
+            <option value="score">Tri : pertinence</option>
+            <option value="fresh">Tri : fraîcheur</option>
+          </select>
+          <div className="flex items-center gap-2">
+            <button className="btn-primary">Filtrer</button>
+            {activeFilters > 0 && (
+              <Link href="/jobs" className="text-xs text-slate-500 hover:underline">
+                Réinitialiser
+              </Link>
+            )}
+          </div>
+        </form>
+
+        {/* Recherches sauvegardées */}
+        <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-slate-100 pt-3">
+          <span className="text-xs text-slate-400">Sauvegardées :</span>
+          {saved.length === 0 && (
+            <span className="text-xs text-slate-300">aucune</span>
+          )}
+          {saved.map((s) => (
+            <span key={s.id} className="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-white px-2 py-1 text-xs">
+              <Link href={hrefFor(s.query)} className="text-slate-700 hover:underline">{s.name}</Link>
+              <form action={deleteSavedSearch}>
+                <input type="hidden" name="id" value={s.id} />
+                <button className="text-rose-400 hover:text-rose-600" aria-label="Supprimer">×</button>
+              </form>
+            </span>
+          ))}
+          {activeFilters > 0 && (
+            <form action={saveSearch} className="ml-auto flex items-center gap-1">
+              {Object.entries(currentQuery).map(([k, v]) => (
+                <input key={k} type="hidden" name={k} value={v} />
+              ))}
+              <input name="name" required placeholder="Nom de la recherche" className="rounded border border-slate-200 px-2 py-1 text-xs" />
+              <button className="rounded bg-slate-800 px-2 py-1 text-xs text-white">Sauvegarder</button>
+            </form>
+          )}
+        </div>
+      </Card>
 
       <Card className="mb-6">
         <div className="mb-3 text-sm font-semibold text-slate-700">+ Ajouter une offre</div>
@@ -96,7 +198,9 @@ export default async function JobsPage({
 
       {jobs.length === 0 ? (
         <EmptyState>
-          Aucune offre. Clique sur « Ingérer » pour récupérer les offres.
+          {activeFilters
+            ? "Aucune offre ne correspond à ces filtres."
+            : "Aucune offre. Clique sur « Ingérer » pour récupérer les offres."}
         </EmptyState>
       ) : (
         <div className="space-y-2">
