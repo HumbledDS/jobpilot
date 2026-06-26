@@ -1,6 +1,20 @@
-import { getApplications, getJobs, getContacts, getSkillProjects } from "@/lib/db";
+import {
+  getApplications,
+  getJobs,
+  getContacts,
+  getSkillProjects,
+  getRecentIngestRuns,
+} from "@/lib/db";
 import { hasAdmin } from "@/lib/supabase/admin";
-import { PageHeader, StatCard, Card, SetupBanner, EmptyState } from "@/components/ui";
+import {
+  PageHeader,
+  StatCard,
+  Card,
+  SetupBanner,
+  EmptyState,
+  SOURCE_LABELS,
+  timeAgo,
+} from "@/components/ui";
 import {
   APPLICATION_STATUSES,
   STATUS_LABELS,
@@ -12,12 +26,18 @@ import Link from "next/link";
 export const dynamic = "force-dynamic";
 
 export default async function DashboardPage() {
-  const [apps, jobs, contacts, projects] = await Promise.all([
+  const [apps, jobs, contacts, projects, ingestRuns] = await Promise.all([
     getApplications(),
     getJobs(),
     getContacts(),
     getSkillProjects(),
+    getRecentIngestRuns(),
   ]);
+
+  const ALL_SOURCES = ["apec", "france_travail", "adzuna", "manual"];
+  const jobsBySource = (s: string) => jobs.filter((j) => j.source === s).length;
+  const lastRun = (s: string) =>
+    ingestRuns.find((r) => r.source === s && r.finished_at)?.finished_at ?? null;
 
   const byStatus = (s: ApplicationStatus) =>
     apps.filter((a) => a.status === s).length;
@@ -122,6 +142,36 @@ export default async function DashboardPage() {
           )}
         </Card>
       </div>
+
+      <Card className="mt-6">
+        <div className="mb-4 flex items-center justify-between">
+          <div className="text-sm font-semibold text-slate-700">
+            Sources d&apos;offres
+          </div>
+          <div className="text-xs text-slate-400">{jobs.length} offres au total</div>
+        </div>
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+          {ALL_SOURCES.map((s) => {
+            const n = jobsBySource(s);
+            const last = lastRun(s);
+            return (
+              <div key={s} className="rounded-lg border border-slate-200 p-3">
+                <div className="text-xs font-medium uppercase tracking-wide text-slate-400">
+                  {SOURCE_LABELS[s] ?? s}
+                </div>
+                <div className="mt-1 text-2xl font-bold text-slate-900">{n}</div>
+                <div className="mt-1 text-[11px] text-slate-400">
+                  {s === "manual"
+                    ? "saisie manuelle"
+                    : last
+                      ? `ingéré ${timeAgo(last)}`
+                      : "jamais ingéré"}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </Card>
 
       <div className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-4">
         <StatCard label="Offres en base" value={jobs.length} />

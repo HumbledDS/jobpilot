@@ -3,7 +3,7 @@
 ## Vue d'ensemble
 ```
                 ┌──────────────────────┐
- France Travail │  Vercel Cron (daily) │  ← ingestion planifiée
+ France Travail │  Vercel Cron (daily) │  <- ingestion planifiée
    Adzuna API ─▶│  /api/ingest         │
                 └─────────┬────────────┘
                           │ upsert

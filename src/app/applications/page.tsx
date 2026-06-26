@@ -121,7 +121,7 @@ export default async function ApplicationsPage() {
                       <form action={deleteApplication}>
                         <input type="hidden" name="id" value={a.id} />
                         <button className="rounded px-2 py-1 text-xs text-rose-500 hover:bg-rose-50">
-                          ✕
+                          ×
                         </button>
                       </form>
                     </div>

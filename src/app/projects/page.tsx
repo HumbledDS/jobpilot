@@ -23,6 +23,8 @@ export default async function ProjectsPage() {
   const done = projects.filter(
     (p) => p.status === "deployed" || p.status === "done",
   ).length;
+  const inProgress = projects.filter((p) => p.status === "in_progress").length;
+  const pct = projects.length ? Math.round((done / projects.length) * 100) : 0;
 
   return (
     <div>
@@ -31,6 +33,18 @@ export default async function ProjectsPage() {
         subtitle={`Montée en compétence — ${done}/${projects.length} aboutis · objectif : prouver le titre FDE / Cloud / Architect`}
       />
       {!hasAdmin() && <SetupBanner />}
+
+      <Card className="mb-6">
+        <div className="mb-2 flex items-center justify-between text-sm">
+          <span className="font-semibold text-slate-700">Progression</span>
+          <span className="text-slate-500">
+            {done} aboutis · {inProgress} en cours · {projects.length} au total ({pct}%)
+          </span>
+        </div>
+        <div className="h-3 w-full overflow-hidden rounded bg-slate-100">
+          <div className="h-full rounded bg-emerald-500" style={{ width: `${pct}%` }} />
+        </div>
+      </Card>
 
       {projects.length === 0 ? (
         <EmptyState>Aucun projet (le seed n&apos;a pas tourné).</EmptyState>

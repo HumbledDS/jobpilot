@@ -1,4 +1,4 @@
-# JobPilot 🛫 — Career Control Center
+# JobPilot — Career Control Center
 
 **JobPilot** is a personal control center to run a modern tech job search end-to-end:
 ingest job offers from legal APIs, track applications through a pipeline, manage
@@ -17,13 +17,13 @@ skill-up tracker to grow toward Forward Deployed / Cloud Architect roles.
 ## Core modules
 | Module | What it does |
 |---|---|
-| 📥 Offers ingestion | Pull data/cloud/AI offers (IDF, ≥ 50 k€) from France Travail & Adzuna into Postgres |
-| 🔎 Jobs board | Browse / search / filter ingested offers, save searches |
-| 🗂️ Applications (Kanban) | À postuler → Postulé → Relance → Entretien → Offre / Refus |
-| 👤 Contacts | Recruiters & interlocutors per company / application |
-| 🧾 Documents | Version CVs & cover letters, link the right version to each application |
-| 📊 Dashboard | Funnel, response rate, per-source stats, weekly cadence |
-| 🚀 Skill-up | Track the 10 end-to-end projects (repo + live URL + status) |
+| Offers ingestion | Pull data/cloud/AI offers (IDF, ≥ 50 k€) from France Travail & Adzuna into Postgres |
+| Jobs board | Browse / search / filter ingested offers, save searches |
+| Applications (Kanban) | À postuler -> Postulé -> Relance -> Entretien -> Offre / Refus |
+| Contacts | Recruiters & interlocutors per company / application |
+| Documents | Version CVs & cover letters, link the right version to each application |
+| Dashboard | Funnel, response rate, per-source stats, weekly cadence |
+| Skill-up | Track the 10 end-to-end projects (repo + live URL + status) |
 
 ## Getting started
 ```bash

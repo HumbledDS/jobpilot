@@ -62,7 +62,7 @@ export default async function DocumentsPage() {
                     <form action={deleteCvVersion}>
                       <input type="hidden" name="id" value={cv.id} />
                       <button className="rounded px-2 py-1 text-xs text-rose-500 hover:bg-rose-50">
-                        ✕
+                        ×
                       </button>
                     </form>
                   </div>
@@ -99,7 +99,7 @@ export default async function DocumentsPage() {
                     <form action={deleteCoverLetter}>
                       <input type="hidden" name="id" value={l.id} />
                       <button className="rounded px-2 py-1 text-xs text-rose-500 hover:bg-rose-50">
-                        ✕
+                        ×
                       </button>
                     </form>
                   </div>

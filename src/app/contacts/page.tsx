@@ -50,7 +50,7 @@ export default async function ContactsPage() {
                 <form action={deleteContact}>
                   <input type="hidden" name="id" value={c.id} />
                   <button className="rounded px-2 py-1 text-xs text-rose-500 hover:bg-rose-50">
-                    ✕
+                    ×
                   </button>
                 </form>
               </div>

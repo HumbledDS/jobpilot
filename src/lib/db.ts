@@ -29,9 +29,29 @@ export async function getJobs(): Promise<Job[]> {
   const { data } = await db
     .from("jp_jobs")
     .select("*")
+    .order("posted_at", { ascending: false, nullsFirst: false })
     .order("ingested_at", { ascending: false })
-    .limit(200);
+    .limit(300);
   return (data as Job[]) ?? [];
+}
+
+export type IngestRun = {
+  source: string;
+  finished_at: string | null;
+  found: number | null;
+  inserted: number | null;
+  ok: boolean | null;
+};
+
+export async function getRecentIngestRuns(): Promise<IngestRun[]> {
+  const db = getAdmin();
+  if (!db) return [];
+  const { data } = await db
+    .from("jp_ingest_runs")
+    .select("source, finished_at, found, inserted, ok")
+    .order("started_at", { ascending: false })
+    .limit(30);
+  return (data as IngestRun[]) ?? [];
 }
 
 export async function getCompanies(): Promise<Company[]> {
