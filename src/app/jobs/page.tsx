@@ -261,6 +261,11 @@ export default async function JobsPage({
                             Top match
                           </span>
                         )}
+                        {j.from_target && (
+                          <span className="rounded-full bg-blue-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-blue-700" title={`Offre émise directement par ${j.source_company ?? "une entreprise cible"}`}>
+                            Directe
+                          </span>
+                        )}
                         <Freshness postedAt={j.posted_at} />
                         <span className="rounded bg-slate-100 px-1.5 py-0.5 text-[10px] uppercase text-slate-500">
                           {SOURCE_LABELS[j.source] ?? j.source}

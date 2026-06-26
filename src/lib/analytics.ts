@@ -56,9 +56,22 @@ export function salaryStats(jobs: Job[]): {
 // Agrégateurs / job boards qui apparaissent comme "entreprise" mais ne sont pas l'employeur réel.
 const AGGREGATORS = /hellowork|meteojob|talents handicap|direct emploi|jobijoba|regionsjob|cadremploi|indeed|jobteaser|figaro|keljob/i;
 
-export type Trust = "solide" | "ok" | "esn" | "inconnue";
+export type Trust = "solide" | "ok" | "esn" | "freelance" | "inconnue";
 const SOLID_CATS = new Set(["Big Tech", "Produit/Scale-up", "Grand compte", "Éditeur", "Data/IA"]);
 const OK_CATS = new Set(["Conseil", "Cloud/DevOps"]);
+
+// Plateformes de freelancing : on ne connaît pas le vrai donneur d'ordre derrière l'offre.
+const FREELANCE_PLATFORMS =
+  /collective\.?work|\bmalt\b|\bcomet\b|cr[eè]me de la cr[eè]me|freelance\.com|\bfiverr\b|\bupwork\b|\bcrme\b|beager|404\s*works/i;
+// ESN qui recrutent sur mission (pas d'emploi interne) : postes "vivier", marge sur le candidat.
+const MISSION_ESN =
+  /\bjems\b|soma\s*group|soma\b|datatorii|valoway|pme\s*job|pmejob|\besn\b|infotel|akka|alten|expleo|mindquest|free-?work|consulting group|talan|astek|sopra|capgemini|inetum|devoteam|umanis|micropole|keyrus|hardis|sqli/i;
+
+function trustForName(name: string): Trust | null {
+  if (FREELANCE_PLATFORMS.test(name)) return "freelance";
+  if (MISSION_ESN.test(name)) return "esn";
+  return null;
+}
 
 function trustForCategory(cat: string | null): Trust {
   if (!cat) return "inconnue";
@@ -122,10 +135,17 @@ export function companiesHiring(
       const avgSalary = e.sal.length ? Math.round(e.sal.reduce((a, b) => a + b, 0) / e.sal.length) : null;
       const avgScore = e.scores.length ? Math.round(e.scores.reduce((a, b) => a + b, 0) / e.scores.length) : 0;
       const category = findCategory(company);
-      const trust = trustForCategory(category);
-      const harvestFlag = (trust === "esn" || trust === "inconnue") && e.offers >= 4;
+      // Le nom prime (freelance/ESN-mission), sinon la catégorie du référentiel.
+      const trust = trustForName(company) ?? trustForCategory(category);
+      const harvestFlag =
+        (trust === "esn" || trust === "freelance" || trust === "inconnue") && e.offers >= 4;
       let priority = avgScore;
-      priority += trust === "solide" ? 25 : trust === "ok" ? 10 : trust === "esn" ? -10 : -5;
+      priority +=
+        trust === "solide" ? 25
+        : trust === "ok" ? 10
+        : trust === "esn" ? -25
+        : trust === "freelance" ? -40
+        : -5;
       if (avgSalary && avgSalary >= 60000) priority += 10;
       else if (avgSalary && avgSalary >= 50000) priority += 5;
       if (harvestFlag) priority -= 15;

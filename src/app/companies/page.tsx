@@ -2,9 +2,11 @@ import { getTargetCompanies, getJobs } from "@/lib/db";
 import { hasAdmin } from "@/lib/supabase/admin";
 import { PageHeader, Card, SetupBanner, EmptyState } from "@/components/ui";
 import { companiesHiring } from "@/lib/analytics";
+import { sourceTargets } from "./actions";
 import Link from "next/link";
 
 export const dynamic = "force-dynamic";
+export const maxDuration = 60;
 
 export default async function CompaniesPage({
   searchParams,
@@ -23,10 +25,13 @@ export default async function CompaniesPage({
   );
   const top = hiring.slice(0, 14);
 
+  const directCount = jobs.filter((j) => j.from_target).length;
+
   const TRUST_BADGE: Record<string, { label: string; cls: string } | null> = {
     solide: { label: "établie", cls: "bg-emerald-100 text-emerald-700" },
     ok: { label: "référencée", cls: "bg-blue-100 text-blue-700" },
-    esn: { label: "ESN — vérifier", cls: "bg-amber-100 text-amber-700" },
+    esn: { label: "ESN mission — déprioritisée", cls: "bg-amber-100 text-amber-700" },
+    freelance: { label: "plateforme freelance", cls: "bg-purple-100 text-purple-700" },
     inconnue: null,
   };
 
@@ -67,6 +72,21 @@ export default async function CompaniesPage({
         <p className="mt-1 text-[11px] text-slate-400">
           Pour ajouter le CA, la croissance et l&apos;évolution d&apos;effectifs, il faut une source externe (INSEE Sirene, gratuite) — on peut l&apos;enrichir ensuite.
         </p>
+        <div className="mt-3 flex flex-wrap items-center gap-3 border-t border-slate-200 pt-3">
+          <form action={sourceTargets}>
+            <button className="btn-primary" disabled={!hasAdmin()}>
+              Sourcer les offres des entreprises cibles
+            </button>
+          </form>
+          <span className="text-xs text-slate-500">
+            Interroge directement un lot d&apos;entreprises établies (vrais postes internes), en filtrant les intermédiaires.
+            {directCount > 0 && (
+              <>
+                {" "}<strong className="text-slate-700">{directCount}</strong> offre(s) directe(s) déjà sourcée(s).
+              </>
+            )}
+          </span>
+        </div>
       </Card>
 
       {top.length > 0 && (

@@ -51,6 +51,8 @@ export type Job = {
   matched_skills: string[] | null;
   missing_skills: string[] | null;
   role_family: string | null;
+  from_target?: boolean | null;
+  source_company?: string | null;
 };
 
 export type Company = {
