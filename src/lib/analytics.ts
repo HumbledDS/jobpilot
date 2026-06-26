@@ -53,6 +53,9 @@ export function salaryStats(jobs: Job[]): {
   };
 }
 
+// Agrégateurs / job boards qui apparaissent comme "entreprise" mais ne sont pas l'employeur réel.
+const AGGREGATORS = /hellowork|meteojob|talents handicap|direct emploi|jobijoba|regionsjob|cadremploi|indeed|jobteaser|figaro|keljob/i;
+
 /** Which companies are actively hiring (from ingested offers) — the targeting signal. */
 export function companiesHiring(jobs: Job[]) {
   const m = new Map<
@@ -61,7 +64,7 @@ export function companiesHiring(jobs: Job[]) {
   >();
   for (const j of jobs) {
     const name = (j.company_name ?? "").trim();
-    if (!name) continue;
+    if (!name || AGGREGATORS.test(name)) continue;
     const e = m.get(name) ?? { offers: 0, sal: [], scores: [], roles: {}, latest: null };
     e.offers++;
     const top = j.salary_max ?? j.salary_min;
