@@ -61,7 +61,8 @@ export async function enrichCompanies(cap = 400): Promise<EnrichResult> {
   let matched = 0;
   const list = companies ?? [];
 
-  await chunk(list, 6, async (c) => {
+  // Concurrence faible : l'API plafonne ~7 req/s ; on évite les 429.
+  await chunk(list, 2, async (c) => {
     try {
       const res = await fetch(
         `https://recherche-entreprises.api.gouv.fr/search?q=${encodeURIComponent(
@@ -69,8 +70,10 @@ export async function enrichCompanies(cap = 400): Promise<EnrichResult> {
         )}&page=1&per_page=1&etat_administratif=A`,
         { cache: "no-store" },
       );
+      // 429 / erreur : on NE tamponne PAS -> la ligne sera réessayée au prochain passage.
+      if (!res.ok) return;
       const update: Record<string, unknown> = { enriched_at: new Date().toISOString() };
-      if (res.ok) {
+      {
         const data = (await res.json()) as { results?: ApiCompany[] };
         const r = (data.results ?? [])[0];
         if (r) {
