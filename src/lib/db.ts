@@ -197,3 +197,29 @@ export async function getSkillProjects(): Promise<SkillProject[]> {
     .order("order_index", { ascending: true });
   return (data as SkillProject[]) ?? [];
 }
+
+export type CoachTask = {
+  id: string;
+  key: string;
+  label: string;
+  category: string | null;
+  cadence: "daily" | "weekly" | "once";
+  rationale: string | null;
+  status: "todo" | "done";
+  due_date: string | null;
+  created_at: string;
+  done_at: string | null;
+};
+
+/** Tâches du coach : todos custom + complétions récentes (pour le suivi/contexte). */
+export async function getCoachTasks(): Promise<CoachTask[]> {
+  const db = getAdmin();
+  if (!db) return [];
+  const since = new Date(Date.now() - 9 * 86400000).toISOString();
+  const { data } = await db
+    .from("jp_coach_tasks")
+    .select("*")
+    .or(`status.eq.todo,done_at.gte.${since}`)
+    .order("created_at", { ascending: false });
+  return (data as CoachTask[]) ?? [];
+}

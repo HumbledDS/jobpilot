@@ -56,8 +56,40 @@ export function salaryStats(jobs: Job[]): {
 // Agrégateurs / job boards qui apparaissent comme "entreprise" mais ne sont pas l'employeur réel.
 const AGGREGATORS = /hellowork|meteojob|talents handicap|direct emploi|jobijoba|regionsjob|cadremploi|indeed|jobteaser|figaro|keljob/i;
 
-/** Which companies are actively hiring (from ingested offers) — the targeting signal. */
-export function companiesHiring(jobs: Job[]) {
+export type Trust = "solide" | "ok" | "esn" | "inconnue";
+const SOLID_CATS = new Set(["Big Tech", "Produit/Scale-up", "Grand compte", "Éditeur", "Data/IA"]);
+const OK_CATS = new Set(["Conseil", "Cloud/DevOps"]);
+
+function trustForCategory(cat: string | null): Trust {
+  if (!cat) return "inconnue";
+  if (SOLID_CATS.has(cat)) return "solide";
+  if (OK_CATS.has(cat)) return "ok";
+  if (cat === "ESN") return "esn";
+  return "inconnue";
+}
+
+export type HiringRow = {
+  company: string;
+  offers: number;
+  avgSalary: number | null;
+  avgScore: number;
+  topRole: string | null;
+  latest: string | null;
+  category: string | null;
+  trust: Trust;
+  harvestFlag: boolean; // ESN/inconnue qui publie beaucoup -> sourcing probable
+  priority: number;
+};
+
+/**
+ * Which companies are actively hiring (targeting signal), pondéré par la confiance.
+ * On privilégie les entreprises établies (produit/scale-up/grand compte/éditeur),
+ * on déclasse les ESN qui publient en masse (souvent pour sourcer des candidats).
+ */
+export function companiesHiring(
+  jobs: Job[],
+  targets: { name: string; category: string | null }[] = [],
+): HiringRow[] {
   const m = new Map<
     string,
     { offers: number; sal: number[]; scores: number[]; roles: Record<string, number>; latest: string | null }
@@ -75,16 +107,42 @@ export function companiesHiring(jobs: Job[]) {
     if (j.posted_at && (!e.latest || j.posted_at > e.latest)) e.latest = j.posted_at;
     m.set(name, e);
   }
+
+  const findCategory = (company: string): string | null => {
+    const c = company.toLowerCase();
+    const t = targets.find((x) => {
+      const n = x.name.toLowerCase();
+      return c.includes(n) || n.includes(c);
+    });
+    return t?.category ?? null;
+  };
+
   return [...m]
-    .map(([company, e]) => ({
-      company,
-      offers: e.offers,
-      avgSalary: e.sal.length ? Math.round(e.sal.reduce((a, b) => a + b, 0) / e.sal.length) : null,
-      avgScore: e.scores.length ? Math.round(e.scores.reduce((a, b) => a + b, 0) / e.scores.length) : 0,
-      topRole: Object.entries(e.roles).sort((a, b) => b[1] - a[1])[0]?.[0] ?? null,
-      latest: e.latest,
-    }))
-    .sort((a, b) => b.offers - a.offers || b.avgScore - a.avgScore);
+    .map(([company, e]) => {
+      const avgSalary = e.sal.length ? Math.round(e.sal.reduce((a, b) => a + b, 0) / e.sal.length) : null;
+      const avgScore = e.scores.length ? Math.round(e.scores.reduce((a, b) => a + b, 0) / e.scores.length) : 0;
+      const category = findCategory(company);
+      const trust = trustForCategory(category);
+      const harvestFlag = (trust === "esn" || trust === "inconnue") && e.offers >= 4;
+      let priority = avgScore;
+      priority += trust === "solide" ? 25 : trust === "ok" ? 10 : trust === "esn" ? -10 : -5;
+      if (avgSalary && avgSalary >= 60000) priority += 10;
+      else if (avgSalary && avgSalary >= 50000) priority += 5;
+      if (harvestFlag) priority -= 15;
+      return {
+        company,
+        offers: e.offers,
+        avgSalary,
+        avgScore,
+        topRole: Object.entries(e.roles).sort((a, b) => b[1] - a[1])[0]?.[0] ?? null,
+        latest: e.latest,
+        category,
+        trust,
+        harvestFlag,
+        priority,
+      };
+    })
+    .sort((a, b) => b.priority - a.priority || b.offers - a.offers);
 }
 
 const SENT_STATUSES: ApplicationStatus[] = [
