@@ -47,6 +47,23 @@ function parseJson<T>(text: string): T | null {
   }
 }
 
+export const SIGNATURE = `Babacar Gueye
+babacar.work2024@gmail.com · +33 6 79 81 97 72
+LinkedIn : linkedin.com/in/babacargueye1 · GitHub : github.com/humbledDS`;
+
+/** Detect candidate contact emails inside an offer's text. */
+export function extractEmails(text?: string | null): string[] {
+  if (!text) return [];
+  const found = text.match(/[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}/gi) ?? [];
+  return [
+    ...new Set(
+      found
+        .map((e) => e.toLowerCase())
+        .filter((e) => !/(no-?reply|noreply|exemple|example|\.png|\.jpg)/.test(e)),
+    ),
+  ];
+}
+
 const PROFILE_CONTEXT = `Babacar Gueye — Forward Deployed / Solutions Engineer, profil Cloud & Data.
 Socle maths/stats (M2 Stats + DU Big Data), ~3 ans de pratique (stages, CDD quant, missions freelance).
 Stack: Python, SQL, Spark, Airflow, dbt, Snowflake, Databricks, AWS/GCP/Azure, Docker, Kubernetes, Terraform, APIs, MCP.
@@ -84,4 +101,27 @@ export async function generateCoverLetterAI(input: {
 Règles: honnête (ne jamais inventer d'expérience), concis (250-320 mots), structuré (accroche, adéquation profil/poste, valeur ajoutée, conclusion), ${input.tone ? `ton ${input.tone}, ` : ""}orienté impact. Pas d'emojis. Pas de formules creuses ("dynamique et motivé").`;
   const user = `Poste: ${input.jobTitle}${input.company ? `\nEntreprise: ${input.company}` : ""}${input.jobDescription ? `\nDescription de l'offre:\n${input.jobDescription.slice(0, 2000)}` : ""}\nÉcris la lettre.`;
   return complete(system, user, 1200);
+}
+
+/** Generate a short application email to a recruiter, signed with the profile. */
+export async function generateApplicationEmailAI(input: {
+  jobTitle: string;
+  company?: string | null;
+  jobDescription?: string | null;
+  contactName?: string | null;
+}): Promise<{ subject: string; body: string } | null> {
+  const system = `Tu écris un email de prise de contact / candidature en français pour ${PROFILE_CONTEXT}
+Règles: court (120-180 mots), poli mais direct, accroche personnalisée sur le poste/l'entreprise, 2-3 phrases sur l'adéquation (sans inventer d'expérience), proposition d'échange, puis la signature EXACTE ci-dessous.
+Signature à mettre à la fin, telle quelle:
+${SIGNATURE}
+Réponds UNIQUEMENT en JSON: {"subject": "...", "body": "..."}. Le body inclut la formule d'appel, le corps, et la signature.`;
+  const user = `Poste: ${input.jobTitle}${input.company ? `\nEntreprise: ${input.company}` : ""}${input.contactName ? `\nDestinataire: ${input.contactName}` : ""}${input.jobDescription ? `\nDescription de l'offre:\n${input.jobDescription.slice(0, 1500)}` : ""}\nÉcris l'email.`;
+  const out = await complete(system, user, 900);
+  if (!out) return null;
+  const parsed = parseJson<{ subject: string; body: string }>(out);
+  if (!parsed) return { subject: `Candidature — ${input.jobTitle}`, body: out };
+  return {
+    subject: parsed.subject ?? `Candidature — ${input.jobTitle}`,
+    body: parsed.body ?? "",
+  };
 }

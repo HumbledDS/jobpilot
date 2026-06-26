@@ -1,7 +1,9 @@
 import { getJobById } from "@/lib/db";
 import { Card, Freshness, fmtSalary, SOURCE_LABELS, timeAgo } from "@/components/ui";
 import { scoreLabel } from "@/lib/scoring";
+import { extractEmails, aiEnabled } from "@/lib/ai";
 import { applyToJob } from "../actions";
+import { createContactFromJob } from "../../contacts/actions";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -18,6 +20,7 @@ export default async function JobDetailPage({
 
   const sl = scoreLabel(job.match_score);
   const sal = fmtSalary(job.salary_min, job.salary_max);
+  const emails = extractEmails(job.description);
 
   return (
     <div className="max-w-3xl break-words">
@@ -70,6 +73,31 @@ export default async function JobDetailPage({
           )}
         </div>
       </Card>
+
+      {emails.length > 0 && (
+        <Card className="mt-6">
+          <div className="mb-1 text-sm font-semibold text-slate-700">
+            Emails de contact détectés dans l&apos;offre
+          </div>
+          <p className="mb-3 text-xs text-slate-400">
+            Ajoute le contact pour générer un email de candidature{aiEnabled() ? " (rédigé par l'IA)" : ""}, signé avec tes infos.
+          </p>
+          <div className="flex flex-col gap-2">
+            {emails.map((email) => (
+              <div key={email} className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-slate-200 p-2">
+                <a href={`mailto:${email}`} className="text-sm text-blue-600 underline break-all">{email}</a>
+                <form action={createContactFromJob}>
+                  <input type="hidden" name="job_id" value={job.id} />
+                  <input type="hidden" name="email" value={email} />
+                  <button className="rounded bg-slate-800 px-3 py-1.5 text-xs text-white">
+                    Ajouter au contact{aiEnabled() ? " + rédiger l'email" : ""}
+                  </button>
+                </form>
+              </div>
+            ))}
+          </div>
+        </Card>
+      )}
 
       {job.description && (
         <Card className="mt-6">

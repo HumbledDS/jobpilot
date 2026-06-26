@@ -1,7 +1,9 @@
 import { getContacts, getCompanies } from "@/lib/db";
 import { hasAdmin } from "@/lib/supabase/admin";
+import { aiEnabled } from "@/lib/ai";
 import { PageHeader, Card, SetupBanner, EmptyState } from "@/components/ui";
-import { createContact, deleteContact } from "./actions";
+import { CopyButton } from "@/components/CopyButton";
+import { createContact, deleteContact, draftEmailForContact } from "./actions";
 
 export const dynamic = "force-dynamic";
 
@@ -72,6 +74,48 @@ export default async function ContactsPage() {
                 )}
                 {c.notes && <div className="text-slate-500">{c.notes}</div>}
               </div>
+
+              {c.email && (
+                <div className="mt-3 border-t border-slate-100 pt-3">
+                  {c.draft_email ? (
+                    <details>
+                      <summary className="cursor-pointer text-xs font-semibold text-slate-700">
+                        Email rédigé{c.draft_subject ? ` — ${c.draft_subject}` : ""}
+                      </summary>
+                      <p className="mt-2 whitespace-pre-wrap break-words rounded bg-slate-50 p-2 text-xs text-slate-600">
+                        {c.draft_email}
+                      </p>
+                      <div className="mt-2 flex flex-wrap items-center gap-2">
+                        <CopyButton
+                          text={c.draft_email}
+                          label="Copier l'email"
+                        />
+                        <a
+                          href={`mailto:${c.email}?subject=${encodeURIComponent(c.draft_subject ?? "")}&body=${encodeURIComponent(c.draft_email)}`}
+                          className="rounded bg-slate-800 px-2 py-1 text-xs text-white"
+                        >
+                          Ouvrir dans ma messagerie
+                        </a>
+                        {aiEnabled() && (
+                          <form action={draftEmailForContact}>
+                            <input type="hidden" name="id" value={c.id} />
+                            <button className="rounded border border-slate-200 px-2 py-1 text-xs text-slate-600 hover:bg-slate-100">
+                              Régénérer
+                            </button>
+                          </form>
+                        )}
+                      </div>
+                    </details>
+                  ) : aiEnabled() ? (
+                    <form action={draftEmailForContact}>
+                      <input type="hidden" name="id" value={c.id} />
+                      <button className="rounded bg-slate-800 px-2 py-1 text-xs text-white">
+                        Rédiger l&apos;email (IA)
+                      </button>
+                    </form>
+                  ) : null}
+                </div>
+              )}
             </Card>
           ))}
         </div>

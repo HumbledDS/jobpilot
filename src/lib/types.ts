@@ -94,6 +94,10 @@ export type Contact = {
   phone: string | null;
   linkedin_url: string | null;
   notes: string | null;
+  job_title: string | null;
+  job_url: string | null;
+  draft_subject: string | null;
+  draft_email: string | null;
 };
 
 export type CvVersion = {
