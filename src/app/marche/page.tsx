@@ -33,8 +33,10 @@ export default async function MarchePage() {
   const sal = salaryStats(jobs);
   const maxDemand = demand[0]?.count ?? 1;
 
-  // Compétences à développer : très demandées et absentes du profil.
-  const gaps = demand.filter((d) => !profileSkills.has(d.skill)).slice(0, 8);
+  // Compétences à développer : très demandées et absentes du profil (= skills à acquérir).
+  const gaps = demand.filter((d) => !profileSkills.has(d.skill)).slice(0, 10);
+  const maxGap = gaps[0]?.count ?? 1;
+  const totalJobs = jobs.length || 1;
   // Top suggestions : meilleures offres par score.
   const topMatches = jobs.slice(0, 5);
 
@@ -244,19 +246,35 @@ export default async function MarchePage() {
             {/* À développer + salaires */}
             <div className="space-y-6">
               <Card>
-                <div className="mb-3 text-sm font-semibold text-ink">
-                  Compétences à développer (demandées, hors de ton profil)
+                <div className="mb-1 text-sm font-semibold text-ink">
+                  Top compétences à acquérir
+                </div>
+                <div className="mb-3 text-xs text-muted">
+                  Les plus demandées sur tes {jobs.length} offres et absentes de ton profil — classées par priorité. « Apprendre » crée un projet portfolio pour la maîtriser.
                 </div>
                 {gaps.length === 0 ? (
                   <div className="text-xs text-faint">Ton profil couvre déjà le top du marché.</div>
                 ) : (
-                  <div className="flex flex-wrap gap-2">
-                    {gaps.map((g) => (
-                      <span key={g.skill} className="rounded-full border border-amber-200 bg-amber-50 px-2 py-1 text-xs text-amber-700">
-                        {g.skill} · {g.count} offres
-                      </span>
+                  <ol className="space-y-2">
+                    {gaps.map((g, i) => (
+                      <li key={g.skill} className="flex items-center gap-2.5">
+                        <span className="mono w-4 shrink-0 text-[11px] text-faint">{String(i + 1).padStart(2, "0")}</span>
+                        <span className="w-28 shrink-0 truncate text-sm font-medium text-ink sm:w-36">{g.skill}</span>
+                        <div className="h-2 min-w-0 flex-1 overflow-hidden rounded-full bg-subtle">
+                          <div className="h-full rounded-full bg-accent" style={{ width: `${(g.count / maxGap) * 100}%` }} />
+                        </div>
+                        <span className="mono tnum w-16 shrink-0 text-right text-[11px] text-muted">
+                          {g.count} · {Math.round((g.count / totalJobs) * 100)}%
+                        </span>
+                        <Link
+                          href={`/projects?theme=${encodeURIComponent(g.skill)}`}
+                          className="shrink-0 text-xs font-medium text-accent hover:text-accent-strong"
+                        >
+                          Apprendre →
+                        </Link>
+                      </li>
                     ))}
-                  </div>
+                  </ol>
                 )}
               </Card>
 

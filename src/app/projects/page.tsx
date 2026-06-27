@@ -28,7 +28,12 @@ const STATUS_STYLE: Record<string, string> = {
   done: "bg-emerald-100 text-emerald-700",
 };
 
-export default async function ProjectsPage() {
+export default async function ProjectsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ theme?: string }>;
+}) {
+  const { theme } = await searchParams;
   const projects = await getSkillProjects();
   const done = projects.filter(
     (p) => p.status === "deployed" || p.status === "done",
@@ -65,8 +70,13 @@ export default async function ProjectsPage() {
               {aiEnabled() ? "IA active" : "clé IA requise"}
             </span>
           </div>
+          {theme && (
+            <div className="mb-3 rounded-lg border border-accent/30 bg-accent-soft/50 px-3 py-2 text-xs text-accent-strong">
+              Compétence ciblée depuis le marché : <strong>{theme}</strong>. Lance la génération pour obtenir un projet qui la prouve.
+            </div>
+          )}
           <form action={generateProjectIdea} className="grid grid-cols-1 gap-3">
-            <input name="theme" placeholder="Thème (ex: streaming, MCP, RAG, FinOps)" className="input" />
+            <input name="theme" defaultValue={theme ?? ""} placeholder="Thème (ex: streaming, MCP, RAG, FinOps)" className="input" />
             <div className="grid grid-cols-2 gap-3">
               <input name="role" placeholder="Rôle visé (ex: Cloud)" className="input" />
               <input name="cloud" placeholder="Cloud (AWS/GCP/Azure)" className="input" />
