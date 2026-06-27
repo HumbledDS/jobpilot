@@ -1,4 +1,5 @@
 import { getJobs, getSavedSearches, getTargetCompanies } from "@/lib/db";
+import { requireUser } from "@/lib/guard";
 import { hasAdmin } from "@/lib/supabase/admin";
 import {
   PageHeader,
@@ -45,6 +46,7 @@ export default async function JobsPage({
 }: {
   searchParams: Promise<SP>;
 }) {
+  await requireUser();
   const sp = await searchParams;
   const q = (sp.q ?? "").trim();
   const source = sp.source ?? "";

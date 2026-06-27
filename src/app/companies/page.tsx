@@ -1,4 +1,5 @@
 import { getTargetCompanies, getJobs } from "@/lib/db";
+import { requireUser } from "@/lib/guard";
 import { hasAdmin } from "@/lib/supabase/admin";
 import { PageHeader, Card, SetupBanner, EmptyState } from "@/components/ui";
 import { companiesHiring } from "@/lib/analytics";
@@ -20,6 +21,7 @@ export default async function CompaniesPage({
 }: {
   searchParams: Promise<{ cat?: string }>;
 }) {
+  await requireUser();
   const { cat } = await searchParams;
   const [all, jobs] = await Promise.all([getTargetCompanies(), getJobs("score")]);
 

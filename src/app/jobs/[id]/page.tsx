@@ -1,4 +1,5 @@
 import { getJobById } from "@/lib/db";
+import { requireUser } from "@/lib/guard";
 import { Card, Freshness, fmtSalary, SOURCE_LABELS, timeAgo } from "@/components/ui";
 import { scoreLabel } from "@/lib/scoring";
 import { extractEmails, aiEnabled } from "@/lib/ai";
@@ -16,6 +17,7 @@ export default async function JobDetailPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
+  await requireUser();
   const { id } = await params;
   const job = await getJobById(id);
   if (!job) notFound();

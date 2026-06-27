@@ -1,4 +1,5 @@
 import { getApplicationById, getAppEvents } from "@/lib/db";
+import { requireUser } from "@/lib/guard";
 import { Card, fmtSalary, timeAgo } from "@/components/ui";
 import { CopyButton } from "@/components/CopyButton";
 import {
@@ -35,6 +36,7 @@ export default async function ApplicationDetail({
 }: {
   params: Promise<{ id: string }>;
 }) {
+  await requireUser();
   const { id } = await params;
   const app = await getApplicationById(id);
   if (!app) notFound();

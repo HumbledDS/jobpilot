@@ -1,4 +1,5 @@
 import { getContacts, getCompanies } from "@/lib/db";
+import { requireUser } from "@/lib/guard";
 import { hasAdmin } from "@/lib/supabase/admin";
 import { aiEnabled } from "@/lib/ai";
 import { PageHeader, Card, SetupBanner, EmptyState } from "@/components/ui";
@@ -9,6 +10,7 @@ export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
 export default async function ContactsPage() {
+  await requireUser();
   const [contacts, companies] = await Promise.all([getContacts(), getCompanies()]);
   const companyName = (id: string | null) =>
     companies.find((c) => c.id === id)?.name ?? null;

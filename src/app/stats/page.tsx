@@ -1,4 +1,5 @@
 import { getApplications, getJobs } from "@/lib/db";
+import { requireUser } from "@/lib/guard";
 import { hasAdmin } from "@/lib/supabase/admin";
 import { PageHeader, StatCard, Card, SetupBanner, EmptyState } from "@/components/ui";
 import { applicationStats } from "@/lib/analytics";
@@ -19,6 +20,7 @@ const SOURCE_LABEL: Record<string, string> = {
 };
 
 export default async function StatsPage() {
+  await requireUser();
   const [apps, jobs] = await Promise.all([getApplications(), getJobs("score")]);
   const s = applicationStats(apps);
 

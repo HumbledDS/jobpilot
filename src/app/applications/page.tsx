@@ -1,4 +1,5 @@
 import { getApplications } from "@/lib/db";
+import { requireUser } from "@/lib/guard";
 import { hasAdmin } from "@/lib/supabase/admin";
 import { PageHeader, Card, SetupBanner, EmptyState, fmtSalary } from "@/components/ui";
 import {
@@ -16,6 +17,7 @@ import Link from "next/link";
 export const dynamic = "force-dynamic";
 
 export default async function ApplicationsPage() {
+  await requireUser();
   const apps = await getApplications();
 
   return (

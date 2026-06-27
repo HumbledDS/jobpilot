@@ -1,4 +1,5 @@
 import { getSkillProjects } from "@/lib/db";
+import { requireUser } from "@/lib/guard";
 import { hasAdmin } from "@/lib/supabase/admin";
 import { aiEnabled } from "@/lib/ai";
 import { PageHeader, Card, SetupBanner, EmptyState } from "@/components/ui";
@@ -33,6 +34,7 @@ export default async function ProjectsPage({
 }: {
   searchParams: Promise<{ theme?: string }>;
 }) {
+  await requireUser();
   const { theme } = await searchParams;
   const projects = await getSkillProjects();
   const done = projects.filter(

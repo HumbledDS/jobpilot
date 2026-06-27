@@ -1,4 +1,5 @@
 import { getJobs, getProfile, getTargetCompanies } from "@/lib/db";
+import { requireUser } from "@/lib/guard";
 import { hasAdmin } from "@/lib/supabase/admin";
 import { PageHeader, Card, SetupBanner, EmptyState, fmtSalary } from "@/components/ui";
 import { skillDemand, roleDemand, salaryStats, offerSegments, nafSector } from "@/lib/analytics";
@@ -21,6 +22,7 @@ function fmtCA(v?: number | null): string | null {
 }
 
 export default async function MarchePage() {
+  await requireUser();
   const [jobs, profile, targets] = await Promise.all([
     getJobs("score"),
     getProfile(),

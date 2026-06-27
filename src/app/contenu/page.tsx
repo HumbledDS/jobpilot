@@ -1,4 +1,5 @@
 import { getPosts } from "@/lib/db";
+import { requireUser } from "@/lib/guard";
 import { hasAdmin } from "@/lib/supabase/admin";
 import { aiEnabled } from "@/lib/ai";
 import { PageHeader, Card, SetupBanner, EmptyState } from "@/components/ui";
@@ -23,6 +24,7 @@ function fullText(p: Post) {
 }
 
 export default async function ContenuPage() {
+  await requireUser();
   const posts = await getPosts();
   const cols: Post["status"][] = ["idea", "draft", "published"];
 

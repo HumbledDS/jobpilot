@@ -1,4 +1,5 @@
 import { getJobs, getTargetCompanies, getApplications } from "@/lib/db";
+import { requireUser } from "@/lib/guard";
 import { hasAdmin } from "@/lib/supabase/admin";
 import { PageHeader, Card, StatCard, SetupBanner } from "@/components/ui";
 
@@ -45,6 +46,7 @@ const AUTOMATION = [
 ];
 
 export default async function SystemePage() {
+  await requireUser();
   const [jobs, companies, apps] = await Promise.all([
     getJobs("score"),
     getTargetCompanies(),
