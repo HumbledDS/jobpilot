@@ -4,10 +4,22 @@ import { isAllowed } from "@/lib/auth";
 
 /**
  * Rafraîchit la session Supabase ET protège les routes :
- * - publiques : "/", "/auth/*", "/api/*" (les API ont leur propre auth : token MCP / CRON_SECRET)
+ * - publiques : "/", "/auth/*" (les API ont leur propre auth : token MCP / CRON_SECRET)
  * - tout le reste exige un utilisateur connecté ET autorisé (allowlist), sinon redirection vers "/".
  */
 export async function proxy(request: NextRequest) {
+  const path = request.nextUrl.pathname;
+
+  // Laisse passer les assets, le runtime Next et les routes API (auth propre).
+  if (
+    path.startsWith("/_next") ||
+    path.startsWith("/api") ||
+    path === "/favicon.ico" ||
+    /\.[a-zA-Z0-9]+$/.test(path)
+  ) {
+    return NextResponse.next();
+  }
+
   let response = NextResponse.next({ request });
 
   const supabase = createServerClient(
@@ -34,22 +46,13 @@ export async function proxy(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const path = request.nextUrl.pathname;
-  const isPublic =
-    path === "/" || path.startsWith("/auth") || path.startsWith("/api");
+  const isPublic = path === "/" || path.startsWith("/auth");
 
   if (!isPublic && !isAllowed(user?.email)) {
     const url = request.nextUrl.clone();
     url.pathname = "/";
-    const r = NextResponse.redirect(url);
-    r.headers.set("x-proxy", `gate:${path}`);
-    return r;
+    return NextResponse.redirect(url);
   }
 
-  response.headers.set("x-proxy", `pass:${path}:${user?.email ?? "none"}`);
   return response;
 }
-
-export const config = {
-  matcher: ["/((?!api|_next|favicon.ico).*)"],
-};
