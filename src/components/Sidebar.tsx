@@ -66,7 +66,7 @@ function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
   );
 }
 
-function SidebarBody({ onNavigate }: { onNavigate?: () => void }) {
+function SidebarBody({ onNavigate, email }: { onNavigate?: () => void; email?: string | null }) {
   return (
     <>
       <div className="px-5 py-5">
@@ -77,15 +77,18 @@ function SidebarBody({ onNavigate }: { onNavigate?: () => void }) {
         <ThemeToggle />
         <div>
           <div className="eyebrow">Operator</div>
-          <div className="mt-1.5 text-xs font-medium text-ink">Babacar Gueye</div>
-          <div className="mono mt-0.5 text-[11px] text-faint">data · cloud · ia</div>
+          <div className="mt-1.5 truncate text-xs font-medium text-ink">Babacar Gueye</div>
+          <div className="mono mt-0.5 truncate text-[11px] text-faint">{email ?? "data · cloud · ia"}</div>
+          <form action="/auth/signout" method="post" className="mt-2">
+            <button className="text-[11px] font-medium text-muted hover:text-ink">Se déconnecter</button>
+          </form>
         </div>
       </div>
     </>
   );
 }
 
-export function Sidebar() {
+export function Sidebar({ email }: { email?: string | null }) {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
 
@@ -108,7 +111,7 @@ export function Sidebar() {
     <>
       {/* Desktop sidebar */}
       <aside className="hidden w-60 shrink-0 flex-col border-r border-line bg-surface md:flex">
-        <SidebarBody />
+        <SidebarBody email={email} />
       </aside>
 
       {/* Mobile top bar */}
@@ -150,7 +153,7 @@ export function Sidebar() {
                 Fermer
               </button>
             </div>
-            <SidebarBody onNavigate={() => setOpen(false)} />
+            <SidebarBody onNavigate={() => setOpen(false)} email={email} />
           </aside>
         </div>
       )}

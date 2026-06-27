@@ -37,6 +37,9 @@ import {
   generateAiFocus,
 } from "./_coach/actions";
 import Link from "next/link";
+import { createClient } from "@/lib/supabase/server";
+import { isAllowed } from "@/lib/auth";
+import { Landing } from "@/components/Landing";
 
 const CADENCE_LABEL: Record<string, string> = {
   daily: "quotidien",
@@ -47,6 +50,15 @@ const CADENCE_LABEL: Record<string, string> = {
 export const dynamic = "force-dynamic";
 
 export default async function DashboardPage() {
+  // Page d'accueil publique tant qu'on n'est pas connecté & autorisé.
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!isAllowed(user?.email)) {
+    return <Landing notAllowed={!!user} />;
+  }
+
   const [apps, jobs, contacts, projects, ingestRuns, settings, posts, profile, targets, coachTasks] =
     await Promise.all([
       getApplications(),

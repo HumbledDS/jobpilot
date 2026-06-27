@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Sidebar } from "@/components/Sidebar";
+import { createClient } from "@/lib/supabase/server";
+import { isAllowed } from "@/lib/auth";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -18,11 +20,17 @@ export const metadata: Metadata = {
   description: "Pilotage de la recherche d'emploi data/cloud/IA",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const authed = isAllowed(user?.email);
+
   return (
     <html
       lang="fr"
@@ -38,12 +46,16 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-full text-ink">
-        <div className="flex min-h-screen">
-          <Sidebar />
-          <main className="w-full min-w-0 flex-1 overflow-x-hidden px-4 pt-20 pb-6 md:px-8 md:py-8">
-            {children}
-          </main>
-        </div>
+        {authed ? (
+          <div className="flex min-h-screen">
+            <Sidebar email={user?.email ?? null} />
+            <main className="w-full min-w-0 flex-1 overflow-x-hidden px-4 pt-20 pb-6 md:px-8 md:py-8">
+              {children}
+            </main>
+          </div>
+        ) : (
+          children
+        )}
       </body>
     </html>
   );
