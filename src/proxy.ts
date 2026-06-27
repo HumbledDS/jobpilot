@@ -7,7 +7,7 @@ import { isAllowed } from "@/lib/auth";
  * - publiques : "/", "/auth/*", "/api/*" (les API ont leur propre auth : token MCP / CRON_SECRET)
  * - tout le reste exige un utilisateur connecté ET autorisé (allowlist), sinon redirection vers "/".
  */
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   let response = NextResponse.next({ request });
 
   const supabase = createServerClient(
