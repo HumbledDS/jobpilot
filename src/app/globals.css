@@ -6,12 +6,18 @@
   Inspired by Vercel Geist, Rauno Freiberg's Web Interface Guidelines, Emil Kowalski's motion work.
   See design-system.md.
 */
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme inline {
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+}
 
+/* Color tokens emitted as overridable CSS variables (enables dark mode). */
+@theme {
   --color-canvas: #f5f6f7;
   --color-surface: #ffffff;
+  --color-subtle: #eceef0;
   --color-ink: #141619;
   --color-muted: #5b616b;
   --color-faint: #9aa0a8;
@@ -20,6 +26,25 @@
   --color-accent: #0d9488;
   --color-accent-strong: #0f766e;
   --color-accent-soft: #e3f3f0;
+  --color-primary: #141619;
+  --color-primary-fg: #ffffff;
+}
+
+.dark {
+  color-scheme: dark;
+  --color-canvas: #0b0c0e;
+  --color-surface: #15171a;
+  --color-subtle: #1e2126;
+  --color-ink: #ececee;
+  --color-muted: #9ba1a9;
+  --color-faint: #6b7178;
+  --color-line: #24272c;
+  --color-line-strong: #34383f;
+  --color-accent: #2dd4bf;
+  --color-accent-strong: #5eead4;
+  --color-accent-soft: #123430;
+  --color-primary: #f4f4f5;
+  --color-primary-fg: #141619;
 }
 
 :root {
@@ -39,6 +64,9 @@ body {
   background-size: 22px 22px;
   background-attachment: fixed;
   color: var(--color-ink);
+}
+.dark body {
+  background-image: radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.035) 1px, transparent 0);
 }
 
 ::selection {
@@ -98,17 +126,17 @@ h1, h2, h3 {
   justify-content: center;
   gap: 0.4rem;
   border-radius: 0.5rem;
-  background: var(--color-ink);
-  color: #fff;
+  background: var(--color-primary);
+  color: var(--color-primary-fg);
   padding: 0.5rem 1rem;
   font-size: 0.875rem;
   font-weight: 550;
   cursor: pointer;
-  border: 1px solid var(--color-ink);
-  transition: transform 0.1s ease, background 0.15s ease, box-shadow 0.15s ease;
+  border: 1px solid var(--color-primary);
+  transition: transform 0.1s ease, opacity 0.15s ease, box-shadow 0.15s ease;
 }
 .btn-primary:hover {
-  background: #2b2f35;
+  opacity: 0.9;
 }
 .btn-primary:active {
   transform: scale(0.97);

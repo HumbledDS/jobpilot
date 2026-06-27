@@ -27,7 +27,7 @@ export default async function ApplicationsPage() {
       {!hasAdmin() && <SetupBanner />}
 
       <Card className="mb-6">
-        <div className="mb-3 text-sm font-semibold text-slate-700">
+        <div className="mb-3 text-sm font-semibold text-ink">
           + Nouvelle candidature
         </div>
         <form
@@ -66,17 +66,17 @@ export default async function ApplicationsPage() {
                   >
                     {STATUS_LABELS[s]}
                   </span>
-                  <span className="text-xs text-slate-400">{col.length}</span>
+                  <span className="text-xs text-faint">{col.length}</span>
                 </div>
                 {col.map((a) => (
                   <div
                     key={a.id}
-                    className="min-w-0 rounded-lg border border-slate-200 bg-white p-3 shadow-sm"
+                    className="min-w-0 rounded-lg border border-line bg-surface p-3 shadow-sm"
                   >
-                    <Link href={`/applications/${a.id}`} className="block break-words text-sm font-semibold text-slate-800 hover:underline">
+                    <Link href={`/applications/${a.id}`} className="block break-words text-sm font-semibold text-ink hover:underline">
                       {a.jp_jobs?.title ?? "—"}
                     </Link>
-                    <div className="break-words text-xs text-slate-500">
+                    <div className="break-words text-xs text-muted">
                       {a.jp_jobs?.company_name ?? ""}
                       {a.jp_jobs?.location ? ` · ${a.jp_jobs.location}` : ""}
                     </div>
@@ -107,7 +107,7 @@ export default async function ApplicationsPage() {
                         <select
                           name="status"
                           defaultValue={a.status}
-                          className="min-w-0 flex-1 rounded border border-slate-200 px-1 py-1 text-xs"
+                          className="min-w-0 flex-1 rounded border border-line px-1 py-1 text-xs"
                         >
                           {APPLICATION_STATUSES.map((st) => (
                             <option key={st} value={st}>
@@ -115,7 +115,7 @@ export default async function ApplicationsPage() {
                             </option>
                           ))}
                         </select>
-                        <button className="rounded bg-slate-800 px-2 py-1 text-xs text-white">
+                        <button className="rounded bg-ink px-2 py-1 text-xs text-surface">
                           OK
                         </button>
                       </form>

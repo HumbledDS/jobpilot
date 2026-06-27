@@ -233,20 +233,20 @@ export default async function DashboardPage() {
             </div>
             <ul className="space-y-2">
               {aiTasks.map((t) => (
-                <li key={t.id} className="rounded-lg border border-violet-100 bg-white p-3">
+                <li key={t.id} className="rounded-lg border border-violet-100 bg-surface p-3">
                   <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0">
                       <div className="flex flex-wrap items-center gap-2">
                         <span className="rounded bg-violet-100 px-1.5 py-0.5 text-[10px] font-medium text-violet-600">{t.category}</span>
-                        <span className="text-[10px] text-slate-400">{CADENCE_LABEL[t.cadence]}</span>
-                        <span className="text-sm font-medium text-slate-800">{t.label}</span>
+                        <span className="text-[10px] text-faint">{CADENCE_LABEL[t.cadence]}</span>
+                        <span className="text-sm font-medium text-ink">{t.label}</span>
                       </div>
-                      {t.rationale && <p className="mt-1 text-xs text-slate-500">{t.rationale}</p>}
+                      {t.rationale && <p className="mt-1 text-xs text-muted">{t.rationale}</p>}
                     </div>
                     <div className="flex shrink-0 items-center gap-1">
                       <form action={completeTask}>
                         <input type="hidden" name="id" value={t.id} />
-                        <button className="rounded-lg border border-slate-200 px-2 py-1 text-xs font-medium text-slate-600 hover:bg-emerald-50 hover:text-emerald-700">Fait</button>
+                        <button className="rounded-lg border border-line px-2 py-1 text-xs font-medium text-muted hover:bg-emerald-50 hover:text-emerald-700">Fait</button>
                       </form>
                       <form action={deleteTask}>
                         <input type="hidden" name="id" value={t.id} />
@@ -273,21 +273,21 @@ export default async function DashboardPage() {
               (g) =>
                 g.items.length > 0 && (
                   <div key={g.title}>
-                    <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-400">
+                    <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-faint">
                       {g.title}
                     </div>
                     <ul className="space-y-2">
                       {g.items.map((r) => (
-                        <li key={r.key} className="rounded-lg border border-slate-200 bg-white p-3">
+                        <li key={r.key} className="rounded-lg border border-line bg-surface p-3">
                           <div className="flex items-start justify-between gap-2">
                             <div className="min-w-0">
                               <div className="flex flex-wrap items-center gap-2">
-                                <span className="rounded bg-slate-100 px-1.5 py-0.5 text-[10px] font-medium text-slate-500">
+                                <span className="rounded bg-subtle px-1.5 py-0.5 text-[10px] font-medium text-muted">
                                   {r.category}
                                 </span>
-                                <span className="text-sm font-medium text-slate-800">{r.label}</span>
+                                <span className="text-sm font-medium text-ink">{r.label}</span>
                               </div>
-                              <p className="mt-1 text-xs text-slate-500">{r.rationale}</p>
+                              <p className="mt-1 text-xs text-muted">{r.rationale}</p>
                               {r.href && (
                                 <Link href={r.href} className="mt-1 inline-block text-xs text-accent underline">
                                   Y aller
@@ -300,7 +300,7 @@ export default async function DashboardPage() {
                               <input type="hidden" name="category" value={r.category} />
                               <input type="hidden" name="cadence" value={r.cadence} />
                               <input type="hidden" name="rationale" value={r.rationale} />
-                              <button className="rounded-lg border border-slate-200 px-2 py-1 text-xs font-medium text-slate-600 hover:bg-emerald-50 hover:text-emerald-700">
+                              <button className="rounded-lg border border-line px-2 py-1 text-xs font-medium text-muted hover:bg-emerald-50 hover:text-emerald-700">
                                 Fait
                               </button>
                             </form>
@@ -315,19 +315,19 @@ export default async function DashboardPage() {
         )}
 
         {/* Tâches perso */}
-        <div className="mt-4 border-t border-slate-100 pt-3">
-          <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-400">
+        <div className="mt-4 border-t border-line pt-3">
+          <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-faint">
             Mes tâches
           </div>
           {customTodos.length > 0 && (
             <ul className="mb-2 space-y-1.5">
               {customTodos.map((t) => (
                 <li key={t.id} className="flex items-center gap-2 text-sm">
-                  <span className="min-w-0 flex-1 break-words text-slate-700">{t.label}</span>
-                  <span className="text-[10px] text-slate-400">{CADENCE_LABEL[t.cadence]}</span>
+                  <span className="min-w-0 flex-1 break-words text-ink">{t.label}</span>
+                  <span className="text-[10px] text-faint">{CADENCE_LABEL[t.cadence]}</span>
                   <form action={completeTask}>
                     <input type="hidden" name="id" value={t.id} />
-                    <button className="rounded border border-slate-200 px-2 py-0.5 text-xs text-slate-600 hover:bg-emerald-50 hover:text-emerald-700">
+                    <button className="rounded border border-line px-2 py-0.5 text-xs text-muted hover:bg-emerald-50 hover:text-emerald-700">
                       Fait
                     </button>
                   </form>
@@ -348,7 +348,7 @@ export default async function DashboardPage() {
               <option value="weekly">Hebdo</option>
               <option value="once">Ponctuel</option>
             </select>
-            <button className="rounded-lg bg-slate-800 px-3 py-2 text-xs font-medium text-white">Ajouter</button>
+            <button className="rounded-lg bg-ink px-3 py-2 text-xs font-medium text-surface">Ajouter</button>
           </form>
         </div>
       </Card>
@@ -375,10 +375,10 @@ export default async function DashboardPage() {
       {growthHiring.length > 0 && (
         <Card className="mt-6">
           <div className="mb-1 flex flex-wrap items-center justify-between gap-2">
-            <span className="text-sm font-semibold text-slate-700">Boîtes en croissance qui recrutent</span>
+            <span className="text-sm font-semibold text-ink">Boîtes en croissance qui recrutent</span>
             <Link href="/companies" className="text-xs text-accent underline">toutes les entreprises</Link>
           </div>
-          <div className="mb-3 text-xs text-slate-500">
+          <div className="mb-3 text-xs text-muted">
             Employeurs établis, en croissance de CA (comptes INPI), avec des offres en cours — les meilleures cibles.
           </div>
           <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
@@ -390,13 +390,13 @@ export default async function DashboardPage() {
                 <Link
                   key={h.company}
                   href={`/jobs?q=${encodeURIComponent(h.company)}`}
-                  className="rounded-lg border border-slate-200 p-3 hover:border-emerald-300 hover:bg-emerald-50/30"
+                  className="rounded-lg border border-line p-3 hover:border-emerald-300 hover:bg-emerald-50/30"
                 >
                   <div className="flex items-center justify-between gap-2">
-                    <span className="min-w-0 break-words text-sm font-medium text-slate-800">{h.company}</span>
+                    <span className="min-w-0 break-words text-sm font-medium text-ink">{h.company}</span>
                     <span className="shrink-0 rounded bg-emerald-100 px-1.5 py-0.5 text-[10px] font-semibold text-emerald-700">+{g}%/an</span>
                   </div>
-                  <div className="mt-1 flex flex-wrap gap-x-2 text-xs text-slate-500">
+                  <div className="mt-1 flex flex-wrap gap-x-2 text-xs text-muted">
                     <span>{h.offers} offre(s)</span>
                     {caTxt && <span>· CA {caTxt}</span>}
                     {h.effectifLabel && <span className="hidden sm:inline">· {h.effectifLabel} sal.</span>}
@@ -411,7 +411,7 @@ export default async function DashboardPage() {
       {/* Cadence + Pipeline + Prochaines actions */}
       <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-3">
         <Card>
-          <div className="mb-4 border-b border-slate-100 pb-2 text-sm font-semibold text-slate-700">
+          <div className="mb-4 border-b border-line pb-2 text-sm font-semibold text-ink">
             Cadence cette semaine
           </div>
           <div className="space-y-4">
@@ -423,12 +423,12 @@ export default async function DashboardPage() {
               return (
                 <div key={c.label}>
                   <div className="mb-1.5 flex items-center justify-between text-xs">
-                    <span className="text-slate-500">{c.label}</span>
-                    <span className="font-medium text-slate-700">{c.n} / {c.goal}</span>
+                    <span className="text-muted">{c.label}</span>
+                    <span className="font-medium text-ink">{c.n} / {c.goal}</span>
                   </div>
-                  <div className="h-2.5 w-full overflow-hidden rounded-full bg-slate-100">
+                  <div className="h-2.5 w-full overflow-hidden rounded-full bg-subtle">
                     <div
-                      className={`h-full rounded-full transition-all ${pct >= 100 ? "bg-emerald-500" : "bg-slate-700"}`}
+                      className={`h-full rounded-full transition-all ${pct >= 100 ? "bg-emerald-500" : "bg-ink"}`}
                       style={{ width: `${pct}%` }}
                     />
                   </div>
@@ -439,13 +439,13 @@ export default async function DashboardPage() {
         </Card>
 
         <Card className="lg:col-span-2">
-          <div className="mb-4 border-b border-slate-100 pb-2 text-sm font-semibold text-slate-700">
+          <div className="mb-4 border-b border-line pb-2 text-sm font-semibold text-ink">
             Pipeline des candidatures
           </div>
           {apps.length === 0 ? (
             <EmptyState>
               Aucune candidature.{" "}
-              <Link href="/applications" className="text-slate-900 underline">
+              <Link href="/applications" className="text-ink underline">
                 Ajoute-en une
               </Link>
               .
@@ -457,16 +457,16 @@ export default async function DashboardPage() {
                 const pct = apps.length ? (n / apps.length) * 100 : 0;
                 return (
                   <div key={s} className="flex items-center gap-2 sm:gap-3">
-                    <div className="w-20 shrink-0 text-xs text-slate-500 sm:w-28">
+                    <div className="w-20 shrink-0 text-xs text-muted sm:w-28">
                       {STATUS_LABELS[s]}
                     </div>
-                    <div className="h-4 min-w-0 flex-1 overflow-hidden rounded-full bg-slate-100">
+                    <div className="h-4 min-w-0 flex-1 overflow-hidden rounded-full bg-subtle">
                       <div
-                        className={`h-full rounded-full ${n > 0 ? "bg-slate-700" : ""}`}
+                        className={`h-full rounded-full ${n > 0 ? "bg-ink" : ""}`}
                         style={{ width: `${pct}%` }}
                       />
                     </div>
-                    <div className="w-8 text-right text-xs font-semibold text-slate-700">
+                    <div className="w-8 text-right text-xs font-semibold text-ink">
                       {n}
                     </div>
                   </div>
@@ -479,7 +479,7 @@ export default async function DashboardPage() {
 
       {/* Prochaines actions */}
       <Card className="mt-6">
-        <div className="mb-4 border-b border-slate-100 pb-2 text-sm font-semibold text-slate-700">
+        <div className="mb-4 border-b border-line pb-2 text-sm font-semibold text-ink">
           Prochaines actions
         </div>
         {upcoming.length === 0 ? (
@@ -489,12 +489,12 @@ export default async function DashboardPage() {
             {upcoming.map((a) => (
               <li
                 key={a.id}
-                className="rounded-lg border border-slate-200 p-3 text-sm"
+                className="rounded-lg border border-line p-3 text-sm"
               >
-                <div className="font-medium break-words text-slate-800">
+                <div className="font-medium break-words text-ink">
                   {a.jp_jobs?.title ?? "Candidature"}
                 </div>
-                <div className="mt-1.5 flex items-center gap-2 text-xs text-slate-400">
+                <div className="mt-1.5 flex items-center gap-2 text-xs text-faint">
                   <span
                     className={`rounded border px-1.5 py-0.5 ${STATUS_COLORS[a.status]}`}
                   >
@@ -512,23 +512,23 @@ export default async function DashboardPage() {
 
       {/* Sources d'offres */}
       <Card className="mt-6">
-        <div className="mb-4 flex items-center justify-between border-b border-slate-100 pb-2">
-          <div className="text-sm font-semibold text-slate-700">
+        <div className="mb-4 flex items-center justify-between border-b border-line pb-2">
+          <div className="text-sm font-semibold text-ink">
             Sources d&apos;offres
           </div>
-          <div className="text-xs text-slate-400">{jobs.length} offres au total</div>
+          <div className="text-xs text-faint">{jobs.length} offres au total</div>
         </div>
         <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
           {ALL_SOURCES.map((s) => {
             const n = jobsBySource(s);
             const last = lastRun(s);
             return (
-              <div key={s} className="rounded-lg border border-slate-200 bg-slate-50/50 p-3">
-                <div className="text-xs font-medium uppercase tracking-wide text-slate-400">
+              <div key={s} className="rounded-lg border border-line bg-canvas/50 p-3">
+                <div className="text-xs font-medium uppercase tracking-wide text-faint">
                   {SOURCE_LABELS[s] ?? s}
                 </div>
-                <div className="mt-1 text-2xl font-bold text-slate-900">{n}</div>
-                <div className="mt-1 text-[11px] text-slate-400">
+                <div className="mt-1 text-2xl font-bold text-ink">{n}</div>
+                <div className="mt-1 text-[11px] text-faint">
                   {s === "manual"
                     ? "saisie manuelle"
                     : last

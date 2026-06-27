@@ -28,7 +28,7 @@ export default async function DocumentsPage() {
         {/* CV versions */}
         <div>
           <Card className="mb-4">
-            <div className="mb-3 text-sm font-semibold text-slate-700">+ Version de CV</div>
+            <div className="mb-3 text-sm font-semibold text-ink">+ Version de CV</div>
             <form action={createCvVersion} className="grid grid-cols-1 gap-3">
               <input name="label" required placeholder="Label (ex: CV Master 2026) *" className="input" />
               <input name="target_role" placeholder="Rôle cible (ex: FDE / Cloud)" className="input" />
@@ -44,13 +44,13 @@ export default async function DocumentsPage() {
                 <Card key={cv.id}>
                   <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0 break-words">
-                      <div className="text-sm font-semibold text-slate-800">
+                      <div className="text-sm font-semibold text-ink">
                         {cv.label}{" "}
-                        <span className="text-xs font-normal text-slate-400">
+                        <span className="text-xs font-normal text-faint">
                           v{cv.version}
                         </span>
                       </div>
-                      <div className="text-xs text-slate-500">{cv.target_role}</div>
+                      <div className="text-xs text-muted">{cv.target_role}</div>
                       {cv.file_url && (
                         <a
                           href={cv.file_url}
@@ -79,10 +79,10 @@ export default async function DocumentsPage() {
         <div>
           <Card className="mb-4">
             <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-              <span className="text-sm font-semibold text-slate-700">
+              <span className="text-sm font-semibold text-ink">
                 Générer une lettre avec l&apos;IA
               </span>
-              <span className={`rounded px-1.5 py-0.5 text-[11px] ${aiEnabled() ? "bg-emerald-100 text-emerald-700" : "bg-slate-100 text-slate-400"}`}>
+              <span className={`rounded px-1.5 py-0.5 text-[11px] ${aiEnabled() ? "bg-emerald-100 text-emerald-700" : "bg-subtle text-faint"}`}>
                 {aiEnabled() ? "IA active" : "clé IA requise"}
               </span>
             </div>
@@ -98,7 +98,7 @@ export default async function DocumentsPage() {
           </Card>
 
           <Card className="mb-4">
-            <div className="mb-3 text-sm font-semibold text-slate-700">
+            <div className="mb-3 text-sm font-semibold text-ink">
               + Lettre de motivation (manuelle)
             </div>
             <form action={createCoverLetter} className="grid grid-cols-1 gap-3">
@@ -116,8 +116,8 @@ export default async function DocumentsPage() {
                 <Card key={l.id}>
                   <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0 break-words">
-                      <div className="text-sm font-semibold text-slate-800">{l.label}</div>
-                      <div className="text-xs text-slate-400">{l.tone}</div>
+                      <div className="text-sm font-semibold text-ink">{l.label}</div>
+                      <div className="text-xs text-faint">{l.tone}</div>
                     </div>
                     <form action={deleteCoverLetter}>
                       <input type="hidden" name="id" value={l.id} />
@@ -127,7 +127,7 @@ export default async function DocumentsPage() {
                     </form>
                   </div>
                   {l.content && (
-                    <p className="mt-2 line-clamp-3 text-xs text-slate-500">{l.content}</p>
+                    <p className="mt-2 line-clamp-3 text-xs text-muted">{l.content}</p>
                   )}
                 </Card>
               ))

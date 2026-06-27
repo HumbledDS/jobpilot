@@ -22,7 +22,7 @@ const STATUS = [
   { v: "done", label: "Terminé" },
 ];
 const STATUS_STYLE: Record<string, string> = {
-  todo: "bg-slate-100 text-slate-600",
+  todo: "bg-subtle text-muted",
   in_progress: "bg-amber-100 text-amber-700",
   deployed: "bg-blue-100 text-accent",
   done: "bg-emerald-100 text-emerald-700",
@@ -46,12 +46,12 @@ export default async function ProjectsPage() {
 
       <Card className="mb-4">
         <div className="mb-2 flex items-center justify-between text-sm">
-          <span className="font-semibold text-slate-700">Progression</span>
-          <span className="text-slate-500">
+          <span className="font-semibold text-ink">Progression</span>
+          <span className="text-muted">
             {done} aboutis · {inProgress} en cours · {projects.length} au total ({pct}%)
           </span>
         </div>
-        <div className="h-3 w-full overflow-hidden rounded bg-slate-100">
+        <div className="h-3 w-full overflow-hidden rounded bg-subtle">
           <div className="h-full rounded bg-emerald-500" style={{ width: `${pct}%` }} />
         </div>
       </Card>
@@ -60,8 +60,8 @@ export default async function ProjectsPage() {
         {/* AI idea generator */}
         <Card>
           <div className="mb-3 flex items-center justify-between">
-            <span className="text-sm font-semibold text-slate-700">Générer une idée (IA)</span>
-            <span className={`rounded px-1.5 py-0.5 text-[11px] ${aiEnabled() ? "bg-emerald-100 text-emerald-700" : "bg-slate-100 text-slate-400"}`}>
+            <span className="text-sm font-semibold text-ink">Générer une idée (IA)</span>
+            <span className={`rounded px-1.5 py-0.5 text-[11px] ${aiEnabled() ? "bg-emerald-100 text-emerald-700" : "bg-subtle text-faint"}`}>
               {aiEnabled() ? "IA active" : "clé IA requise"}
             </span>
           </div>
@@ -79,7 +79,7 @@ export default async function ProjectsPage() {
 
         {/* Manual add */}
         <Card>
-          <div className="mb-3 text-sm font-semibold text-slate-700">+ Ajouter un projet</div>
+          <div className="mb-3 text-sm font-semibold text-ink">+ Ajouter un projet</div>
           <form action={createProject} className="grid grid-cols-1 gap-3">
             <input name="name" required placeholder="Nom du projet *" className="input" />
             <input name="description" placeholder="Description courte" className="input" />
@@ -102,14 +102,14 @@ export default async function ProjectsPage() {
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
                     {p.order_index != null && (
-                      <span className="text-xs font-bold text-slate-300">#{p.order_index}</span>
+                      <span className="text-xs font-bold text-faint">#{p.order_index}</span>
                     )}
-                    <span className="break-words text-sm font-semibold text-slate-800">{p.name}</span>
+                    <span className="break-words text-sm font-semibold text-ink">{p.name}</span>
                     <span className={`rounded px-1.5 py-0.5 text-[10px] font-medium ${STATUS_STYLE[p.status]}`}>
                       {STATUS.find((s) => s.v === p.status)?.label}
                     </span>
                   </div>
-                  <div className="break-words text-xs text-slate-500">
+                  <div className="break-words text-xs text-muted">
                     {p.description}
                     {p.cloud ? ` · ${p.cloud}` : ""}
                     {p.target_role ? ` · ${p.target_role}` : ""}
@@ -126,20 +126,20 @@ export default async function ProjectsPage() {
                 <div className="flex w-full flex-col gap-2 md:w-auto md:shrink-0">
                   <form action={updateProject} className="flex flex-wrap items-center gap-2">
                     <input type="hidden" name="id" value={p.id} />
-                    <select name="status" defaultValue={p.status} className="rounded border border-slate-200 px-2 py-1 text-xs">
+                    <select name="status" defaultValue={p.status} className="rounded border border-line px-2 py-1 text-xs">
                       {STATUS.map((s) => (
                         <option key={s.v} value={s.v}>{s.label}</option>
                       ))}
                     </select>
-                    <input name="repo_url" defaultValue={p.repo_url ?? ""} placeholder="repo url" className="min-w-0 flex-1 rounded border border-slate-200 px-2 py-1 text-xs md:w-28 md:flex-none" />
-                    <input name="deployed_url" defaultValue={p.deployed_url ?? ""} placeholder="live url" className="min-w-0 flex-1 rounded border border-slate-200 px-2 py-1 text-xs md:w-28 md:flex-none" />
-                    <button className="rounded bg-slate-800 px-2 py-1 text-xs text-white">Maj</button>
+                    <input name="repo_url" defaultValue={p.repo_url ?? ""} placeholder="repo url" className="min-w-0 flex-1 rounded border border-line px-2 py-1 text-xs md:w-28 md:flex-none" />
+                    <input name="deployed_url" defaultValue={p.deployed_url ?? ""} placeholder="live url" className="min-w-0 flex-1 rounded border border-line px-2 py-1 text-xs md:w-28 md:flex-none" />
+                    <button className="rounded bg-ink px-2 py-1 text-xs text-surface">Maj</button>
                   </form>
                   <div className="flex items-center gap-2">
                     {aiEnabled() && (
                       <form action={generateBrief}>
                         <input type="hidden" name="id" value={p.id} />
-                        <button className="rounded border border-slate-200 px-2 py-1 text-xs text-slate-600 hover:bg-slate-100">
+                        <button className="rounded border border-line px-2 py-1 text-xs text-muted hover:bg-subtle">
                           {p.brief ? "Régénérer le brief" : "Générer le brief (IA)"}
                         </button>
                       </form>
@@ -153,17 +153,17 @@ export default async function ProjectsPage() {
               </div>
 
               {/* Brief + notes : l'espace de travail */}
-              <div className="mt-3 grid grid-cols-1 gap-3 border-t border-slate-100 pt-3 lg:grid-cols-2">
+              <div className="mt-3 grid grid-cols-1 gap-3 border-t border-line pt-3 lg:grid-cols-2">
                   {p.brief && (
                     <details>
-                      <summary className="cursor-pointer text-xs font-semibold text-slate-700">Brief du projet</summary>
-                      <p className="mt-2 whitespace-pre-wrap break-words rounded bg-slate-50 p-2 text-xs text-slate-600">{p.brief}</p>
+                      <summary className="cursor-pointer text-xs font-semibold text-ink">Brief du projet</summary>
+                      <p className="mt-2 whitespace-pre-wrap break-words rounded bg-canvas p-2 text-xs text-muted">{p.brief}</p>
                       <div className="mt-2"><CopyButton text={p.brief} label="Copier le brief" /></div>
                     </details>
                   )}
                   <form action={saveProjectNotes} className="flex flex-col gap-2">
                     <textarea name="notes" defaultValue={p.notes ?? ""} rows={3} placeholder="Tes notes / avancement…" className="input" />
-                    <button className="self-start rounded bg-slate-800 px-2 py-1 text-xs text-white">Enregistrer les notes</button>
+                    <button className="self-start rounded bg-ink px-2 py-1 text-xs text-surface">Enregistrer les notes</button>
                   </form>
               </div>
             </Card>

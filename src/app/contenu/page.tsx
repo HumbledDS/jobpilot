@@ -35,7 +35,7 @@ export default async function ContenuPage() {
       {!hasAdmin() && <SetupBanner />}
 
       <Card className="mb-6">
-        <div className="mb-3 text-sm font-semibold text-slate-700">
+        <div className="mb-3 text-sm font-semibold text-ink">
           Générer un brouillon (canevas prêt à éditer)
         </div>
         <form action={generateDraft} className="grid grid-cols-1 gap-3 md:grid-cols-4">
@@ -49,7 +49,7 @@ export default async function ContenuPage() {
           <input name="course" placeholder="Cours / école (ex: M2 EFREI)" className="input md:col-span-3" />
           <button className="btn-primary">Générer</button>
         </form>
-        <p className="mt-2 text-xs text-slate-400">
+        <p className="mt-2 text-xs text-faint">
           {aiEnabled()
             ? "IA active (Claude Opus 4.8) : « Générer » rédige un vrai post adapté au sujet et à ton profil, que tu peux ensuite éditer."
             : "Mode canevas (sans IA) : structure prête à compléter. Ajoute ANTHROPIC_API_KEY pour une génération rédigée par Claude."}
@@ -62,10 +62,10 @@ export default async function ContenuPage() {
           return (
             <div key={col}>
               <div className="mb-3 flex items-center justify-between">
-                <span className="text-sm font-semibold text-slate-700">
+                <span className="text-sm font-semibold text-ink">
                   {POST_STATUS_LABELS[col]}
                 </span>
-                <span className="text-xs text-slate-400">{list.length}</span>
+                <span className="text-xs text-faint">{list.length}</span>
               </div>
               <div className="space-y-3">
                 {list.length === 0 ? (
@@ -74,10 +74,10 @@ export default async function ContenuPage() {
                   list.map((p) => (
                     <Card key={p.id} className="min-w-0 p-3">
                       <details>
-                        <summary className="cursor-pointer break-words text-sm font-semibold text-slate-800">
+                        <summary className="cursor-pointer break-words text-sm font-semibold text-ink">
                           {p.title}
                         </summary>
-                        <div className="mt-1 break-words text-[11px] text-slate-400">
+                        <div className="mt-1 break-words text-[11px] text-faint">
                           {p.topic}{p.course ? ` · ${p.course}` : ""}{p.angle ? ` · ${p.angle}` : ""}
                         </div>
                         <form action={updatePost} className="mt-3 space-y-2">
@@ -87,12 +87,12 @@ export default async function ContenuPage() {
                           <textarea name="body" defaultValue={p.body ?? ""} rows={8} className="input" placeholder="Corps du post" />
                           <input name="hashtags" defaultValue={(p.hashtags ?? []).join(" ")} className="input" placeholder="#hashtags" />
                           <div className="flex flex-wrap items-center gap-2">
-                            <select name="status" defaultValue={p.status} className="rounded border border-slate-200 px-2 py-1 text-xs">
+                            <select name="status" defaultValue={p.status} className="rounded border border-line px-2 py-1 text-xs">
                               <option value="idea">Idée</option>
                               <option value="draft">Brouillon</option>
                               <option value="published">Publié</option>
                             </select>
-                            <button className="rounded bg-slate-800 px-2 py-1 text-xs text-white">Enregistrer</button>
+                            <button className="rounded bg-ink px-2 py-1 text-xs text-surface">Enregistrer</button>
                           </div>
                         </form>
                         <div className="mt-2 flex flex-wrap items-center gap-2">

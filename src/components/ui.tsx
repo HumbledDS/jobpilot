@@ -116,7 +116,7 @@ export function timeAgo(date: string | null): string {
 /** Freshness badge: the fresher the posting, the stronger the signal to apply now. */
 export function Freshness({ postedAt }: { postedAt: string | null }) {
   const d = ageInDays(postedAt);
-  let cls = "bg-slate-100 text-slate-500 border-slate-200";
+  let cls = "bg-subtle text-muted border-line";
   let label = timeAgo(postedAt);
   if (d !== null) {
     if (d <= 0) {

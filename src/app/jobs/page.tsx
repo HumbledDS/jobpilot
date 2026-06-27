@@ -126,7 +126,7 @@ export default async function JobsPage({
               <svg
                 aria-hidden="true"
                 viewBox="0 0 24 24"
-                className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
+                className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-faint"
                 fill="none"
                 stroke="currentColor"
                 strokeWidth="2"
@@ -148,7 +148,7 @@ export default async function JobsPage({
               {activeFilters > 0 && (
                 <Link
                   href="/jobs"
-                  className="rounded-md px-3 py-2 text-xs font-medium text-slate-500 hover:bg-slate-100 hover:text-slate-700"
+                  className="rounded-md px-3 py-2 text-xs font-medium text-muted hover:bg-subtle hover:text-ink"
                 >
                   Réinitialiser
                 </Link>
@@ -203,17 +203,17 @@ export default async function JobsPage({
         </form>
 
         {/* Recherches sauvegardées */}
-        <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-slate-100 pt-3">
-          <span className="text-xs font-medium text-slate-400">Recherches sauvegardées</span>
+        <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-line pt-3">
+          <span className="text-xs font-medium text-faint">Recherches sauvegardées</span>
           {saved.length === 0 && (
-            <span className="text-xs text-slate-300">aucune pour l&apos;instant</span>
+            <span className="text-xs text-faint">aucune pour l&apos;instant</span>
           )}
           {saved.map((s) => (
-            <span key={s.id} className="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-slate-50 py-1 pl-3 pr-1.5 text-xs">
-              <Link href={hrefFor(s.query)} className="font-medium text-slate-700 hover:text-slate-900">{s.name}</Link>
+            <span key={s.id} className="inline-flex items-center gap-1 rounded-full border border-line bg-canvas py-1 pl-3 pr-1.5 text-xs">
+              <Link href={hrefFor(s.query)} className="font-medium text-ink hover:text-ink">{s.name}</Link>
               <form action={deleteSavedSearch}>
                 <input type="hidden" name="id" value={s.id} />
-                <button className="flex h-4 w-4 items-center justify-center rounded-full text-slate-400 hover:bg-rose-100 hover:text-rose-600" aria-label="Supprimer">×</button>
+                <button className="flex h-4 w-4 items-center justify-center rounded-full text-faint hover:bg-rose-100 hover:text-rose-600" aria-label="Supprimer">×</button>
               </form>
             </span>
           ))}
@@ -222,15 +222,15 @@ export default async function JobsPage({
               {Object.entries(currentQuery).map(([k, v]) => (
                 <input key={k} type="hidden" name={k} value={v} />
               ))}
-              <input name="name" required placeholder="Nom de la recherche" className="rounded-md border border-slate-200 px-2 py-1.5 text-xs focus:border-slate-400 focus:outline-none" />
-              <button className="rounded-md bg-slate-800 px-3 py-1.5 text-xs font-medium text-white hover:bg-slate-700">Sauvegarder</button>
+              <input name="name" required placeholder="Nom de la recherche" className="rounded-md border border-line px-2 py-1.5 text-xs focus:border-line-strong focus:outline-none" />
+              <button className="rounded-md bg-ink px-3 py-1.5 text-xs font-medium text-surface hover:opacity-90">Sauvegarder</button>
             </form>
           )}
         </div>
       </Card>
 
       <Card className="mb-6">
-        <div className="mb-3 text-sm font-semibold text-slate-700">+ Ajouter une offre</div>
+        <div className="mb-3 text-sm font-semibold text-ink">+ Ajouter une offre</div>
         <form action={createJob} className="grid grid-cols-1 gap-3 md:grid-cols-3">
           <input name="title" required placeholder="Intitulé *" className="input" />
           <input name="company_name" placeholder="Entreprise" className="input" />
@@ -262,7 +262,7 @@ export default async function JobsPage({
             return (
               <Card
                 key={j.id}
-                className={`p-4 transition-colors hover:border-slate-300 ${
+                className={`p-4 transition-colors hover:border-line-strong ${
                   isTop ? "border-emerald-200 bg-emerald-50/30" : ""
                 }`}
               >
@@ -279,7 +279,7 @@ export default async function JobsPage({
                   <div className="flex min-w-0 flex-1 flex-col gap-2 md:flex-row md:items-start md:justify-between">
                     <div className="min-w-0">
                       <div className="flex flex-wrap items-center gap-2">
-                        <Link href={`/jobs/${j.id}`} className="break-words text-sm font-semibold text-slate-800 hover:text-slate-950 hover:underline">
+                        <Link href={`/jobs/${j.id}`} className="break-words text-sm font-semibold text-ink hover:text-ink hover:underline">
                           {j.title}
                         </Link>
                         {isTop && (
@@ -293,16 +293,16 @@ export default async function JobsPage({
                           </span>
                         )}
                         <Freshness postedAt={j.posted_at} />
-                        <span className="rounded bg-slate-100 px-1.5 py-0.5 text-[10px] uppercase text-slate-500">
+                        <span className="rounded bg-subtle px-1.5 py-0.5 text-[10px] uppercase text-muted">
                           {SOURCE_LABELS[j.source] ?? j.source}
                         </span>
                       </div>
-                      <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-xs text-slate-500">
-                        {j.company_name && <span className="font-semibold text-slate-700">{j.company_name}</span>}
+                      <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-xs text-muted">
+                        {j.company_name && <span className="font-semibold text-ink">{j.company_name}</span>}
                         {j.location && <span>{j.location}</span>}
                         {j.role_family && j.role_family !== "Autre" && <span>{j.role_family}</span>}
                         {sal && <span className="font-semibold text-emerald-600">{sal}</span>}
-                        <span className="text-slate-400">publiée {timeAgo(j.posted_at)}</span>
+                        <span className="text-faint">publiée {timeAgo(j.posted_at)}</span>
                       </div>
                       {(j.matched_skills?.length || j.missing_skills?.length) ? (
                         <div className="mt-2 flex flex-wrap gap-1">
@@ -312,20 +312,20 @@ export default async function JobsPage({
                             </span>
                           ))}
                           {(j.missing_skills ?? []).map((s) => (
-                            <span key={s} className="rounded border border-dashed border-slate-200 bg-slate-50 px-1.5 py-0.5 text-[11px] text-slate-400" title="Compétence demandée que tu n'as pas listée">
+                            <span key={s} className="rounded border border-dashed border-line bg-canvas px-1.5 py-0.5 text-[11px] text-faint" title="Compétence demandée que tu n'as pas listée">
                               +{s}
                             </span>
                           ))}
                         </div>
                       ) : null}
                     </div>
-                    <div className="flex shrink-0 flex-wrap items-center gap-2 border-t border-slate-100 pt-2 md:border-0 md:pt-0">
+                    <div className="flex shrink-0 flex-wrap items-center gap-2 border-t border-line pt-2 md:border-0 md:pt-0">
                       <form action={applyToJob}>
                         <input type="hidden" name="id" value={j.id} />
-                        <button className="rounded-md bg-slate-800 px-3 py-1.5 text-xs font-medium text-white hover:bg-slate-700">Candidater</button>
+                        <button className="rounded-md bg-ink px-3 py-1.5 text-xs font-medium text-surface hover:opacity-90">Candidater</button>
                       </form>
                       {j.url && (
-                        <a href={j.url} target="_blank" rel="noreferrer" className="rounded-md border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-50">Voir</a>
+                        <a href={j.url} target="_blank" rel="noreferrer" className="rounded-md border border-line px-3 py-1.5 text-xs font-medium text-muted hover:bg-canvas">Voir</a>
                       )}
                       <form action={deleteJob} className="ml-auto md:ml-0">
                         <input type="hidden" name="id" value={j.id} />

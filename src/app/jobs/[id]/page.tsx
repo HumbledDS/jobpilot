@@ -26,7 +26,7 @@ export default async function JobDetailPage({
 
   return (
     <div className="max-w-3xl break-words">
-      <Link href="/jobs" className="text-xs text-slate-400 hover:underline">
+      <Link href="/jobs" className="text-xs text-faint hover:underline">
         ← Retour aux offres
       </Link>
 
@@ -35,18 +35,18 @@ export default async function JobDetailPage({
           {job.match_score ?? "—"} · {sl.label}
         </span>
         <Freshness postedAt={job.posted_at} />
-        <span className="rounded bg-slate-100 px-1.5 py-0.5 text-[10px] uppercase text-slate-500">
+        <span className="rounded bg-subtle px-1.5 py-0.5 text-[10px] uppercase text-muted">
           {SOURCE_LABELS[job.source] ?? job.source}
         </span>
       </div>
 
-      <h1 className="mt-2 text-2xl font-bold text-slate-900">{job.title}</h1>
-      <div className="mt-1 flex flex-wrap gap-x-3 text-sm text-slate-500">
-        {job.company_name && <span className="font-medium text-slate-700">{job.company_name}</span>}
+      <h1 className="mt-2 text-2xl font-bold text-ink">{job.title}</h1>
+      <div className="mt-1 flex flex-wrap gap-x-3 text-sm text-muted">
+        {job.company_name && <span className="font-medium text-ink">{job.company_name}</span>}
         {job.location && <span>{job.location}</span>}
         {job.role_family && job.role_family !== "Autre" && <span>{job.role_family}</span>}
         {sal && <span className="font-medium text-emerald-600">{sal}</span>}
-        <span className="text-slate-400">publiée {timeAgo(job.posted_at)}</span>
+        <span className="text-faint">publiée {timeAgo(job.posted_at)}</span>
       </div>
 
       <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:flex-wrap">
@@ -58,53 +58,53 @@ export default async function JobDetailPage({
         </form>
         <form action={applyToJob} className="contents sm:block">
           <input type="hidden" name="id" value={job.id} />
-          <button className="w-full rounded-lg border border-slate-200 px-4 py-2 text-center text-sm hover:bg-slate-50 sm:w-auto">
+          <button className="w-full rounded-lg border border-line px-4 py-2 text-center text-sm hover:bg-canvas sm:w-auto">
             Ajouter au suivi
           </button>
         </form>
         {job.url && (
-          <a href={job.url} target="_blank" rel="noreferrer" className="rounded-lg border border-slate-200 px-4 py-2 text-center text-sm hover:bg-slate-50">
+          <a href={job.url} target="_blank" rel="noreferrer" className="rounded-lg border border-line px-4 py-2 text-center text-sm hover:bg-canvas">
             Voir l&apos;offre d&apos;origine
           </a>
         )}
       </div>
       {aiEnabled() && (
-        <p className="mt-2 text-xs text-slate-400">
+        <p className="mt-2 text-xs text-faint">
           « Préparer la candidature » crée le suivi, choisit le CV adapté et génère lettre + email sur-mesure.
         </p>
       )}
 
       <Card className="mt-6">
-        <div className="mb-2 text-sm font-semibold text-slate-700">Adéquation avec ton profil</div>
+        <div className="mb-2 text-sm font-semibold text-ink">Adéquation avec ton profil</div>
         <div className="flex flex-wrap gap-1">
           {(job.matched_skills ?? []).map((s) => (
             <span key={s} className="rounded bg-emerald-50 px-1.5 py-0.5 text-xs text-emerald-700">{s}</span>
           ))}
           {(job.missing_skills ?? []).map((s) => (
-            <span key={s} className="rounded bg-slate-100 px-1.5 py-0.5 text-xs text-slate-500">+{s}</span>
+            <span key={s} className="rounded bg-subtle px-1.5 py-0.5 text-xs text-muted">+{s}</span>
           ))}
           {!(job.matched_skills?.length || job.missing_skills?.length) && (
-            <span className="text-xs text-slate-400">Aucune compétence détectée dans le texte.</span>
+            <span className="text-xs text-faint">Aucune compétence détectée dans le texte.</span>
           )}
         </div>
       </Card>
 
       {emails.length > 0 && (
         <Card className="mt-6">
-          <div className="mb-1 text-sm font-semibold text-slate-700">
+          <div className="mb-1 text-sm font-semibold text-ink">
             Emails de contact détectés dans l&apos;offre
           </div>
-          <p className="mb-3 text-xs text-slate-400">
+          <p className="mb-3 text-xs text-faint">
             Ajoute le contact pour générer un email de candidature{aiEnabled() ? " (rédigé par l'IA)" : ""}, signé avec tes infos.
           </p>
           <div className="flex flex-col gap-2">
             {emails.map((email) => (
-              <div key={email} className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-slate-200 p-2">
+              <div key={email} className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-line p-2">
                 <a href={`mailto:${email}`} className="text-sm text-accent underline break-all">{email}</a>
                 <form action={createContactFromJob}>
                   <input type="hidden" name="job_id" value={job.id} />
                   <input type="hidden" name="email" value={email} />
-                  <button className="rounded bg-slate-800 px-3 py-1.5 text-xs text-white">
+                  <button className="rounded bg-ink px-3 py-1.5 text-xs text-surface">
                     Ajouter au contact{aiEnabled() ? " + rédiger l'email" : ""}
                   </button>
                 </form>
@@ -116,8 +116,8 @@ export default async function JobDetailPage({
 
       {job.description && (
         <Card className="mt-6">
-          <div className="mb-2 text-sm font-semibold text-slate-700">Description</div>
-          <p className="whitespace-pre-wrap text-sm text-slate-600">{job.description}</p>
+          <div className="mb-2 text-sm font-semibold text-ink">Description</div>
+          <p className="whitespace-pre-wrap text-sm text-muted">{job.description}</p>
         </Card>
       )}
     </div>

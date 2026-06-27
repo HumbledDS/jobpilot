@@ -57,18 +57,18 @@ export default async function StatsPage() {
         <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
           {/* Funnel */}
           <Card>
-            <div className="mb-3 text-sm font-semibold text-slate-700">Entonnoir des candidatures</div>
+            <div className="mb-3 text-sm font-semibold text-ink">Entonnoir des candidatures</div>
             <div className="space-y-2">
               {APPLICATION_STATUSES.map((st) => {
                 const n = s.by(st);
                 const pct = s.total ? (n / s.total) * 100 : 0;
                 return (
                   <div key={st} className="flex items-center gap-2 sm:gap-3">
-                    <div className="w-20 shrink-0 text-xs text-slate-500 sm:w-28">{STATUS_LABELS[st]}</div>
-                    <div className="h-5 min-w-0 flex-1 overflow-hidden rounded bg-slate-100">
+                    <div className="w-20 shrink-0 text-xs text-muted sm:w-28">{STATUS_LABELS[st]}</div>
+                    <div className="h-5 min-w-0 flex-1 overflow-hidden rounded bg-subtle">
                       <div className={`h-full rounded border ${STATUS_COLORS[st]}`} style={{ width: `${pct}%` }} />
                     </div>
-                    <div className="w-8 text-right text-xs font-medium text-slate-600">{n}</div>
+                    <div className="w-8 text-right text-xs font-medium text-muted">{n}</div>
                   </div>
                 );
               })}
@@ -78,22 +78,22 @@ export default async function StatsPage() {
           {/* Cadence + sources */}
           <div className="space-y-6">
             <Card>
-              <div className="mb-3 text-sm font-semibold text-slate-700">Cadence (6 dernières semaines)</div>
+              <div className="mb-3 text-sm font-semibold text-ink">Cadence (6 dernières semaines)</div>
               <div className="flex items-end gap-2" style={{ height: "96px" }}>
                 {s.weeks.map((w) => (
                   <div key={w.label} className="flex flex-1 flex-col items-center justify-end gap-1">
-                    <div className="w-full rounded-t bg-slate-800" style={{ height: `${(w.n / maxWeek) * 72}px` }} title={`${w.n}`} />
-                    <div className="text-[10px] text-slate-400">{w.label}</div>
+                    <div className="w-full rounded-t bg-ink" style={{ height: `${(w.n / maxWeek) * 72}px` }} title={`${w.n}`} />
+                    <div className="text-[10px] text-faint">{w.label}</div>
                   </div>
                 ))}
               </div>
             </Card>
 
             <Card>
-              <div className="mb-3 text-sm font-semibold text-slate-700">Par canal</div>
+              <div className="mb-3 text-sm font-semibold text-ink">Par canal</div>
               <div className="flex flex-wrap gap-2">
                 {Object.entries(s.bySource).map(([src, n]) => (
-                  <span key={src} className="rounded-full border border-slate-200 px-2 py-1 text-xs text-slate-600">
+                  <span key={src} className="rounded-full border border-line px-2 py-1 text-xs text-muted">
                     {SOURCE_LABEL[src] ?? src} · {n}
                   </span>
                 ))}

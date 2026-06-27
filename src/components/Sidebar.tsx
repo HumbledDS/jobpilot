@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 const NAV = [
   { href: "/", label: "Dashboard" },
@@ -47,12 +48,12 @@ function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
             aria-current={active ? "page" : undefined}
             className={`group flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors ${
               active
-                ? "bg-ink font-medium text-white"
+                ? "bg-ink font-medium text-surface"
                 : "font-medium text-muted hover:bg-canvas hover:text-ink"
             }`}
           >
             <span
-              className={`mono text-[10px] ${active ? "text-white/55" : "text-faint group-hover:text-muted"}`}
+              className={`mono text-[10px] ${active ? "text-surface/55" : "text-faint group-hover:text-muted"}`}
             >
               {String(i).padStart(2, "0")}
             </span>
@@ -71,10 +72,13 @@ function SidebarBody({ onNavigate }: { onNavigate?: () => void }) {
         <Wordmark />
       </div>
       <NavLinks onNavigate={onNavigate} />
-      <div className="mt-2 border-t border-line px-5 py-4">
-        <div className="eyebrow">Operator</div>
-        <div className="mt-1.5 text-xs font-medium text-ink">Babacar Gueye</div>
-        <div className="mono mt-0.5 text-[11px] text-faint">data · cloud · ia</div>
+      <div className="mt-2 space-y-3 border-t border-line px-5 py-4">
+        <ThemeToggle />
+        <div>
+          <div className="eyebrow">Operator</div>
+          <div className="mt-1.5 text-xs font-medium text-ink">Babacar Gueye</div>
+          <div className="mono mt-0.5 text-[11px] text-faint">data · cloud · ia</div>
+        </div>
       </div>
     </>
   );

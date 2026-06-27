@@ -75,9 +75,9 @@ export default async function CompaniesPage({
       {!hasAdmin() && <SetupBanner />}
 
       {/* Directive */}
-      <Card className="mb-4 border-slate-300 bg-slate-50">
-        <div className="text-sm font-semibold text-slate-800">Qui viser maintenant</div>
-        <p className="mt-1 text-xs text-slate-600">
+      <Card className="mb-4 border-line-strong bg-canvas">
+        <div className="text-sm font-semibold text-ink">Qui viser maintenant</div>
+        <p className="mt-1 text-xs text-muted">
           On privilégie les entreprises <strong>établies et de confiance</strong> (produit, scale-up, grand compte, éditeur) qui recrutent activement en data/cloud, à bon salaire et avec un fort match. Une boîte solide qui recrute = un pied dans la porte qui débouche vraiment.
           {priority.length > 0 && (
             <>
@@ -88,30 +88,30 @@ export default async function CompaniesPage({
         <p className="mt-1 text-[11px] text-amber-600">
           Méfiance avec les ESN qui publient beaucoup d&apos;offres similaires : souvent du sourcing de candidats (CV mis en vivier) plus que des postes réels. Elles sont signalées « ESN — vérifier ».
         </p>
-        <p className="mt-1 text-[11px] text-slate-500">
+        <p className="mt-1 text-[11px] text-muted">
           Le classement intègre l&apos;<strong>assise réelle</strong> (catégorie PME/ETI/GE, effectifs, CA et sa <strong>croissance annuelle</strong>) — données publiques gratuites (Sirene + comptes INPI multi-années). Les boîtes établies <strong>et en croissance</strong> remontent. Note : pour certains grands groupes, le CA est celui d&apos;une entité légale filiale.
         </p>
-        <div className="mt-3 flex flex-col gap-3 border-t border-slate-200 pt-3 sm:flex-row sm:flex-wrap sm:items-center">
+        <div className="mt-3 flex flex-col gap-3 border-t border-line pt-3 sm:flex-row sm:flex-wrap sm:items-center">
           <form action={sourceTargets}>
             <button className="btn-primary" disabled={!hasAdmin()}>
               Sourcer les offres (ATS)
             </button>
           </form>
           <form action={enrichNow}>
-            <button className="rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100" disabled={!hasAdmin()}>
+            <button className="rounded-lg border border-line-strong px-3 py-2 text-sm font-medium text-ink hover:bg-subtle" disabled={!hasAdmin()}>
               Enrichir (CA / effectifs)
             </button>
           </form>
-          <span className="text-xs text-slate-500">
+          <span className="text-xs text-muted">
             {directCount > 0 && (
               <>
-                <strong className="text-slate-700">{directCount}</strong> offre(s) directe(s)
+                <strong className="text-ink">{directCount}</strong> offre(s) directe(s)
               </>
             )}
             {enrichedCount > 0 && (
               <>
                 {directCount > 0 ? " · " : ""}
-                <strong className="text-slate-700">{enrichedCount}</strong>/{all.length} enrichie(s)
+                <strong className="text-ink">{enrichedCount}</strong>/{all.length} enrichie(s)
               </>
             )}
           </span>
@@ -120,7 +120,7 @@ export default async function CompaniesPage({
 
       {top.length > 0 && (
         <Card className="mb-6">
-          <div className="mb-3 text-sm font-semibold text-slate-700">
+          <div className="mb-3 text-sm font-semibold text-ink">
             Entreprises qui recrutent (dans tes {jobs.length} offres ciblées)
           </div>
           <div className="space-y-1.5">
@@ -130,18 +130,18 @@ export default async function CompaniesPage({
               return (
                 <div
                   key={h.company}
-                  className={`flex flex-wrap items-center gap-x-3 gap-y-1 rounded-lg border p-2 ${h.trust === "solide" ? "border-emerald-200 bg-emerald-50/40" : "border-slate-200"}`}
+                  className={`flex flex-wrap items-center gap-x-3 gap-y-1 rounded-lg border p-2 ${h.trust === "solide" ? "border-emerald-200 bg-emerald-50/40" : "border-line"}`}
                 >
-                  <span className="min-w-0 flex-1 break-words text-sm font-medium text-slate-800">
+                  <span className="min-w-0 flex-1 break-words text-sm font-medium text-ink">
                     {h.company}
                     {badge && <span className={`ml-2 rounded px-1.5 py-0.5 text-[10px] font-medium ${badge.cls}`}>{badge.label}</span>}
-                    {h.category && <span className="ml-2 text-[11px] text-slate-400">{h.category}</span>}
+                    {h.category && <span className="ml-2 text-[11px] text-faint">{h.category}</span>}
                   </span>
-                  <span className="text-xs text-slate-500">{h.offers} offre(s)</span>
+                  <span className="text-xs text-muted">{h.offers} offre(s)</span>
                   {sal && <span className="text-xs font-medium text-emerald-600">{sal}</span>}
-                  <span className="text-xs text-slate-400">match {h.avgScore}</span>
+                  <span className="text-xs text-faint">match {h.avgScore}</span>
                   {h.effectifLabel && (
-                    <span className="hidden text-xs text-slate-400 sm:inline">{h.effectifLabel} sal.</span>
+                    <span className="hidden text-xs text-faint sm:inline">{h.effectifLabel} sal.</span>
                   )}
                   {(h.caCagr ?? h.caGrowth) != null && (() => {
                     const g = (h.caCagr ?? h.caGrowth) as number;
@@ -164,11 +164,11 @@ export default async function CompaniesPage({
       )}
 
       {/* Référentiel cible (303) */}
-      <div className="mb-2 text-sm font-semibold text-slate-700">Référentiel d&apos;entreprises cibles ({all.length})</div>
+      <div className="mb-2 text-sm font-semibold text-ink">Référentiel d&apos;entreprises cibles ({all.length})</div>
       <div className="mb-4 flex flex-wrap gap-2">
         <Link
           href="/companies"
-          className={`rounded-full border px-3 py-1 text-xs font-medium ${!cat ? "border-slate-900 bg-slate-900 text-white" : "border-slate-200 bg-white text-slate-600"}`}
+          className={`rounded-full border px-3 py-1 text-xs font-medium ${!cat ? "border-ink bg-ink text-surface" : "border-line bg-surface text-muted"}`}
         >
           Toutes ({all.length})
         </Link>
@@ -176,7 +176,7 @@ export default async function CompaniesPage({
           <Link
             key={c}
             href={`/companies?cat=${encodeURIComponent(c)}`}
-            className={`rounded-full border px-3 py-1 text-xs font-medium ${cat === c ? "border-slate-900 bg-slate-900 text-white" : "border-slate-200 bg-white text-slate-600"}`}
+            className={`rounded-full border px-3 py-1 text-xs font-medium ${cat === c ? "border-ink bg-ink text-surface" : "border-line bg-surface text-muted"}`}
           >
             {c} ({n})
           </Link>
@@ -190,19 +190,19 @@ export default async function CompaniesPage({
           {list.map((c) => (
             <Card key={c.id} className="flex flex-col gap-2 p-4">
               <div className="min-w-0">
-                <div className="break-words text-sm font-semibold text-slate-800">{c.name}</div>
-                <div className="text-[11px] uppercase tracking-wide text-slate-400">{c.category}</div>
+                <div className="break-words text-sm font-semibold text-ink">{c.name}</div>
+                <div className="text-[11px] uppercase tracking-wide text-faint">{c.category}</div>
               </div>
               {(c.categorie_entreprise || c.effectif_label || c.ca != null) && (
                 <div className="flex flex-wrap items-center gap-1.5">
                   {c.categorie_entreprise && (
-                    <span className="rounded bg-slate-100 px-1.5 py-0.5 text-[10px] font-medium text-slate-600">{c.categorie_entreprise}</span>
+                    <span className="rounded bg-subtle px-1.5 py-0.5 text-[10px] font-medium text-muted">{c.categorie_entreprise}</span>
                   )}
                   {c.effectif_label && (
-                    <span className="rounded bg-slate-100 px-1.5 py-0.5 text-[10px] text-slate-500">{c.effectif_label} sal.</span>
+                    <span className="rounded bg-subtle px-1.5 py-0.5 text-[10px] text-muted">{c.effectif_label} sal.</span>
                   )}
                   {fmtCA(c.ca) && (
-                    <span className="rounded bg-slate-100 px-1.5 py-0.5 text-[10px] text-slate-500">
+                    <span className="rounded bg-subtle px-1.5 py-0.5 text-[10px] text-muted">
                       CA {fmtCA(c.ca)}
                       {(c.ca_cagr ?? c.ca_growth) != null && (() => {
                         const g = (c.ca_cagr ?? c.ca_growth) as number;

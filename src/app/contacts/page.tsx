@@ -22,7 +22,7 @@ export default async function ContactsPage() {
       {!hasAdmin() && <SetupBanner />}
 
       <Card className="mb-6">
-        <div className="mb-3 text-sm font-semibold text-slate-700">+ Nouveau contact</div>
+        <div className="mb-3 text-sm font-semibold text-ink">+ Nouveau contact</div>
         <form action={createContact} className="grid grid-cols-1 gap-3 md:grid-cols-3">
           <input name="full_name" required placeholder="Nom complet *" className="input" />
           <input name="role" placeholder="Poste (ex: Talent Acquisition)" className="input" />
@@ -42,10 +42,10 @@ export default async function ContactsPage() {
             <Card key={c.id}>
               <div className="flex items-start justify-between gap-2">
                 <div className="min-w-0">
-                  <div className="break-words text-sm font-semibold text-slate-800">
+                  <div className="break-words text-sm font-semibold text-ink">
                     {c.full_name}
                   </div>
-                  <div className="break-words text-xs text-slate-500">
+                  <div className="break-words text-xs text-muted">
                     {c.role ?? ""}
                     {companyName(c.company_id) ? ` · ${companyName(c.company_id)}` : ""}
                   </div>
@@ -73,17 +73,17 @@ export default async function ContactsPage() {
                     Profil LinkedIn
                   </a>
                 )}
-                {c.notes && <div className="text-slate-500">{c.notes}</div>}
+                {c.notes && <div className="text-muted">{c.notes}</div>}
               </div>
 
               {c.email && (
-                <div className="mt-3 border-t border-slate-100 pt-3">
+                <div className="mt-3 border-t border-line pt-3">
                   {c.draft_email ? (
                     <details>
-                      <summary className="cursor-pointer text-xs font-semibold text-slate-700">
+                      <summary className="cursor-pointer text-xs font-semibold text-ink">
                         Email rédigé{c.draft_subject ? ` — ${c.draft_subject}` : ""}
                       </summary>
-                      <p className="mt-2 whitespace-pre-wrap break-words rounded bg-slate-50 p-2 text-xs text-slate-600">
+                      <p className="mt-2 whitespace-pre-wrap break-words rounded bg-canvas p-2 text-xs text-muted">
                         {c.draft_email}
                       </p>
                       <div className="mt-2 flex flex-wrap items-center gap-2">
@@ -93,14 +93,14 @@ export default async function ContactsPage() {
                         />
                         <a
                           href={`mailto:${c.email}?subject=${encodeURIComponent(c.draft_subject ?? "")}&body=${encodeURIComponent(c.draft_email)}`}
-                          className="rounded bg-slate-800 px-2 py-1 text-xs text-white"
+                          className="rounded bg-ink px-2 py-1 text-xs text-surface"
                         >
                           Ouvrir dans ma messagerie
                         </a>
                         {aiEnabled() && (
                           <form action={draftEmailForContact}>
                             <input type="hidden" name="id" value={c.id} />
-                            <button className="rounded border border-slate-200 px-2 py-1 text-xs text-slate-600 hover:bg-slate-100">
+                            <button className="rounded border border-line px-2 py-1 text-xs text-muted hover:bg-subtle">
                               Régénérer
                             </button>
                           </form>
@@ -110,7 +110,7 @@ export default async function ContactsPage() {
                   ) : aiEnabled() ? (
                     <form action={draftEmailForContact}>
                       <input type="hidden" name="id" value={c.id} />
-                      <button className="rounded bg-slate-800 px-2 py-1 text-xs text-white">
+                      <button className="rounded bg-ink px-2 py-1 text-xs text-surface">
                         Rédiger l&apos;email (IA)
                       </button>
                     </form>
