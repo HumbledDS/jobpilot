@@ -105,12 +105,31 @@ export default async function DashboardPage() {
     skillDemand(jobs).find((d) => !profileSkills.has(d.skill))?.skill ?? null;
   const hiring = companiesHiring(
     jobs,
-    targets.map((t) => ({ name: t.name, category: t.category })),
+    targets.map((t) => ({
+      name: t.name,
+      category: t.category,
+      categorieEntreprise: t.categorie_entreprise,
+      caGrowth: t.ca_growth,
+      caCagr: t.ca_cagr,
+      ca: t.ca,
+      effectifLabel: t.effectif_label,
+      effectifCode: t.effectif_code,
+    })),
   );
   const topCompany =
     hiring.find((h) => h.trust === "solide" || h.trust === "ok")?.company ??
     hiring[0]?.company ??
     null;
+  // Boîtes établies, en croissance, qui recrutent.
+  const growthHiring = hiring
+    .filter(
+      (h) =>
+        (h.trust === "solide" || h.trust === "ok") &&
+        (h.caCagr ?? h.caGrowth) != null &&
+        (h.caCagr ?? h.caGrowth)! > 0,
+    )
+    .sort((a, b) => (b.caCagr ?? b.caGrowth ?? 0) - (a.caCagr ?? a.caGrowth ?? 0))
+    .slice(0, 6);
   const pendingFollowups = apps.filter(
     (a) =>
       (a.status === "postule" || a.status === "relance") &&
@@ -350,6 +369,43 @@ export default async function DashboardPage() {
         </Card>
         <StatCard label="Offres reçues" value={byStatus("offre")} />
       </div>
+
+      {/* Boîtes en croissance qui recrutent */}
+      {growthHiring.length > 0 && (
+        <Card className="mt-6">
+          <div className="mb-1 flex flex-wrap items-center justify-between gap-2">
+            <span className="text-sm font-semibold text-slate-700">Boîtes en croissance qui recrutent</span>
+            <Link href="/companies" className="text-xs text-blue-600 underline">toutes les entreprises</Link>
+          </div>
+          <div className="mb-3 text-xs text-slate-500">
+            Employeurs établis, en croissance de CA (comptes INPI), avec des offres en cours — les meilleures cibles.
+          </div>
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
+            {growthHiring.map((h) => {
+              const g = (h.caCagr ?? h.caGrowth) as number;
+              const caTxt =
+                h.ca == null ? null : Math.abs(h.ca) >= 1e9 ? `${(h.ca / 1e9).toFixed(1)} Md€` : `${Math.round(h.ca / 1e6)} M€`;
+              return (
+                <Link
+                  key={h.company}
+                  href={`/jobs?q=${encodeURIComponent(h.company)}`}
+                  className="rounded-lg border border-slate-200 p-3 hover:border-emerald-300 hover:bg-emerald-50/30"
+                >
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="min-w-0 break-words text-sm font-medium text-slate-800">{h.company}</span>
+                    <span className="shrink-0 rounded bg-emerald-100 px-1.5 py-0.5 text-[10px] font-semibold text-emerald-700">+{g}%/an</span>
+                  </div>
+                  <div className="mt-1 flex flex-wrap gap-x-2 text-xs text-slate-500">
+                    <span>{h.offers} offre(s)</span>
+                    {caTxt && <span>· CA {caTxt}</span>}
+                    {h.effectifLabel && <span className="hidden sm:inline">· {h.effectifLabel} sal.</span>}
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        </Card>
+      )}
 
       {/* Cadence + Pipeline + Prochaines actions */}
       <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-3">

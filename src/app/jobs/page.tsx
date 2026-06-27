@@ -1,4 +1,4 @@
-import { getJobs, getSavedSearches } from "@/lib/db";
+import { getJobs, getSavedSearches, getTargetCompanies } from "@/lib/db";
 import { hasAdmin } from "@/lib/supabase/admin";
 import {
   PageHeader,
@@ -31,6 +31,7 @@ type SP = {
   remote?: string;
   minScore?: string;
   role?: string;
+  growth?: string;
 };
 
 function hrefFor(query: Record<string, string>) {
@@ -52,9 +53,24 @@ export default async function JobsPage({
   const remote = sp.remote ?? "";
   const minScore = sp.minScore ? Number(sp.minScore) : 0;
   const role = sp.role ?? "";
+  const growthMin = sp.growth ? Number(sp.growth) : 0;
 
-  const all = await getJobs(sortMode);
-  const saved = await getSavedSearches();
+  const [all, saved, targets] = await Promise.all([
+    getJobs(sortMode),
+    getSavedSearches(),
+    getTargetCompanies(),
+  ]);
+
+  // Croissance de CA par entreprise (CAGR sinon YoY) pour filtrer les offres.
+  const growthTargets = targets
+    .map((t) => ({ n: t.name.toLowerCase(), g: t.ca_cagr ?? t.ca_growth }))
+    .filter((t): t is { n: string; g: number } => t.g != null);
+  const companyGrowth = (name: string | null): number | null => {
+    if (!name) return null;
+    const c = name.toLowerCase();
+    const hit = growthTargets.find((t) => c.includes(t.n) || t.n.includes(c));
+    return hit ? hit.g : null;
+  };
 
   const sources = [...new Set(all.map((j) => j.source))];
   const roleOptions = [
@@ -70,6 +86,10 @@ export default async function JobsPage({
     if (salary && (j.salary_max ?? j.salary_min ?? 0) < salary) return false;
     if (minScore && (j.match_score ?? 0) < minScore) return false;
     if (role && j.role_family !== role) return false;
+    if (growthMin) {
+      const g = companyGrowth(j.source_company ?? j.company_name);
+      if (g == null || g < growthMin) return false;
+    }
     if (remote) {
       const blob = `${j.remote ?? ""} ${j.location ?? ""} ${j.title}`.toLowerCase();
       if (remote === "remote") {
@@ -79,9 +99,9 @@ export default async function JobsPage({
     return true;
   });
 
-  const activeFilters = [q, source, salary, remote, minScore, role].filter(Boolean).length;
+  const activeFilters = [q, source, salary, remote, minScore, role, growthMin].filter(Boolean).length;
   const currentQuery: Record<string, string> = {};
-  for (const [k, v] of Object.entries({ q, source, sort: sp.sort ?? "", salary: sp.salary ?? "", remote, minScore: sp.minScore ?? "", role }))
+  for (const [k, v] of Object.entries({ q, source, sort: sp.sort ?? "", salary: sp.salary ?? "", remote, minScore: sp.minScore ?? "", role, growth: sp.growth ?? "" }))
     if (v) currentQuery[k] = String(v);
 
   return (
@@ -162,6 +182,12 @@ export default async function JobsPage({
               <option value="40">≥ 40</option>
               <option value="55">≥ 55 (bon)</option>
               <option value="75">≥ 75 (fort)</option>
+            </select>
+            <select name="growth" defaultValue={sp.growth ?? ""} className="input">
+              <option value="">Croissance : toutes</option>
+              <option value="1">CA en croissance</option>
+              <option value="15">CA +15%/an</option>
+              <option value="30">CA +30%/an</option>
             </select>
             <select name="role" defaultValue={role} className="input">
               <option value="">Métier : tous</option>
