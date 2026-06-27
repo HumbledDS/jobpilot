@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { BrandMark } from "@/components/BrandMark";
 
 const NAV = [
   { href: "/", label: "Dashboard" },
@@ -22,10 +23,7 @@ const NAV = [
 function Wordmark() {
   return (
     <div className="flex items-center gap-2.5">
-      <span className="relative flex h-2.5 w-2.5">
-        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-60" />
-        <span className="dot relative bg-accent" />
-      </span>
+      <BrandMark className="h-7 w-7 shrink-0 text-accent" />
       <div>
         <div className="text-[15px] font-semibold tracking-tight text-ink">JobPilot</div>
         <div className="eyebrow mt-1">Career OS · v1</div>

@@ -1,4 +1,5 @@
 import { GoogleSignIn } from "@/components/GoogleSignIn";
+import { BrandMark } from "@/components/BrandMark";
 
 const FEATURES = [
   ["Sourcing automatique", "APEC, France Travail, Adzuna + ATS internes (Greenhouse, Lever, Workday) — chaque jour."],
@@ -12,13 +13,12 @@ export function Landing({ notAllowed = false }: { notAllowed?: boolean }) {
     <main className="relative min-h-screen overflow-hidden">
       <div className="mx-auto flex min-h-screen max-w-5xl flex-col items-center justify-center px-6 py-16 text-center">
         {/* Wordmark */}
-        <div className="mb-8 flex items-center gap-2.5">
-          <span className="relative flex h-2.5 w-2.5">
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-60" />
-            <span className="dot relative bg-accent" />
-          </span>
-          <span className="text-base font-semibold tracking-tight text-ink">JobPilot</span>
-          <span className="eyebrow ml-1">Career OS</span>
+        <div className="mb-8 flex items-center gap-3">
+          <BrandMark className="h-10 w-10 text-accent" />
+          <div className="text-left">
+            <div className="text-lg font-semibold tracking-tight text-ink">JobPilot</div>
+            <div className="eyebrow mt-0.5">Career OS</div>
+          </div>
         </div>
 
         <h1 className="max-w-2xl text-3xl font-semibold tracking-tight text-ink sm:text-5xl">
