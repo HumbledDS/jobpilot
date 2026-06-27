@@ -4,7 +4,6 @@ import { isAllowed } from "@/lib/auth";
 
 /** Garde d'accès : à appeler en tête de chaque page protégée. Redirige vers "/" si non autorisé. */
 export async function requireUser() {
-  redirect("/?gate=forced");
   const supabase = await createClient();
   const {
     data: { user },
