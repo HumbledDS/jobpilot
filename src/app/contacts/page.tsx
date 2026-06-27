@@ -59,7 +59,7 @@ export default async function ContactsPage() {
               </div>
               <div className="mt-2 flex flex-col gap-1 break-words text-xs">
                 {c.email && (
-                  <a href={`mailto:${c.email}`} className="break-all text-blue-600 underline">
+                  <a href={`mailto:${c.email}`} className="break-all text-accent underline">
                     {c.email}
                   </a>
                 )}
@@ -68,7 +68,7 @@ export default async function ContactsPage() {
                     href={c.linkedin_url}
                     target="_blank"
                     rel="noreferrer"
-                    className="text-blue-600 underline"
+                    className="text-accent underline"
                   >
                     Profil LinkedIn
                   </a>

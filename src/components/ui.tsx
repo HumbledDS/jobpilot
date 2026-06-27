@@ -10,12 +10,12 @@ export function PageHeader({
   action?: ReactNode;
 }) {
   return (
-    <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+    <div className="mb-6 flex flex-col gap-4 border-b border-line pb-5 sm:flex-row sm:items-end sm:justify-between">
       <div className="min-w-0">
-        <h1 className="text-xl font-bold tracking-tight text-slate-900 sm:text-2xl">
+        <h1 className="text-xl font-semibold tracking-tight text-ink sm:text-2xl">
           {title}
         </h1>
-        {subtitle && <p className="mt-1 text-sm text-slate-500">{subtitle}</p>}
+        {subtitle && <p className="mt-1.5 text-sm text-muted">{subtitle}</p>}
       </div>
       {action && <div className="shrink-0">{action}</div>}
     </div>
@@ -31,7 +31,7 @@ export function Card({
 }) {
   return (
     <div
-      className={`rounded-xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5 ${className}`}
+      className={`rounded-xl border border-line bg-surface p-4 shadow-[0_1px_2px_rgba(20,22,25,0.04)] sm:p-5 ${className}`}
     >
       {children}
     </div>
@@ -49,13 +49,11 @@ export function StatCard({
 }) {
   return (
     <Card className="min-w-0">
-      <div className="truncate text-xs font-medium uppercase tracking-wide text-slate-400">
-        {label}
-      </div>
-      <div className="mt-2 text-2xl font-bold text-slate-900 sm:text-3xl">
+      <div className="eyebrow truncate">{label}</div>
+      <div className="mono tnum mt-2.5 text-2xl font-semibold tracking-tight text-ink sm:text-[1.75rem]">
         {value}
       </div>
-      {hint && <div className="mt-1 text-xs text-slate-400">{hint}</div>}
+      {hint && <div className="mt-1 text-xs text-faint">{hint}</div>}
     </Card>
   );
 }
@@ -74,7 +72,7 @@ export function SetupBanner() {
 
 export function EmptyState({ children }: { children: ReactNode }) {
   return (
-    <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50 px-6 py-10 text-center text-sm text-slate-400">
+    <div className="rounded-xl border border-dashed border-line-strong bg-canvas px-6 py-10 text-center text-sm text-faint">
       {children}
     </div>
   );

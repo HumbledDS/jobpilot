@@ -180,18 +180,18 @@ export default async function DashboardPage() {
       {!hasAdmin() && <SetupBanner />}
 
       {/* Hero insight — one-sentence state of the search */}
-      <p className="mb-6 text-sm text-slate-600">
-        <span className="font-semibold text-slate-900">{apps.length}</span>{" "}
+      <p className="mb-6 text-sm text-muted">
+        <span className="mono tnum font-semibold text-ink">{apps.length}</span>{" "}
         candidature{apps.length > 1 ? "s" : ""}
         {" · "}taux de réponse{" "}
-        <span className="font-semibold text-emerald-600">{responseRate}%</span>
+        <span className="mono tnum font-semibold text-accent">{responseRate}%</span>
         {" · "}
-        <span className="font-semibold text-slate-900">{jobs.length}</span> offre
+        <span className="mono tnum font-semibold text-ink">{jobs.length}</span> offre
         {jobs.length > 1 ? "s" : ""} ciblée{jobs.length > 1 ? "s" : ""}
         {freshJobs > 0 && (
           <>
             {" "}dont{" "}
-            <span className="font-semibold text-slate-900">{freshJobs}</span>{" "}
+            <span className="mono tnum font-semibold text-ink">{freshJobs}</span>{" "}
             fraîche{freshJobs > 1 ? "s" : ""}
           </>
         )}
@@ -199,23 +199,24 @@ export default async function DashboardPage() {
       </p>
 
       {/* Coach — focus piloté par le contexte */}
-      <Card className="mb-6 border-slate-300 bg-gradient-to-br from-slate-50 to-white">
+      <Card className="mb-6 border-accent/25 bg-accent-soft/40">
         <div className="mb-3 flex items-start justify-between gap-2">
           <div>
-            <div className="text-sm font-semibold text-slate-800">Ton coach — focus</div>
-            <div className="text-xs text-slate-500">
-              Priorités du moment, calées sur ton marché, tes candidatures et tes projets.
+            <div className="eyebrow text-accent-strong">Coach</div>
+            <div className="mt-1.5 text-sm font-semibold text-ink">Focus du moment</div>
+            <div className="text-xs text-muted">
+              Priorités calées sur ton marché, tes candidatures et tes projets.
             </div>
           </div>
           <div className="flex shrink-0 items-center gap-2">
             {doneRecsCount > 0 && (
-              <span className="rounded-full bg-emerald-100 px-2 py-1 text-xs font-medium text-emerald-700">
+              <span className="mono rounded-full bg-accent-soft px-2 py-1 text-[11px] font-medium text-accent-strong">
                 {doneRecsCount} fait{doneRecsCount > 1 ? "s" : ""}
               </span>
             )}
             {aiEnabled() && (
               <form action={generateAiFocus}>
-                <button className="rounded-lg border border-slate-300 px-2.5 py-1 text-xs font-medium text-slate-700 hover:bg-slate-100">
+                <button className="btn-ghost text-xs">
                   {aiTasks.length ? "Régénérer le focus IA" : "Focus IA"}
                 </button>
               </form>
@@ -288,7 +289,7 @@ export default async function DashboardPage() {
                               </div>
                               <p className="mt-1 text-xs text-slate-500">{r.rationale}</p>
                               {r.href && (
-                                <Link href={r.href} className="mt-1 inline-block text-xs text-blue-600 underline">
+                                <Link href={r.href} className="mt-1 inline-block text-xs text-accent underline">
                                   Y aller
                                 </Link>
                               )}
@@ -375,7 +376,7 @@ export default async function DashboardPage() {
         <Card className="mt-6">
           <div className="mb-1 flex flex-wrap items-center justify-between gap-2">
             <span className="text-sm font-semibold text-slate-700">Boîtes en croissance qui recrutent</span>
-            <Link href="/companies" className="text-xs text-blue-600 underline">toutes les entreprises</Link>
+            <Link href="/companies" className="text-xs text-accent underline">toutes les entreprises</Link>
           </div>
           <div className="mb-3 text-xs text-slate-500">
             Employeurs établis, en croissance de CA (comptes INPI), avec des offres en cours — les meilleures cibles.

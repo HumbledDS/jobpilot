@@ -24,7 +24,7 @@ const EVENT_STYLE: Record<string, { label: string; cls: string }> = {
   statut: { label: "Statut", cls: "bg-slate-100 text-slate-600" },
   relance: { label: "Relance", cls: "bg-amber-100 text-amber-700" },
   entretien: { label: "Entretien", cls: "bg-violet-100 text-violet-700" },
-  email: { label: "Email", cls: "bg-blue-100 text-blue-700" },
+  email: { label: "Email", cls: "bg-blue-100 text-accent" },
   offre: { label: "Offre", cls: "bg-emerald-100 text-emerald-700" },
   refus: { label: "Refus", cls: "bg-rose-100 text-rose-600" },
   note: { label: "Note", cls: "bg-slate-100 text-slate-500" },
@@ -99,7 +99,7 @@ export default async function ApplicationDetail({
             <span className="text-slate-700">{cv.label}</span>
             {cv.target_role && <span className="text-xs text-slate-400">{cv.target_role}</span>}
             {cv.file_url && (
-              <a href={cv.file_url} target="_blank" rel="noreferrer" className="text-xs text-blue-600 underline">
+              <a href={cv.file_url} target="_blank" rel="noreferrer" className="text-xs text-accent underline">
                 Ouvrir le CV
               </a>
             )}

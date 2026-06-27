@@ -56,7 +56,7 @@ export default async function DocumentsPage() {
                           href={cv.file_url}
                           target="_blank"
                           rel="noreferrer"
-                          className="text-xs text-blue-600 underline"
+                          className="text-xs text-accent underline"
                         >
                           Ouvrir
                         </a>

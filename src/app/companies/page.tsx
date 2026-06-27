@@ -46,7 +46,7 @@ export default async function CompaniesPage({
 
   const TRUST_BADGE: Record<string, { label: string; cls: string } | null> = {
     solide: { label: "établie", cls: "bg-emerald-100 text-emerald-700" },
-    ok: { label: "référencée", cls: "bg-blue-100 text-blue-700" },
+    ok: { label: "référencée", cls: "bg-blue-100 text-accent" },
     esn: { label: "ESN mission — déprioritisée", cls: "bg-amber-100 text-amber-700" },
     freelance: { label: "plateforme freelance", cls: "bg-purple-100 text-purple-700" },
     inconnue: null,
@@ -155,7 +155,7 @@ export default async function CompaniesPage({
                   {h.harvestFlag && (
                     <span className="rounded bg-amber-50 px-1.5 py-0.5 text-[10px] font-medium text-amber-600">publie en volume</span>
                   )}
-                  <Link href={`/jobs?q=${encodeURIComponent(h.company)}`} className="text-xs text-blue-600 underline">voir leurs offres</Link>
+                  <Link href={`/jobs?q=${encodeURIComponent(h.company)}`} className="text-xs text-accent underline">voir leurs offres</Link>
                 </div>
               );
             })}
@@ -217,9 +217,9 @@ export default async function CompaniesPage({
                 </div>
               )}
               <div className="mt-auto flex gap-3 text-xs">
-                <Link href={`/jobs?q=${encodeURIComponent(c.name)}`} className="text-blue-600 underline">offres ici</Link>
-                <a href={linkedinUrl(c.name)} target="_blank" rel="noreferrer" className="text-blue-600 underline">LinkedIn</a>
-                <a href={indeedUrl(c.name)} target="_blank" rel="noreferrer" className="text-blue-600 underline">Indeed</a>
+                <Link href={`/jobs?q=${encodeURIComponent(c.name)}`} className="text-accent underline">offres ici</Link>
+                <a href={linkedinUrl(c.name)} target="_blank" rel="noreferrer" className="text-accent underline">LinkedIn</a>
+                <a href={indeedUrl(c.name)} target="_blank" rel="noreferrer" className="text-accent underline">Indeed</a>
               </div>
             </Card>
           ))}

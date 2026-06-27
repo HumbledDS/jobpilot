@@ -144,7 +144,7 @@ export default async function MarchePage() {
                             </span>
                           );
                         })()}
-                        <Link href={`/jobs?q=${encodeURIComponent(d.name)}`} className="text-xs text-blue-600 underline">voir</Link>
+                        <Link href={`/jobs?q=${encodeURIComponent(d.name)}`} className="text-xs text-accent underline">voir</Link>
                       </div>
                     );
                   })}
@@ -201,7 +201,7 @@ export default async function MarchePage() {
                     </div>
                     <div className="flex shrink-0 items-center gap-2">
                       <span className={`rounded border px-1.5 py-0.5 text-[11px] font-bold ${sl.cls}`}>{j.match_score} · {sl.label}</span>
-                      {j.url && <a href={j.url} target="_blank" rel="noreferrer" className="text-xs text-blue-600 underline">Voir</a>}
+                      {j.url && <a href={j.url} target="_blank" rel="noreferrer" className="text-xs text-accent underline">Voir</a>}
                     </div>
                   </div>
                 );

@@ -100,7 +100,7 @@ export default async function JobDetailPage({
           <div className="flex flex-col gap-2">
             {emails.map((email) => (
               <div key={email} className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-slate-200 p-2">
-                <a href={`mailto:${email}`} className="text-sm text-blue-600 underline break-all">{email}</a>
+                <a href={`mailto:${email}`} className="text-sm text-accent underline break-all">{email}</a>
                 <form action={createContactFromJob}>
                   <input type="hidden" name="job_id" value={job.id} />
                   <input type="hidden" name="email" value={email} />

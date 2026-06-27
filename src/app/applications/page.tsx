@@ -96,7 +96,7 @@ export default async function ApplicationsPage() {
                         href={a.jp_jobs.url}
                         target="_blank"
                         rel="noreferrer"
-                        className="mt-1 inline-block text-xs text-blue-600 underline"
+                        className="mt-1 inline-block text-xs text-accent underline"
                       >
                         Voir l&apos;offre
                       </a>

@@ -288,7 +288,7 @@ export default async function JobsPage({
                           </span>
                         )}
                         {j.from_target && (
-                          <span className="rounded-full bg-blue-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-blue-700" title={`Offre émise directement par ${j.source_company ?? "une entreprise cible"}`}>
+                          <span className="rounded-full bg-blue-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-accent" title={`Offre émise directement par ${j.source_company ?? "une entreprise cible"}`}>
                             Directe
                           </span>
                         )}

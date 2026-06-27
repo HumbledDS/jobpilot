@@ -24,7 +24,7 @@ const STATUS = [
 const STATUS_STYLE: Record<string, string> = {
   todo: "bg-slate-100 text-slate-600",
   in_progress: "bg-amber-100 text-amber-700",
-  deployed: "bg-blue-100 text-blue-700",
+  deployed: "bg-blue-100 text-accent",
   done: "bg-emerald-100 text-emerald-700",
 };
 
@@ -116,10 +116,10 @@ export default async function ProjectsPage() {
                   </div>
                   <div className="mt-1 flex gap-3 text-xs">
                     {p.repo_url && (
-                      <a href={p.repo_url} target="_blank" rel="noreferrer" className="text-blue-600 underline">repo</a>
+                      <a href={p.repo_url} target="_blank" rel="noreferrer" className="text-accent underline">repo</a>
                     )}
                     {p.deployed_url && (
-                      <a href={p.deployed_url} target="_blank" rel="noreferrer" className="text-blue-600 underline">live</a>
+                      <a href={p.deployed_url} target="_blank" rel="noreferrer" className="text-accent underline">live</a>
                     )}
                   </div>
                 </div>

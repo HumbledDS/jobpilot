@@ -1,36 +1,146 @@
 @import "tailwindcss";
 
+/*
+  JobPilot design system — "Terminal Control Center"
+  Near-monochrome + one teal signal accent · Geist Sans/Mono · tabular metrics · hairline borders.
+  Inspired by Vercel Geist, Rauno Freiberg's Web Interface Guidelines, Emil Kowalski's motion work.
+  See design-system.md.
+*/
 @theme inline {
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  --color-canvas: #f5f6f7;
+  --color-surface: #ffffff;
+  --color-ink: #141619;
+  --color-muted: #5b616b;
+  --color-faint: #9aa0a8;
+  --color-line: #e6e8ea;
+  --color-line-strong: #d3d7db;
+  --color-accent: #0d9488;
+  --color-accent-strong: #0f766e;
+  --color-accent-soft: #e3f3f0;
+}
+
+:root {
+  color-scheme: light;
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 body {
-  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  background-color: var(--color-canvas);
+  /* faint engineered dot-grid */
+  background-image: radial-gradient(circle at 1px 1px, rgba(20, 22, 25, 0.04) 1px, transparent 0);
+  background-size: 22px 22px;
+  background-attachment: fixed;
+  color: var(--color-ink);
+}
+
+::selection {
+  background: color-mix(in oklab, var(--color-accent) 24%, transparent);
+}
+
+h1, h2, h3 {
+  letter-spacing: -0.021em;
+}
+
+/* Utilities */
+.tnum {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+.mono {
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+}
+.eyebrow {
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 0.6875rem;
+  line-height: 1;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--color-faint);
+}
+.dot {
+  display: inline-block;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 9999px;
 }
 
 /* Form primitives */
 .input {
   width: 100%;
   border-radius: 0.5rem;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-line);
   padding: 0.5rem 0.75rem;
   font-size: 0.875rem;
-  background: #fff;
+  background: var(--color-surface);
+  color: var(--color-ink);
   outline: none;
+  transition: border-color 0.12s ease, box-shadow 0.12s ease;
+}
+.input::placeholder {
+  color: var(--color-faint);
 }
 .input:focus {
-  border-color: #94a3b8;
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-accent) 18%, transparent);
 }
+
 .btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
   border-radius: 0.5rem;
-  background: #0f172a;
+  background: var(--color-ink);
   color: #fff;
   padding: 0.5rem 1rem;
   font-size: 0.875rem;
-  font-weight: 500;
+  font-weight: 550;
   cursor: pointer;
+  border: 1px solid var(--color-ink);
+  transition: transform 0.1s ease, background 0.15s ease, box-shadow 0.15s ease;
 }
 .btn-primary:hover {
-  background: #334155;
+  background: #2b2f35;
+}
+.btn-primary:active {
+  transform: scale(0.97);
+}
+.btn-primary:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--color-line);
+  background: var(--color-surface);
+  color: var(--color-ink);
+  padding: 0.5rem 0.85rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.12s ease, border-color 0.12s ease;
+}
+.btn-ghost:hover {
+  background: var(--color-canvas);
+  border-color: var(--color-line-strong);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }
