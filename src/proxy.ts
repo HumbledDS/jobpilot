@@ -41,9 +41,12 @@ export async function proxy(request: NextRequest) {
   if (!isPublic && !isAllowed(user?.email)) {
     const url = request.nextUrl.clone();
     url.pathname = "/";
-    return NextResponse.redirect(url);
+    const r = NextResponse.redirect(url);
+    r.headers.set("x-proxy", `gate:${path}`);
+    return r;
   }
 
+  response.headers.set("x-proxy", `pass:${path}:${user?.email ?? "none"}`);
   return response;
 }
 
