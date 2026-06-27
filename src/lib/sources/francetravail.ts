@@ -30,7 +30,7 @@ async function getToken(): Promise<string> {
   return data.access_token;
 }
 
-/** France Travail (ex Pôle Emploi) — Offres d'emploi v2. */
+/** France Travail (ex Pôle Emploi) · Offres d'emploi v2. */
 export async function fetchFranceTravail(
   keywords: string,
   opts: { region?: string; salaireMin?: number } = {},

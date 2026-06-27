@@ -3,7 +3,7 @@ import { type NormalizedJob, parseSalary } from "./types";
 const APEC_ENDPOINT = "https://www.apec.fr/cms/webservices/rechercheOffre";
 
 /**
- * APEC — public search webservice (used by apec.fr).
+ * APEC · public search webservice (used by apec.fr).
  * No API key required. Use politely (low frequency, daily cron).
  */
 export async function fetchApec(

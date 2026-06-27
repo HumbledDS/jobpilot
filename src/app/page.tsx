@@ -26,7 +26,7 @@ import {
   STATUS_COLORS,
   type ApplicationStatus,
 } from "@/lib/types";
-import { skillDemand, companiesHiring } from "@/lib/analytics";
+import { skillDemand, companiesHiring, applicationStats } from "@/lib/analytics";
 import { buildRecommendations, doneInWindow } from "@/lib/coach";
 import { aiEnabled } from "@/lib/ai";
 import {
@@ -111,6 +111,19 @@ export default async function DashboardPage() {
     (j) => j.posted_at && new Date(j.posted_at).getTime() >= freshWindow,
   ).length;
 
+  // Statistiques (intégrées depuis l'ancienne page Stats)
+  const stats = applicationStats(apps);
+  const maxWeek = Math.max(1, ...stats.weeks.map((w) => w.n));
+  const scoredJobs = jobs.filter((j) => j.match_score != null);
+  const avgScore = scoredJobs.length
+    ? Math.round(scoredJobs.reduce((a, j) => a + (j.match_score ?? 0), 0) / scoredJobs.length)
+    : 0;
+  const over50 = jobs.filter((j) => (j.salary_max ?? j.salary_min ?? 0) >= 50000).length;
+  const CHANNEL_LABEL: Record<string, string> = {
+    "co-pilote": "Co-pilote", manuel: "Manuel", apec: "APEC",
+    france_travail: "France Travail", adzuna: "Adzuna", targets: "Entreprise cible",
+  };
+
   // --- Coach : contexte -> recommandations -> suivi ---
   const profileSkills = new Set(profile?.skills ?? []);
   const topGapSkill =
@@ -191,7 +204,7 @@ export default async function DashboardPage() {
       />
       {!hasAdmin() && <SetupBanner />}
 
-      {/* Hero insight — one-sentence state of the search */}
+      {/* Hero insight · one-sentence state of the search */}
       <p className="mb-6 text-sm text-muted">
         <span className="mono tnum font-semibold text-ink">{apps.length}</span>{" "}
         candidature{apps.length > 1 ? "s" : ""}
@@ -210,7 +223,7 @@ export default async function DashboardPage() {
         .
       </p>
 
-      {/* Coach — focus piloté par le contexte */}
+      {/* Coach · focus piloté par le contexte */}
       <Card className="mb-6 border-accent/25 bg-accent-soft/40">
         <div className="mb-3 flex items-start justify-between gap-2">
           <div>
@@ -274,7 +287,7 @@ export default async function DashboardPage() {
 
         {activeRecs.length === 0 ? (
           <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-700">
-            Tout est à jour pour le moment. Beau travail — reviens plus tard pour le prochain focus.
+            Tout est à jour pour le moment. Beau travail · reviens plus tard pour le prochain focus.
           </div>
         ) : (
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -391,7 +404,7 @@ export default async function DashboardPage() {
             <Link href="/companies" className="text-xs text-accent underline">toutes les entreprises</Link>
           </div>
           <div className="mb-3 text-xs text-muted">
-            Employeurs établis, en croissance de CA (comptes INPI), avec des offres en cours — les meilleures cibles.
+            Employeurs établis, en croissance de CA (comptes INPI), avec des offres en cours · les meilleures cibles.
           </div>
           <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
             {growthHiring.map((h) => {
@@ -522,6 +535,50 @@ export default async function DashboardPage() {
         )}
       </Card>
 
+      {/* Statistiques : cadence sur 6 semaines + par canal */}
+      <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-3">
+        <Card className="lg:col-span-2">
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-2 border-b border-line pb-2">
+            <span className="text-sm font-semibold text-ink">Cadence des candidatures (6 sem.)</span>
+            <span className="text-xs text-faint">
+              taux de réponse <span className="mono font-medium text-accent">{stats.responseRate}%</span> · entretien <span className="mono font-medium text-ink">{stats.interviewRate}%</span>
+            </span>
+          </div>
+          <div className="flex items-end gap-3" style={{ height: "120px" }}>
+            {stats.weeks.map((w) => (
+              <div key={w.label} className="flex flex-1 flex-col items-center justify-end gap-1.5">
+                <span className="mono text-[10px] text-faint">{w.n}</span>
+                <div className="w-full rounded-t bg-ink" style={{ height: `${(w.n / maxWeek) * 88}px` }} />
+                <span className="text-[10px] text-faint">{w.label}</span>
+              </div>
+            ))}
+          </div>
+        </Card>
+        <Card>
+          <div className="mb-4 border-b border-line pb-2 text-sm font-semibold text-ink">Par canal</div>
+          {Object.keys(stats.bySource).length === 0 ? (
+            <EmptyState>Aucune candidature envoyée.</EmptyState>
+          ) : (
+            <div className="space-y-2">
+              {Object.entries(stats.bySource).sort((a, b) => b[1] - a[1]).map(([src, n]) => (
+                <div key={src} className="flex items-center justify-between text-sm">
+                  <span className="text-muted">{CHANNEL_LABEL[src] ?? src}</span>
+                  <span className="mono font-medium text-ink">{n}</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </Card>
+      </div>
+
+      {/* Pipeline d'offres */}
+      <div className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-4">
+        <StatCard label="Offres en base" value={jobs.length} />
+        <StatCard label="Fraîches < 48h" value={freshJobs} />
+        <StatCard label="Score moyen" value={avgScore} hint="match / 100" />
+        <StatCard label="≥ 50k" value={`${jobs.length ? Math.round((over50 / jobs.length) * 100) : 0}%`} hint={`${over50} offres`} />
+      </div>
+
       {/* Sources d'offres */}
       <Card className="mt-6">
         <div className="mb-4 flex items-center justify-between border-b border-line pb-2">
@@ -555,7 +612,7 @@ export default async function DashboardPage() {
 
       {/* Secondary KPIs */}
       <div className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-4">
-        <StatCard label="Offres en base" value={jobs.length} />
+        <StatCard label="Taux d'entretien" value={`${stats.interviewRate}%`} hint="entretiens / envoyées" />
         <StatCard label="Contacts" value={contacts.length} />
         <StatCard label="Projets faits" value={`${projectsDone}/${projects.length}`} />
         <StatCard label="Objectif" value="50k€+" hint="IDF · data/cloud/IA" />

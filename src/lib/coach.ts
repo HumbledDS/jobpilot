@@ -30,7 +30,7 @@ export type CoachContext = {
 export function buildRecommendations(c: CoachContext): Rec[] {
   const recs: Rec[] = [];
 
-  // 1. Candidater (quotidien) — moteur principal
+  // 1. Candidater (quotidien) · moteur principal
   const remainingApps = Math.max(0, c.weeklyAppGoal - c.appsThisWeek);
   if (remainingApps > 0) {
     recs.push({
@@ -41,7 +41,7 @@ export function buildRecommendations(c: CoachContext): Rec[] {
       rationale:
         `Objectif ${c.weeklyAppGoal}/sem (déjà ${c.appsThisWeek}). ` +
         (c.strongMatches > 0
-          ? `${c.strongMatches} offre(s) à fort match t'attendent — utilise le co-pilote.`
+          ? `${c.strongMatches} offre(s) à fort match t'attendent · utilise le co-pilote.`
           : "Vise d'abord les offres au meilleur score."),
       href: "/jobs?minScore=75",
     });
@@ -59,19 +59,19 @@ export function buildRecommendations(c: CoachContext): Rec[] {
     });
   }
 
-  // 3. Compétence à monter (hebdo) — piloté par le marché
+  // 3. Compétence à monter (hebdo) · piloté par le marché
   if (c.topGapSkill) {
     recs.push({
       key: `skill_${c.topGapSkill}`,
       label: `Avance sur ${c.topGapSkill} (projet ou lecture)`,
       category: "Compétence",
       cadence: "weekly",
-      rationale: `Très demandé sur tes offres et absent de ton profil — combler l'écart débloque des postes.`,
+      rationale: `Très demandé sur tes offres et absent de ton profil · combler l'écart débloque des postes.`,
       href: "/marche",
     });
   }
 
-  // 4. Projet (hebdo) — preuve du titre FDE/Cloud
+  // 4. Projet (hebdo) · preuve du titre FDE/Cloud
   if (c.inProgressProjects > 0) {
     recs.push({
       key: "project_push",
@@ -112,7 +112,7 @@ export function buildRecommendations(c: CoachContext): Rec[] {
       label: `Identifie un interlocuteur chez ${c.topCompany}`,
       category: "Ciblage",
       cadence: "weekly",
-      rationale: "Entreprise établie qui recrute activement — un contact interne court-circuite l'ATS.",
+      rationale: "Entreprise établie qui recrute activement · un contact interne court-circuite l'ATS.",
       href: "/companies",
     });
   }

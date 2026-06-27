@@ -49,7 +49,7 @@ export default async function CompaniesPage({
   const TRUST_BADGE: Record<string, { label: string; cls: string } | null> = {
     solide: { label: "établie", cls: "bg-emerald-100 text-emerald-700" },
     ok: { label: "référencée", cls: "bg-blue-100 text-accent" },
-    esn: { label: "ESN mission — déprioritisée", cls: "bg-amber-100 text-amber-700" },
+    esn: { label: "ESN mission · déprioritisée", cls: "bg-amber-100 text-amber-700" },
     freelance: { label: "plateforme freelance", cls: "bg-purple-100 text-purple-700" },
     inconnue: null,
   };
@@ -88,10 +88,10 @@ export default async function CompaniesPage({
           )}
         </p>
         <p className="mt-1 text-[11px] text-amber-600">
-          Méfiance avec les ESN qui publient beaucoup d&apos;offres similaires : souvent du sourcing de candidats (CV mis en vivier) plus que des postes réels. Elles sont signalées « ESN — vérifier ».
+          Méfiance avec les ESN qui publient beaucoup d&apos;offres similaires : souvent du sourcing de candidats (CV mis en vivier) plus que des postes réels. Elles sont signalées « ESN · vérifier ».
         </p>
         <p className="mt-1 text-[11px] text-muted">
-          Le classement intègre l&apos;<strong>assise réelle</strong> (catégorie PME/ETI/GE, effectifs, CA et sa <strong>croissance annuelle</strong>) — données publiques gratuites (Sirene + comptes INPI multi-années). Les boîtes établies <strong>et en croissance</strong> remontent. Note : pour certains grands groupes, le CA est celui d&apos;une entité légale filiale.
+          Le classement intègre l&apos;<strong>assise réelle</strong> (catégorie PME/ETI/GE, effectifs, CA et sa <strong>croissance annuelle</strong>) · données publiques gratuites (Sirene + comptes INPI multi-années). Les boîtes établies <strong>et en croissance</strong> remontent. Note : pour certains grands groupes, le CA est celui d&apos;une entité légale filiale.
         </p>
         <div className="mt-3 flex flex-col gap-3 border-t border-line pt-3 sm:flex-row sm:flex-wrap sm:items-center">
           <form action={sourceTargets}>

@@ -1,7 +1,7 @@
 import { type NormalizedJob } from "./types";
 
 /**
- * Règles de pertinence — ne garder que les offres qui nous intéressent.
+ * Règles de pertinence · ne garder que les offres qui nous intéressent.
  * Ajuste ces valeurs pour élargir / resserrer le filtre.
  */
 export const RELEVANCE = {

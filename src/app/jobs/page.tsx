@@ -274,7 +274,7 @@ export default async function JobsPage({
                     className={`flex h-12 w-12 shrink-0 flex-col items-center justify-center rounded-lg border text-center font-bold ${sl.cls}`}
                     title="Score de matching avec ton profil"
                   >
-                    <span className="text-base leading-none">{j.match_score ?? "—"}</span>
+                    <span className="text-base leading-none">{j.match_score ?? "·"}</span>
                     <span className="mt-0.5 text-[9px] font-semibold uppercase leading-none opacity-80">{sl.label}</span>
                   </div>
 

@@ -61,7 +61,7 @@ export function StatCard({
 export function SetupBanner() {
   return (
     <div className="mb-6 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
-      <strong>Configuration requise</strong> — ajoute{" "}
+      <strong>Configuration requise</strong> · ajoute{" "}
       <code className="rounded bg-amber-100 px-1">SUPABASE_SERVICE_ROLE_KEY</code>{" "}
       dans <code className="rounded bg-amber-100 px-1">.env.local</code> et sur
       Vercel (Settings / Environment Variables) pour activer la lecture/écriture

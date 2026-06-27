@@ -1,4 +1,4 @@
-// Accès restreint aux comptes autorisés (outil personnel — données privées).
+// Accès restreint aux comptes autorisés (outil personnel · données privées).
 // Surcharge possible via la variable d'env ALLOWED_EMAILS (séparés par des virgules).
 export const ALLOWED_EMAILS = (
   process.env.ALLOWED_EMAILS ??

@@ -1,4 +1,4 @@
-/** Logo JobPilot — "signal ascendant" : point live + chevrons qui montent. Utilise currentColor. */
+/** Logo JobPilot · "signal ascendant" : point live + chevrons qui montent. Utilise currentColor. */
 export function BrandMark({ className = "" }: { className?: string }) {
   return (
     <svg viewBox="0 0 96 96" className={className} fill="none" aria-hidden="true">

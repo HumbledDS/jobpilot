@@ -64,7 +64,7 @@ export function extractEmails(text?: string | null): string[] {
   ];
 }
 
-const PROFILE_CONTEXT = `Babacar Gueye — Forward Deployed / Solutions Engineer, profil Cloud & Data.
+const PROFILE_CONTEXT = `Babacar Gueye · Forward Deployed / Solutions Engineer, profil Cloud & Data.
 Socle maths/stats (M2 Stats + DU Big Data), ~3 ans de pratique (stages, CDD quant, missions freelance).
 Stack: Python, SQL, Spark, Airflow, dbt, Snowflake, Databricks, AWS/GCP/Azure, Docker, Kubernetes, Terraform, APIs, MCP.
 Enseigne la data (Deep Learning, Data Engineering, Django, DevOps) en Master. Cible: postes data/cloud/IA à 50k€+ en Île-de-France.`;
@@ -159,9 +159,9 @@ Réponds UNIQUEMENT en JSON: {"subject": "...", "body": "..."}. Le body inclut l
   const out = await complete(system, user, 900);
   if (!out) return null;
   const parsed = parseJson<{ subject: string; body: string }>(out);
-  if (!parsed) return { subject: `Candidature — ${input.jobTitle}`, body: out };
+  if (!parsed) return { subject: `Candidature · ${input.jobTitle}`, body: out };
   return {
-    subject: parsed.subject ?? `Candidature — ${input.jobTitle}`,
+    subject: parsed.subject ?? `Candidature · ${input.jobTitle}`,
     body: parsed.body ?? "",
   };
 }
@@ -201,9 +201,9 @@ Réponds UNIQUEMENT en JSON : {"actions":[{"label","category","cadence","rationa
 - Candidatures cette semaine : ${ctx.appsThisWeek}/${ctx.weeklyAppGoal} (taux de réponse ${ctx.responseRate}% sur ${ctx.sentTotal} envoyées)
 - Candidatures en attente à relancer : ${ctx.pendingFollowups}
 - Offres à fort match non encore traitées : ${ctx.strongMatches}
-- Compétences les plus demandées hors de son profil : ${ctx.topGapSkills.join(", ") || "—"}
+- Compétences les plus demandées hors de son profil : ${ctx.topGapSkills.join(", ") || "·"}
 - Projets en cours : ${ctx.inProgressProjects} ; projets restants à aboutir : ${ctx.remainingProjects}
-- Entreprises établies qui recrutent activement : ${ctx.topCompanies.join(", ") || "—"}
+- Entreprises établies qui recrutent activement : ${ctx.topCompanies.join(", ") || "·"}
 - Posts LinkedIn cette semaine : ${ctx.postsThisWeek}/${ctx.weeklyPostGoal}
 - Déjà fait récemment (ne pas reproposer) : ${ctx.recentDone.join(" ; ") || "rien"}
 Donne le focus prioritaire.`;

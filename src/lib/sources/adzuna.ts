@@ -4,7 +4,7 @@ export function adzunaConfigured() {
   return Boolean(process.env.ADZUNA_APP_ID && process.env.ADZUNA_APP_KEY);
 }
 
-/** Adzuna — jobs API (France). */
+/** Adzuna · jobs API (France). */
 export async function fetchAdzuna(
   keywords: string,
   opts: { salaryMin?: number; where?: string } = {},

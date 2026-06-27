@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "JobPilot — Career Control Center",
+  title: "JobPilot · Career Control Center",
   description: "Pilotage de la recherche d'emploi data/cloud/IA",
 };
 

@@ -113,7 +113,7 @@ export default async function MarchePage() {
             </Card>
             <Card>
               <div className="text-xs font-medium uppercase tracking-wide text-faint">Salaire médian</div>
-              <div className="mt-1 text-3xl font-bold text-ink">{sal.median ? `${Math.round(sal.median / 1000)}k` : "—"}</div>
+              <div className="mt-1 text-3xl font-bold text-ink">{sal.median ? `${Math.round(sal.median / 1000)}k` : "·"}</div>
               <div className="text-[11px] text-faint">{sal.n} offres chiffrées</div>
             </Card>
           </div>
@@ -123,7 +123,7 @@ export default async function MarchePage() {
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
               <Card className="lg:col-span-2">
                 <div className="mb-1 text-sm font-semibold text-ink">
-                  Marché interne — postes en entreprise (offres directes)
+                  Marché interne · postes en entreprise (offres directes)
                 </div>
                 <div className="mb-3 text-xs text-muted">
                   Sourcés sur les ATS des entreprises (pas d&apos;intermédiaire), avec leur assise réelle (catégorie, effectifs, CA).
@@ -252,7 +252,7 @@ export default async function MarchePage() {
                   Top compétences à acquérir
                 </div>
                 <div className="mb-3 text-xs text-muted">
-                  Les plus demandées sur tes {jobs.length} offres et absentes de ton profil — classées par priorité. « Apprendre » crée un projet portfolio pour la maîtriser.
+                  Les plus demandées sur tes {jobs.length} offres et absentes de ton profil · classées par priorité. « Apprendre » crée un projet portfolio pour la maîtriser.
                 </div>
                 {gaps.length === 0 ? (
                   <div className="text-xs text-faint">Ton profil couvre déjà le top du marché.</div>
@@ -283,9 +283,9 @@ export default async function MarchePage() {
               <Card>
                 <div className="mb-2 text-sm font-semibold text-ink">Salaires (offres avec salaire affiché)</div>
                 <div className="grid grid-cols-3 gap-3 text-center">
-                  <div><div className="text-2xl font-bold text-ink">{sal.min ? `${Math.round(sal.min / 1000)}k` : "—"}</div><div className="text-[11px] text-faint">min</div></div>
-                  <div><div className="text-2xl font-bold text-ink">{sal.median ? `${Math.round(sal.median / 1000)}k` : "—"}</div><div className="text-[11px] text-faint">médian</div></div>
-                  <div><div className="text-2xl font-bold text-ink">{sal.max ? `${Math.round(sal.max / 1000)}k` : "—"}</div><div className="text-[11px] text-faint">max</div></div>
+                  <div><div className="text-2xl font-bold text-ink">{sal.min ? `${Math.round(sal.min / 1000)}k` : "·"}</div><div className="text-[11px] text-faint">min</div></div>
+                  <div><div className="text-2xl font-bold text-ink">{sal.median ? `${Math.round(sal.median / 1000)}k` : "·"}</div><div className="text-[11px] text-faint">médian</div></div>
+                  <div><div className="text-2xl font-bold text-ink">{sal.max ? `${Math.round(sal.max / 1000)}k` : "·"}</div><div className="text-[11px] text-faint">max</div></div>
                 </div>
                 <div className="mt-2 text-center text-[11px] text-faint">{sal.n} offres avec salaire</div>
               </Card>
@@ -295,7 +295,7 @@ export default async function MarchePage() {
           {/* Métiers du marché */}
           <Card>
             <div className="mb-3 text-sm font-semibold text-ink">
-              Métiers du marché (volume & salaire moyen) — explore ceux hors de ta cible
+              Métiers du marché (volume & salaire moyen) · explore ceux hors de ta cible
             </div>
             <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
               {roles.filter((r) => r.role !== "Autre").map((r) => {

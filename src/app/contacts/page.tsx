@@ -83,7 +83,7 @@ export default async function ContactsPage() {
                   {c.draft_email ? (
                     <details>
                       <summary className="cursor-pointer text-xs font-semibold text-ink">
-                        Email rédigé{c.draft_subject ? ` — ${c.draft_subject}` : ""}
+                        Email rédigé{c.draft_subject ? ` · ${c.draft_subject}` : ""}
                       </summary>
                       <p className="mt-2 whitespace-pre-wrap break-words rounded bg-canvas p-2 text-xs text-muted">
                         {c.draft_email}

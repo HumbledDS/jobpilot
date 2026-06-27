@@ -2,7 +2,7 @@ import { GoogleSignIn } from "@/components/GoogleSignIn";
 import { BrandMark } from "@/components/BrandMark";
 
 const FEATURES = [
-  ["Sourcing automatique", "APEC, France Travail, Adzuna + ATS internes (Greenhouse, Lever, Workday) — chaque jour."],
+  ["Sourcing automatique", "APEC, France Travail, Adzuna + ATS internes (Greenhouse, Lever, Workday) · chaque jour."],
   ["Ciblage intelligent", "Entreprises établies, en croissance (CA/effectifs INPI), qui recrutent vraiment en interne."],
   ["Co-pilote de candidature", "CV adapté + lettre + email rédigés par l'IA. Tu valides, tu envoies."],
   ["Coach & montée en compétence", "Un focus quotidien piloté par ton marché, tes candidatures et tes projets."],
@@ -26,7 +26,7 @@ export function Landing({ notAllowed = false }: { notAllowed?: boolean }) {
         </h1>
         <p className="mt-4 max-w-xl text-sm text-muted sm:text-base">
           Sourcer les bonnes offres, viser les bonnes entreprises, et industrialiser des candidatures
-          de qualité au bon moment — pour décrocher un poste à 50k€+ en Île-de-France.
+          de qualité au bon moment · pour décrocher un poste à 50k€+ en Île-de-France.
         </p>
 
         <div className="mt-8">
@@ -39,7 +39,7 @@ export function Landing({ notAllowed = false }: { notAllowed?: boolean }) {
               <button className="mt-1 text-xs text-accent underline">Se déconnecter</button>
             </form>
           ) : (
-            <p className="mt-3 text-[11px] text-faint">Accès réservé — connexion sécurisée par Google.</p>
+            <p className="mt-3 text-[11px] text-faint">Accès réservé · connexion sécurisée par Google.</p>
           )}
         </div>
 
@@ -54,7 +54,7 @@ export function Landing({ notAllowed = false }: { notAllowed?: boolean }) {
         </div>
 
         <div className="mono mt-12 text-[11px] text-faint">
-          Next.js · Supabase · Claude · MCP — conçu par Babacar Gueye
+          Next.js · Supabase · Claude · MCP · conçu par Babacar Gueye
         </div>
       </div>
     </main>

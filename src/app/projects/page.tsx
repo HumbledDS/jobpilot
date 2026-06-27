@@ -47,7 +47,7 @@ export default async function ProjectsPage({
     <div>
       <PageHeader
         title="Projets"
-        subtitle={`Montée en compétence — ${done}/${projects.length} aboutis · prouver le titre FDE / Cloud / Architect`}
+        subtitle={`Montée en compétence · ${done}/${projects.length} aboutis · prouver le titre FDE / Cloud / Architect`}
       />
       {!hasAdmin() && <SetupBanner />}
 

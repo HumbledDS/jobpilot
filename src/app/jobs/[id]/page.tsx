@@ -20,6 +20,51 @@ function fmtCA(v?: number | null): string | null {
   return `${Math.round(v / 1e3)} k€`;
 }
 
+type Block = { type: "p"; text: string } | { type: "ul"; items: string[] } | { type: "h"; text: string };
+
+/** Met en forme une description d'offre (HTML ou texte brut) en paragraphes + listes. */
+function formatDescription(raw: string): Block[] {
+  let text = raw
+    .replace(/<br\s*\/?>/gi, "\n")
+    .replace(/<\/(p|div|h\d|tr)>/gi, "\n")
+    .replace(/<li[^>]*>/gi, "\n• ")
+    .replace(/<\/li>/gi, "")
+    .replace(/<[^>]+>/g, "")
+    .replace(/&nbsp;/gi, " ")
+    .replace(/&amp;/gi, "&")
+    .replace(/&#?39;|&rsquo;|&apos;/gi, "’")
+    .replace(/&quot;|&ldquo;|&rdquo;/gi, '"')
+    .replace(/&lt;/gi, "<")
+    .replace(/&gt;/gi, ">")
+    .replace(/&[a-z]+;/gi, " ");
+
+  const lines = text.split(/\n+/).map((l) => l.trim()).filter(Boolean);
+  const blocks: Block[] = [];
+  let bullets: string[] = [];
+  const flush = () => {
+    if (bullets.length) {
+      blocks.push({ type: "ul", items: bullets });
+      bullets = [];
+    }
+  };
+  const bulletRe = /^([•\-*–·▪◦‣]|\d+[.)])\s+/;
+  for (const l of lines) {
+    if (bulletRe.test(l)) {
+      bullets.push(l.replace(bulletRe, "").trim());
+    } else {
+      flush();
+      // titre de section : court, sans ponctuation finale, souvent en gras dans l'original
+      if (l.length <= 48 && !/[.:!?]$/.test(l) && /^[A-ZÀ-Ý]/.test(l)) {
+        blocks.push({ type: "h", text: l.replace(/:$/, "") });
+      } else {
+        blocks.push({ type: "p", text: l });
+      }
+    }
+  }
+  flush();
+  return blocks;
+}
+
 export default async function JobDetailPage({
   params,
 }: {
@@ -48,7 +93,7 @@ export default async function JobDetailPage({
   const missing = job.missing_skills ?? [];
 
   return (
-    <div className="max-w-4xl break-words">
+    <div className="max-w-5xl break-words">
       <Link href="/jobs" className="text-xs text-faint hover:text-ink">
         ← Retour aux offres
       </Link>
@@ -57,7 +102,7 @@ export default async function JobDetailPage({
       <Card className="mt-3">
         <div className="flex items-start gap-4">
           <div className={`flex h-16 w-16 shrink-0 flex-col items-center justify-center rounded-xl border ${sl.cls}`}>
-            <span className="mono text-xl font-bold leading-none">{job.match_score ?? "—"}</span>
+            <span className="mono text-xl font-bold leading-none">{job.match_score ?? "·"}</span>
             <span className="mt-1 text-[9px] font-medium uppercase tracking-wide">{sl.label}</span>
           </div>
 
@@ -122,8 +167,25 @@ export default async function JobDetailPage({
         <div className="space-y-5 lg:col-span-2">
           {job.description && (
             <Card>
-              <div className="eyebrow mb-2">Description</div>
-              <p className="whitespace-pre-wrap text-sm leading-relaxed text-muted">{job.description}</p>
+              <div className="eyebrow mb-3">Description</div>
+              <div className="space-y-3 text-sm leading-relaxed text-muted">
+                {formatDescription(job.description).map((b, i) => {
+                  if (b.type === "h")
+                    return <div key={i} className="pt-1 text-sm font-semibold text-ink">{b.text}</div>;
+                  if (b.type === "ul")
+                    return (
+                      <ul key={i} className="space-y-1.5">
+                        {b.items.map((it, j) => (
+                          <li key={j} className="flex gap-2">
+                            <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-accent" />
+                            <span>{it}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    );
+                  return <p key={i}>{b.text}</p>;
+                })}
+              </div>
             </Card>
           )}
 

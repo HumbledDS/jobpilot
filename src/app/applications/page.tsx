@@ -76,7 +76,7 @@ export default async function ApplicationsPage() {
                     className="min-w-0 rounded-lg border border-line bg-surface p-3 shadow-sm"
                   >
                     <Link href={`/applications/${a.id}`} className="block break-words text-sm font-semibold text-ink hover:underline">
-                      {a.jp_jobs?.title ?? "—"}
+                      {a.jp_jobs?.title ?? "·"}
                     </Link>
                     <div className="break-words text-xs text-muted">
                       {a.jp_jobs?.company_name ?? ""}

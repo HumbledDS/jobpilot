@@ -50,7 +50,7 @@ export default async function ApplicationDetail({
   const nextOverdue = nextAction ? nextAction.getTime() < Date.now() : false;
 
   return (
-    <div className="max-w-3xl">
+    <div className="max-w-5xl">
       <Link href="/applications" className="text-xs text-faint hover:underline">
         ← Retour aux candidatures
       </Link>
@@ -93,8 +93,10 @@ export default async function ApplicationDetail({
         </form>
       </div>
 
+      <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-3">
+        <div className="space-y-6 lg:col-span-2">
       {/* CV choisi */}
-      <Card className="mt-6">
+      <Card>
         <div className="text-sm font-semibold text-ink">CV recommandé</div>
         {cv ? (
           <div className="mt-1 flex flex-wrap items-center gap-3 text-sm">
@@ -114,7 +116,7 @@ export default async function ApplicationDetail({
       </Card>
 
       {/* Lettre de motivation */}
-      <Card className="mt-6">
+      <Card>
         <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
           <span className="text-sm font-semibold text-ink">Lettre de motivation</span>
           <div className="flex items-center gap-2">
@@ -138,10 +140,10 @@ export default async function ApplicationDetail({
 
       {/* Email de candidature */}
       {app.draft_email && (
-        <Card className="mt-6">
+        <Card>
           <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
             <span className="text-sm font-semibold text-ink">
-              Email de candidature{app.draft_subject ? ` — ${app.draft_subject}` : ""}
+              Email de candidature{app.draft_subject ? ` · ${app.draft_subject}` : ""}
             </span>
             <div className="flex items-center gap-2">
               <CopyButton text={app.draft_email} label="Copier" />
@@ -156,9 +158,11 @@ export default async function ApplicationDetail({
           <p className="whitespace-pre-wrap break-words rounded bg-canvas p-3 text-sm text-ink">{app.draft_email}</p>
         </Card>
       )}
+        </div>
 
+        <div className="space-y-6">
       {/* Timeline : relances / entretiens / notes */}
-      <Card className="mt-6">
+      <Card>
         <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
           <span className="text-sm font-semibold text-ink">Suivi</span>
           {nextAction && (
@@ -209,6 +213,8 @@ export default async function ApplicationDetail({
           </ol>
         )}
       </Card>
+        </div>
+      </div>
     </div>
   );
 }

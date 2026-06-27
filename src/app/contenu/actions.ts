@@ -20,7 +20,7 @@ const HASHTAGS: Record<string, string[]> = {
 };
 
 function buildDraft(topic: string, angle: string, course: string | null) {
-  const ctx = course ? ` (vu en cours — ${course})` : "";
+  const ctx = course ? ` (vu en cours · ${course})` : "";
   let hook = "";
   let body = "";
   switch (angle) {
@@ -30,7 +30,7 @@ function buildDraft(topic: string, angle: string, course: string | null) {
       break;
     case "Décryptage technique":
       hook = `On parle souvent de ${topic}. Mais comment ça marche vraiment ?`;
-      body = `Le contexte : [le problème que ça résout].\n\nLe mécanisme, étape par étape :\n1. [étape 1]\n2. [étape 2]\n3. [étape 3]\n\nLes compromis : [perf / coût / complexité].\n\nQuand l'utiliser (et quand l'éviter) : [cas d'usage].\n\nJe détaille tout${ctx} — questions en commentaire.`;
+      body = `Le contexte : [le problème que ça résout].\n\nLe mécanisme, étape par étape :\n1. [étape 1]\n2. [étape 2]\n3. [étape 3]\n\nLes compromis : [perf / coût / complexité].\n\nQuand l'utiliser (et quand l'éviter) : [cas d'usage].\n\nJe détaille tout${ctx} · questions en commentaire.`;
       break;
     case "Retour d'expérience enseignant":
       hook = `En enseignant ${topic} à des Bac+5, j'ai remarqué une chose.`;
@@ -42,7 +42,7 @@ function buildDraft(topic: string, angle: string, course: string | null) {
       break;
     case "Tutoriel court":
       hook = `${topic} en 5 étapes.`;
-      body = `1. [étape 1]\n2. [étape 2]\n3. [étape 3]\n4. [étape 4]\n5. [étape 5]\n\nRésultat : [ce que tu obtiens].\n\nJe partage le détail${ctx} si ça intéresse — dites-le moi.`;
+      body = `1. [étape 1]\n2. [étape 2]\n3. [étape 3]\n4. [étape 4]\n5. [étape 5]\n\nRésultat : [ce que tu obtiens].\n\nJe partage le détail${ctx} si ça intéresse · dites-le moi.`;
       break;
     default:
       hook = `${topic} : [accroche].`;
@@ -58,7 +58,7 @@ export async function generateDraft(formData: FormData) {
   const topic = str(formData, "topic") ?? "Tech";
   const angle = str(formData, "angle") ?? "Explication pédagogique";
   const course = str(formData, "course");
-  const title = str(formData, "title") ?? `${topic} — ${angle}`;
+  const title = str(formData, "title") ?? `${topic} · ${angle}`;
 
   // Prefer AI generation when a key is configured; otherwise use the template.
   let hook: string;

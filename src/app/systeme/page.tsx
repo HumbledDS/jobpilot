@@ -19,15 +19,14 @@ const SOURCES = [
   ["APEC", "Offres cadres (endpoint public, sans clé)", "Cron 6h"],
   ["France Travail", "Offres IDF (API OAuth, région 11)", "Cron 6h"],
   ["Adzuna", "Agrégateur multi-sources (clé app)", "Cron 6h"],
-  ["ATS entreprises", "Postes INTERNES réels — Greenhouse, Lever, SmartRecruiters, Workday (par entreprise cible)", "Cron 6h30"],
+  ["ATS entreprises", "Postes INTERNES réels · Greenhouse, Lever, SmartRecruiters, Workday (par entreprise cible)", "Cron 6h30"],
   ["Sirene / data.gouv", "Catégorie (PME/ETI/GE), effectifs, NAF, CA dernière année (sans clé)", "Cron 7h"],
   ["INPI ratios (Opendatasoft)", "CA multi-années → croissance YoY + CAGR (sans clé)", "Cron 7h15"],
   ["Anthropic (Claude Opus)", "Lettres, emails, posts, briefs projets, coach génératif, idées", "À la demande"],
 ];
 
 const MODULES = [
-  ["Dashboard", "Vue d'ensemble + coach (focus du jour piloté par ton contexte) + boîtes en croissance qui recrutent."],
-  ["Stats", "Entonnoir de candidatures, taux de réponse/entretien, cadence, santé du pipeline d'offres."],
+  ["Dashboard", "Coach (focus du jour) + boîtes en croissance qui recrutent + stats : entonnoir, taux de réponse/entretien, cadence, santé du pipeline d'offres."],
   ["Candidatures", "Kanban + fiche détail avec timeline (relances, entretiens, statuts tracés)."],
   ["Offres", "Recherche + filtres (match, salaire, mode, métier, croissance CA), badges Directe / Top match, recherches sauvegardées."],
   ["Marché", "Compétences les plus demandées, top skills à acquérir (actionnable), salaires, segmentation employeurs vs intermédiaires, secteurs, marché interne."],
@@ -56,17 +55,17 @@ export default async function SystemePage() {
   const enriched = companies.filter((c) => c.ca != null).length;
 
   return (
-    <div className="max-w-4xl">
+    <div className="max-w-5xl">
       <PageHeader
         title="Système"
-        subtitle="Ce qui a été construit, connecté, et à quoi ça sert — JobPilot, ton OS de recherche d'emploi."
+        subtitle="Ce qui a été construit, connecté, et à quoi ça sert · JobPilot, ton OS de recherche d'emploi."
       />
       {!hasAdmin() && <SetupBanner />}
 
       <Card className="mb-5 border-accent/25 bg-accent-soft/40">
         <div className="eyebrow text-accent-strong">Objectif</div>
         <p className="mt-1.5 text-sm text-ink">
-          Décrocher un poste <strong>Data / Cloud / IA à 50k€+ en Île-de-France</strong> — en automatisant le sourcing,
+          Décrocher un poste <strong>Data / Cloud / IA à 50k€+ en Île-de-France</strong> · en automatisant le sourcing,
           en visant les bonnes entreprises (établies, qui recrutent en interne, en croissance), et en industrialisant
           des candidatures de qualité au bon moment.
         </p>
@@ -91,7 +90,7 @@ export default async function SystemePage() {
           ))}
         </div>
         <p className="mt-3 text-[11px] text-faint">
-          Les sources financières (Sirene, INPI) sont des données <strong>publiques gratuites</strong> — celles que des
+          Les sources financières (Sirene, INPI) sont des données <strong>publiques gratuites</strong> · celles que des
           services payants (ex. Pappers) ne font que revendre.
         </p>
       </Section>
@@ -131,12 +130,12 @@ export default async function SystemePage() {
 
       <Section eyebrow="Méthode" title="Comment l'utiliser (la boucle gagnante)">
         <ol className="space-y-2 text-sm text-ink">
-          <li><span className="mono mr-2 text-xs text-faint">01</span><strong>Offres</strong> — filtre Match ≥ 75, Salaire ≥ 50k, Croissance ; vise les badges « Directe ».</li>
-          <li><span className="mono mr-2 text-xs text-faint">02</span><strong>Entreprises</strong> — prends tes cibles dans « Qui viser » (établies + en croissance).</li>
-          <li><span className="mono mr-2 text-xs text-faint">03</span><strong>Co-pilote</strong> — prépare la candidature (CV + lettre + email), valide, envoie.</li>
-          <li><span className="mono mr-2 text-xs text-faint">04</span><strong>Candidatures</strong> — logge relances/entretiens sur la timeline.</li>
-          <li><span className="mono mr-2 text-xs text-faint">05</span><strong>Marché → Projets</strong> — comble les compétences manquantes via un projet déployé.</li>
-          <li><span className="mono mr-2 text-xs text-faint">06</span><strong>Dashboard / Coach</strong> — suis ton focus du jour ; ajuste avec Stats.</li>
+          <li><span className="mono mr-2 text-xs text-faint">01</span><strong>Offres</strong> · filtre Match ≥ 75, Salaire ≥ 50k, Croissance ; vise les badges « Directe ».</li>
+          <li><span className="mono mr-2 text-xs text-faint">02</span><strong>Entreprises</strong> · prends tes cibles dans « Qui viser » (établies + en croissance).</li>
+          <li><span className="mono mr-2 text-xs text-faint">03</span><strong>Co-pilote</strong> · prépare la candidature (CV + lettre + email), valide, envoie.</li>
+          <li><span className="mono mr-2 text-xs text-faint">04</span><strong>Candidatures</strong> · logge relances/entretiens sur la timeline.</li>
+          <li><span className="mono mr-2 text-xs text-faint">05</span><strong>Marché → Projets</strong> · comble les compétences manquantes via un projet déployé.</li>
+          <li><span className="mono mr-2 text-xs text-faint">06</span><strong>Dashboard / Coach</strong> · suis ton focus du jour ; ajuste avec Stats.</li>
         </ol>
         <p className="mt-3 text-xs text-muted">
           Rythme cible : 2 candidatures ciblées/jour · relances à J+7 · 1 post LinkedIn/sem · 1 projet qui avance/sem.

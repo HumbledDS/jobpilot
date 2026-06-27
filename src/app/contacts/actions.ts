@@ -105,7 +105,7 @@ export async function createContactFromJob(formData: FormData) {
     company_id: companyId,
     job_title: job.title as string,
     job_url: job.url as string | null,
-    notes: `Offre : ${job.title}${job.url ? ` — ${job.url}` : ""}`,
+    notes: `Offre : ${job.title}${job.url ? ` · ${job.url}` : ""}`,
     draft_subject: draft?.subject ?? null,
     draft_email: draft?.body ?? null,
   };

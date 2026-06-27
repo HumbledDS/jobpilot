@@ -76,7 +76,7 @@ export function scoreJob(job: {
 }
 
 export function scoreLabel(score: number | null): { label: string; cls: string } {
-  if (score == null) return { label: "—", cls: "bg-slate-100 text-slate-400 border-slate-200" };
+  if (score == null) return { label: "·", cls: "bg-slate-100 text-slate-400 border-slate-200" };
   if (score >= 75) return { label: "Fort", cls: "bg-emerald-100 text-emerald-700 border-emerald-200" };
   if (score >= 55) return { label: "Bon", cls: "bg-lime-100 text-lime-700 border-lime-200" };
   if (score >= 40) return { label: "Moyen", cls: "bg-amber-100 text-amber-700 border-amber-200" };
