@@ -33,8 +33,10 @@ const MODULES = [
   ["Entreprises", "Qui viser maintenant : classement par activité de recrutement + assise réelle (catégorie, effectifs, CA, croissance) ; ESN/intermédiaires déclassés."],
   ["Contacts", "Recruteurs par entreprise + email de prise de contact rédigé par l'IA."],
   ["Documents", "Versions de CV et lettres de motivation."],
+  ["CV", "4 positionnements d'un même parcours (Data, Quant, Commercial, Patrimoine) · optimisés ATS · export PDF."],
   ["Contenu", "Génération de posts LinkedIn techniques (cours, projets) pour la visibilité."],
   ["Projets", "Espace de montée en compétence : idées + briefs IA, suivi (todo → déployé)."],
+  ["Formation", "Cours/ressources suivis pour approfondir les technos : statut, progression, plan de révision IA, calé sur les compétences du marché."],
 ];
 
 const AUTOMATION = [

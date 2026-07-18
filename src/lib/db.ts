@@ -7,6 +7,7 @@ import type {
   CvVersion,
   Job,
   SkillProject,
+  Course,
 } from "@/lib/types";
 
 /** Server-only data access. Returns empty arrays when service role key is not set. */
@@ -196,6 +197,16 @@ export async function getSkillProjects(): Promise<SkillProject[]> {
     .select("*")
     .order("order_index", { ascending: true });
   return (data as SkillProject[]) ?? [];
+}
+
+export async function getCourses(): Promise<Course[]> {
+  const db = getAdmin();
+  if (!db) return [];
+  const { data } = await db
+    .from("jp_courses")
+    .select("*")
+    .order("order_index", { ascending: true });
+  return (data as Course[]) ?? [];
 }
 
 export type CoachTask = {
