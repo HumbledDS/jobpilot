@@ -25,6 +25,19 @@ export type CvProfile = {
   salary: string;
 };
 
+// Coordonnées communes à toutes les versions (cf. CV de référence).
+export const CV_CONTACT = {
+  name: "Babacar Gueye",
+  phone: "06 79 81 97 72",
+  email: "babacar.work2024@gmail.com",
+  location: "Île-de-France · Mobilité nationale",
+  linkedin: "linkedin.com/in/babacargueye1",
+  github: "github.com/humbledDS",
+  experience: "3 ans d'expérience",
+  languages: "Français (courant) · Anglais (courant) · Espagnol (notions)",
+  interests: "Tech & IA · Finance · Permis B",
+};
+
 // Formation (constante — reformulée par angle quand c'est utile).
 const EDU_BASE = [
   "Université de Montpellier — Spécialisation Big Data, Data Science & Analyse des risques (Mention Très Bien) · 2023",

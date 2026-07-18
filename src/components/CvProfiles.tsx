@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { Card } from "@/components/ui";
 import { CopyButton } from "@/components/CopyButton";
 import { CV_PROFILES, type CvProfile } from "@/lib/cvProfiles";
@@ -42,6 +43,11 @@ function ProfileView({ p }: { p: CvProfile }) {
         </div>
         <h2 className="mt-1.5 text-lg font-semibold tracking-tight text-ink">{p.title}</h2>
         <p className="mt-2 text-xs text-muted">{p.angle}</p>
+        <div className="mt-3">
+          <Link href={`/cv/${p.id}/print`} className="btn-primary text-xs">
+            Ouvrir le CV · PDF ↗
+          </Link>
+        </div>
       </Card>
 
       {/* Résumé */}
