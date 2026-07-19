@@ -22,8 +22,10 @@ skill-up tracker to grow toward Forward Deployed / Cloud Architect roles.
 | Applications (Kanban) | À postuler -> Postulé -> Relance -> Entretien -> Offre / Refus |
 | Contacts | Recruiters & interlocutors per company / application |
 | Documents | Version CVs & cover letters, link the right version to each application |
+| CV positioning | Same background told under 4 ATS-optimized angles (Data / Quant / Sales / Wealth), with print-to-PDF export |
 | Dashboard | Funnel, response rate, per-source stats, weekly cadence |
 | Skill-up | Track the 10 end-to-end projects (repo + live URL + status) |
+| Formation | Personal upskilling tracker: courses per techno, progress, AI revision plan, tied to market skill gaps |
 
 ## Getting started
 ```bash
@@ -33,8 +35,19 @@ npm run dev                  # http://localhost:3000
 ```
 
 ## Database
-Schema lives in [`supabase/migrations/0001_jobpilot_init.sql`](supabase/migrations/0001_jobpilot_init.sql).
-All `jp_*` tables are RLS-protected (owner = `auth.uid()`).
+Schema lives in [`supabase/migrations/`](supabase/migrations/) — `0001_jobpilot_init.sql`
+(core tables) then `0002_courses.sql` (the Formation tracker). Apply new migrations in the
+Supabase SQL editor or via the CLI. All `jp_*` tables are RLS-protected (owner = `auth.uid()`).
+
+## Ops — refresh offers on demand
+The offers pipeline runs daily via Vercel Cron. To force a fresh pull between crons:
+```bash
+npm run refresh                                # targets http://localhost:3000 (dev running)
+npm run refresh -- https://your-app.vercel.app # targets production
+```
+It chains the 4 cron routes (`ingest` → `source-targets` → `enrich-companies` →
+`enrich-financials`), authenticating with `CRON_SECRET` from `.env.local`, and prints a
+per-source insert summary. You can also trigger each cron manually from the Vercel dashboard.
 
 ## Docs
 - [Architecture](docs/ARCHITECTURE.md)

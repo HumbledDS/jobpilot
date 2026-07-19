@@ -42,6 +42,7 @@ const MODULES = [
 const AUTOMATION = [
   ["Co-pilote de candidature", "Sur une offre : choisit le CV adapté, rédige lettre + email, crée la candidature. Tu valides et envoies."],
   ["Crons quotidiens (Vercel, région cdg1)", "Ingestion 6h · sourcing entreprises 6h30 · enrichissement Sirene 7h · croissance CA (INPI) 7h15."],
+  ["Refresh à la demande", "`npm run refresh` (ou `-- https://prod`) enchaîne les 4 routes pour forcer une mise à jour des offres hors cron ; récap des insertions par source."],
   ["Serveur MCP (HTTP)", "Expose tes données d'offres/candidatures à Claude Desktop via un endpoint authentifié."],
   ["Routes sécurisées", "Les déclencheurs d'ingestion/enrichissement sont protégés par CRON_SECRET (401 sans secret)."],
 ];
