@@ -4,7 +4,9 @@
 
 create table if not exists public.jp_courses (
   id uuid primary key default gen_random_uuid(),
-  user_id uuid not null default auth.uid() references auth.users(id) on delete cascade,
+  -- nullable comme les autres tables jp_* : les écritures passent par le client
+  -- service-role (sans user_id, auth.uid() = null). RLS reste actif.
+  user_id uuid default auth.uid() references auth.users(id) on delete cascade,
   title text not null,
   provider text,                 -- Udemy, Coursera, YouTube, Docs officielles, Databricks Academy…
   skill text,                    -- techno visée (taxonomie skills.ts) : Spark, Kafka, Terraform…
