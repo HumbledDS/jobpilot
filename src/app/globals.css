@@ -227,8 +227,19 @@ h1, h2, h3 {
     border-radius: 0 !important;
     box-shadow: none !important;
   }
+  /* Forcer l'impression des fonds/couleurs (bandeau sombre, accents, chips)
+     même quand « Graphiques d'arrière-plan » est décoché → l'impression
+     correspond au rendu à l'écran. */
+  .cv-doc,
+  .cv-doc * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
   @page {
     size: A4;
-    margin: 12mm;
+    /* margin 0 : supprime les en-têtes/pieds de page du navigateur (date, URL,
+       n° de page) ET laisse le bandeau sombre aller bord à bord comme à l'écran.
+       Le padding interne du document (px-8/py-6) garde le texte à distance des bords. */
+    margin: 0;
   }
 }
