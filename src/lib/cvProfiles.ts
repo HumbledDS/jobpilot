@@ -152,28 +152,6 @@ export const CV_PROFILES: CvProfile[] = [
     ],
     experiences: [
       {
-        company: "Freelance",
-        role: "Quantitative Developer · financial scoring & due diligence",
-        period: "10/2024 – 05/2025",
-        bullets: [
-          "Built a financial scoring engine (ratios, feature engineering) feeding a real-time analytics interface.",
-          "Designed data pipelines for financial-data enrichment and processing at scale.",
-          "Automated the full analytical workflow, reducing analysis time by 60 %.",
-        ],
-        stack: "Python · PySpark · SQL · NumPy · Pandas · AWS",
-      },
-      {
-        company: "Orange Business Services",
-        role: "Data Scientist · statistical modeling",
-        period: "11/2022 – 05/2023",
-        bullets: [
-          "Developed large-scale analytical pipelines processing millions of B2B customer events.",
-          "Built a predictive churn model on 200,000+ clients (classification, feature engineering, validation).",
-          "Optimized SQL & Spark queries, reducing execution time by 60 %.",
-        ],
-        stack: "Python · Scikit-Learn · SQL · PySpark · Machine Learning",
-      },
-      {
         company: "Jedy Formation",
         role: "Instructor · Statistics, Machine Learning & Python",
         period: "09/2025 – 07/2026",
@@ -192,6 +170,39 @@ export const CV_PROFILES: CvProfile[] = [
           "Designed an event-driven data model and star-schema warehouse for analytics.",
         ],
         stack: "Python · PostgreSQL · SQL · Pandas",
+      },
+      {
+        company: "Freelance",
+        role: "Quantitative Developer · financial scoring & due diligence",
+        period: "10/2024 – 05/2025",
+        bullets: [
+          "Built a financial scoring engine (ratios, feature engineering) feeding a real-time analytics interface.",
+          "Designed data pipelines for financial-data enrichment and processing at scale.",
+          "Automated the full analytical workflow, reducing analysis time by 60 %.",
+        ],
+        stack: "Python · PySpark · SQL · NumPy · Pandas · AWS",
+      },
+      {
+        company: "Projet personnel · Quantitative Research",
+        role: "Backtesting & systematic strategies",
+        period: "2023 – 2024",
+        bullets: [
+          "Built a vectorized backtesting engine (NumPy/Pandas) on equity & crypto time series.",
+          "Implemented mean-reversion and momentum signals, evaluated with Sharpe, max drawdown and hit-ratio.",
+          "Walk-forward validation and transaction-cost modeling to control overfitting.",
+        ],
+        stack: "Python · NumPy · Pandas · SciPy · Matplotlib",
+      },
+      {
+        company: "Orange Business Services",
+        role: "Data Scientist · statistical modeling",
+        period: "11/2022 – 05/2023",
+        bullets: [
+          "Developed large-scale analytical pipelines processing millions of B2B customer events.",
+          "Built a predictive churn model on 200,000+ clients (classification, feature engineering, validation).",
+          "Optimized SQL & Spark queries, reducing execution time by 60 %.",
+        ],
+        stack: "Python · Scikit-Learn · SQL · PySpark · Machine Learning",
       },
     ],
     education: [
@@ -228,16 +239,6 @@ export const CV_PROFILES: CvProfile[] = [
     ],
     experiences: [
       {
-        company: "Collablib",
-        role: "Fondateur · Solutions & Business Development",
-        period: "05/2025 – Aujourd'hui",
-        bullets: [
-          "Défini le positionnement, le pricing et le go-to-market d'un SaaS de mise en relation créateurs & marques.",
-          "Mené des entretiens de discovery client et construit un entonnoir d'acquisition.",
-          "Piloté la roadmap produit et réalisé les démonstrations auprès des premiers utilisateurs.",
-        ],
-      },
-      {
         company: "Tailored-CV",
         role: "Fondateur · Product & Pre-Sales",
         period: "01/2026 – 05/2026",
@@ -256,12 +257,32 @@ export const CV_PROFILES: CvProfile[] = [
         ],
       },
       {
+        company: "Collablib",
+        role: "Fondateur · Solutions & Business Development",
+        period: "05/2025 – Aujourd'hui",
+        bullets: [
+          "Défini le positionnement, le pricing et le go-to-market d'un SaaS de mise en relation créateurs & marques.",
+          "Mené des entretiens de discovery client et construit un entonnoir d'acquisition.",
+          "Piloté la roadmap produit et réalisé les démonstrations auprès des premiers utilisateurs.",
+        ],
+      },
+      {
         company: "Freelance · Data & AI",
         role: "Consultant · valeur métier",
         period: "10/2024 – 05/2025",
         bullets: [
           "Construit un outil réduisant de 60 % le temps d'analyse financière — vendu la valeur aux analystes utilisateurs.",
           "Traduit un besoin métier en solution technique concrète et démontrable.",
+        ],
+      },
+      {
+        company: "Tasiaa",
+        role: "Fondateur · Business Development & Sales",
+        period: "2023 – 2024",
+        bullets: [
+          "Lancé un SaaS de zéro : prospection, démonstrations et closing des premiers clients.",
+          "Construit le discours de vente et l'entonnoir d'acquisition (outbound + inbound).",
+          "Négocié des partenariats et itéré le pricing selon les retours terrain.",
         ],
       },
     ],
@@ -296,25 +317,6 @@ export const CV_PROFILES: CvProfile[] = [
     ],
     experiences: [
       {
-        company: "Freelance · Analyse financière",
-        role: "Analyste · pré due-diligence & scoring financier",
-        period: "10/2024 – 05/2025",
-        bullets: [
-          "Conception d'un moteur d'analyse financière automatisée : ratios, scoring, lecture d'états financiers.",
-          "Accélération de 60 % du temps d'analyse — évaluation rapide de la solidité financière.",
-          "Traduction d'indicateurs quantitatifs en décision et recommandation.",
-        ],
-      },
-      {
-        company: "Orange Business Services",
-        role: "Analyste · connaissance client & risque",
-        period: "11/2022 – 05/2023",
-        bullets: [
-          "Analyse comportementale et modélisation du risque de départ sur un portefeuille de 200 000 clients.",
-          "Contribution aux stratégies de rétention — logique de fidélisation et de suivi client.",
-        ],
-      },
-      {
         company: "Jedy Formation",
         role: "Formateur · accompagnement & pédagogie",
         period: "09/2025 – 07/2026",
@@ -330,6 +332,35 @@ export const CV_PROFILES: CvProfile[] = [
         bullets: [
           "Développement d'un portefeuille clients de zéro : prospection, relation et fidélisation.",
           "Autonomie complète, sens du résultat et gestion de bout en bout.",
+        ],
+      },
+      {
+        company: "Freelance · Analyse financière",
+        role: "Analyste · pré due-diligence & scoring financier",
+        period: "10/2024 – 05/2025",
+        bullets: [
+          "Conception d'un moteur d'analyse financière automatisée : ratios, scoring, lecture d'états financiers.",
+          "Accélération de 60 % du temps d'analyse — évaluation rapide de la solidité financière.",
+          "Traduction d'indicateurs quantitatifs en décision et recommandation.",
+        ],
+      },
+      {
+        company: "Projet personnel · Gestion de patrimoine",
+        role: "Simulateur d'allocation patrimoniale",
+        period: "2024",
+        bullets: [
+          "Développement d'un simulateur d'allocation (PEA, assurance-vie, SCPI, ETF) selon le profil de risque.",
+          "Calcul du couple rendement/risque, projection long terme et impact fiscal.",
+          "Restitution pédagogique pour appuyer la décision d'investissement.",
+        ],
+      },
+      {
+        company: "Orange Business Services",
+        role: "Analyste · connaissance client & risque",
+        period: "11/2022 – 05/2023",
+        bullets: [
+          "Analyse comportementale et modélisation du risque de départ sur un portefeuille de 200 000 clients.",
+          "Contribution aux stratégies de rétention — logique de fidélisation et de suivi client.",
         ],
       },
     ],
