@@ -276,6 +276,16 @@ export const CV_PROFILES: CvProfile[] = [
         ],
       },
       {
+        company: "Freelance · B2B SaaS",
+        role: "Business Development Representative · outbound & demos",
+        period: "02/2024 – 09/2024",
+        bullets: [
+          "Prospection outbound (email, LinkedIn) et qualification de leads pour une solution SaaS B2B.",
+          "Réalisation de démonstrations produit et suivi de pipeline jusqu'au closing.",
+          "Reporting CRM et itération du discours commercial selon les taux de conversion.",
+        ],
+      },
+      {
         company: "Tasiaa",
         role: "Fondateur · Business Development & Sales",
         period: "03/2023 – 09/2024",
@@ -283,6 +293,15 @@ export const CV_PROFILES: CvProfile[] = [
           "Lancé un SaaS de zéro : prospection, démonstrations et closing des premiers clients.",
           "Construit le discours de vente et l'entonnoir d'acquisition (outbound + inbound).",
           "Négocié des partenariats et itéré le pricing selon les retours terrain.",
+        ],
+      },
+      {
+        company: "Conseiller de vente (temps partiel)",
+        role: "Relation client & vente · pendant les études",
+        period: "09/2021 – 08/2022",
+        bullets: [
+          "Accueil, conseil et vente en contact direct avec la clientèle.",
+          "Atteinte des objectifs de vente et fidélisation ; sens du service et de l'écoute.",
         ],
       },
     ],
@@ -345,6 +364,16 @@ export const CV_PROFILES: CvProfile[] = [
         ],
       },
       {
+        company: "Conseil financier indépendant (Freelance)",
+        role: "Accompagnement de particuliers · budget, épargne, allocation",
+        period: "03/2024 – 10/2024",
+        bullets: [
+          "Accompagnement de particuliers sur la structuration budgétaire, l'épargne et l'allocation d'actifs.",
+          "Recommandations d'enveloppes (PEA, assurance-vie, SCPI, ETF) selon objectifs et profil de risque.",
+          "Pédagogie et suivi dans la durée pour sécuriser les décisions d'investissement.",
+        ],
+      },
+      {
         company: "Projet personnel · Gestion de patrimoine",
         role: "Simulateur d'allocation patrimoniale",
         period: "01/2024 – 08/2024",
@@ -352,6 +381,15 @@ export const CV_PROFILES: CvProfile[] = [
           "Développement d'un simulateur d'allocation (PEA, assurance-vie, SCPI, ETF) selon le profil de risque.",
           "Calcul du couple rendement/risque, projection long terme et impact fiscal.",
           "Restitution pédagogique pour appuyer la décision d'investissement.",
+        ],
+      },
+      {
+        company: "Projet personnel · Marchés financiers",
+        role: "Veille marchés & sélection ETF / SCPI",
+        period: "06/2023 – 12/2023",
+        bullets: [
+          "Suivi des marchés et analyse comparative d'ETF et de SCPI (frais, performance, risque).",
+          "Construction d'une allocation type diversifiée et documentation des critères de sélection.",
         ],
       },
       {
