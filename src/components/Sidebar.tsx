@@ -14,8 +14,10 @@ const NAV = [
   { href: "/companies", label: "Entreprises" },
   { href: "/contacts", label: "Contacts" },
   { href: "/documents", label: "Documents" },
+  { href: "/cv", label: "CV" },
   { href: "/contenu", label: "Contenu" },
   { href: "/projects", label: "Projets" },
+  { href: "/formation", label: "Formation" },
   { href: "/systeme", label: "Système" },
 ];
 

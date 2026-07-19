@@ -205,3 +205,30 @@ h1, h2, h3 {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Impression / export PDF : ne garder que le document CV, format A4. */
+@media print {
+  aside,
+  header[class*="fixed"],
+  .no-print {
+    display: none !important;
+  }
+  main {
+    padding: 0 !important;
+    overflow: visible !important;
+  }
+  body {
+    background: #fff !important;
+    background-image: none !important;
+  }
+  .cv-doc {
+    max-width: none !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+  }
+  @page {
+    size: A4;
+    margin: 12mm;
+  }
+}

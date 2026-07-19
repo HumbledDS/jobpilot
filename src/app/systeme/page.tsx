@@ -33,13 +33,16 @@ const MODULES = [
   ["Entreprises", "Qui viser maintenant : classement par activité de recrutement + assise réelle (catégorie, effectifs, CA, croissance) ; ESN/intermédiaires déclassés."],
   ["Contacts", "Recruteurs par entreprise + email de prise de contact rédigé par l'IA."],
   ["Documents", "Versions de CV et lettres de motivation."],
+  ["CV", "4 positionnements d'un même parcours (Data, Quant, Commercial, Patrimoine) · optimisés ATS · export PDF."],
   ["Contenu", "Génération de posts LinkedIn techniques (cours, projets) pour la visibilité."],
   ["Projets", "Espace de montée en compétence : idées + briefs IA, suivi (todo → déployé)."],
+  ["Formation", "Cours/ressources suivis pour approfondir les technos : statut, progression, plan de révision IA, calé sur les compétences du marché."],
 ];
 
 const AUTOMATION = [
   ["Co-pilote de candidature", "Sur une offre : choisit le CV adapté, rédige lettre + email, crée la candidature. Tu valides et envoies."],
   ["Crons quotidiens (Vercel, région cdg1)", "Ingestion 6h · sourcing entreprises 6h30 · enrichissement Sirene 7h · croissance CA (INPI) 7h15."],
+  ["Refresh à la demande", "`npm run refresh` (ou `-- https://prod`) enchaîne les 4 routes pour forcer une mise à jour des offres hors cron ; récap des insertions par source."],
   ["Serveur MCP (HTTP)", "Expose tes données d'offres/candidatures à Claude Desktop via un endpoint authentifié."],
   ["Routes sécurisées", "Les déclencheurs d'ingestion/enrichissement sont protégés par CRON_SECRET (401 sans secret)."],
 ];

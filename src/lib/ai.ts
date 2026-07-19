@@ -166,6 +166,25 @@ Réponds UNIQUEMENT en JSON: {"subject": "...", "body": "..."}. Le body inclut l
   };
 }
 
+/** Plan de révision / approfondissement d'une techno, pour monter en compétence. */
+export async function generateCoursePlanAI(input: {
+  skill: string;
+  title?: string | null;
+  level?: string | null;
+}): Promise<string | null> {
+  const system = `Tu construis un plan de révision et d'approfondissement d'une techno pour ${PROFILE_CONTEXT}
+But : relire, consolider et creuser la maîtrise de cette techno pour la prouver en entretien et sur des postes data/cloud/IA.
+Format en sections courtes et actionnables, en français, sans emojis :
+- Rappels essentiels : 4-6 concepts clés à revoir en priorité.
+- À creuser (niveau avancé) : 4-6 sujets qui font la différence en entretien.
+- Pratique : 2-3 exercices ou mini-projets concrets pour ancrer.
+- Ressources : docs officielles + 2-3 ressources ciblées et réputées (noms précis, pas d'URL inventée).
+- Pièges & questions d'entretien : 3-4 questions typiques avec l'angle de réponse.
+Reste concret, réaliste pour une personne seule, et calé sur son niveau (~3 ans de pratique).`;
+  const user = `Techno : ${input.skill}${input.title ? `\nCours/ressource en cours : ${input.title}` : ""}${input.level ? `\nNiveau visé : ${input.level}` : ""}\nÉcris le plan.`;
+  return complete(system, user, 1400);
+}
+
 export type AiFocusAction = {
   label: string;
   category: string;

@@ -182,3 +182,16 @@ export type SkillProject = {
   brief: string | null;
   notes: string | null;
 };
+
+export type Course = {
+  id: string;
+  title: string;
+  provider: string | null;
+  skill: string | null;
+  url: string | null;
+  status: "todo" | "in_progress" | "done";
+  progress: number;
+  plan: string | null;
+  notes: string | null;
+  order_index: number | null;
+};
