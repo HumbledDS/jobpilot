@@ -185,7 +185,7 @@ export const CV_PROFILES: CvProfile[] = [
       {
         company: "Projet personnel · Quantitative Research",
         role: "Backtesting & systematic strategies",
-        period: "2023 – 2024",
+        period: "06/2023 – 09/2024",
         bullets: [
           "Built a vectorized backtesting engine (NumPy/Pandas) on equity & crypto time series.",
           "Implemented mean-reversion and momentum signals, evaluated with Sharpe, max drawdown and hit-ratio.",
@@ -278,7 +278,7 @@ export const CV_PROFILES: CvProfile[] = [
       {
         company: "Tasiaa",
         role: "Fondateur · Business Development & Sales",
-        period: "2023 – 2024",
+        period: "03/2023 – 09/2024",
         bullets: [
           "Lancé un SaaS de zéro : prospection, démonstrations et closing des premiers clients.",
           "Construit le discours de vente et l'entonnoir d'acquisition (outbound + inbound).",
@@ -328,7 +328,7 @@ export const CV_PROFILES: CvProfile[] = [
       {
         company: "Entrepreneuriat (Collablib, Tailored-CV)",
         role: "Fondateur · autonomie & développement",
-        period: "2025 – 2026",
+        period: "05/2025 – 05/2026",
         bullets: [
           "Développement d'un portefeuille clients de zéro : prospection, relation et fidélisation.",
           "Autonomie complète, sens du résultat et gestion de bout en bout.",
@@ -347,7 +347,7 @@ export const CV_PROFILES: CvProfile[] = [
       {
         company: "Projet personnel · Gestion de patrimoine",
         role: "Simulateur d'allocation patrimoniale",
-        period: "2024",
+        period: "01/2024 – 08/2024",
         bullets: [
           "Développement d'un simulateur d'allocation (PEA, assurance-vie, SCPI, ETF) selon le profil de risque.",
           "Calcul du couple rendement/risque, projection long terme et impact fiscal.",
